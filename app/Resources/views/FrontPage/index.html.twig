@@ -1,0 +1,26 @@
+{# app/Resources/views/base.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Annotate</h2>
+                <p>This is the button to start the annotation</p>
+                <p><a class="btn btn-default" href="{ path('dinel_annotator_annotate') }}" role="button">Begin annotation &raquo;</a></p>
+            </div>
+            <div class="col-md-4">
+                <h2>Analyse</h2>
+                
+            </div>
+            <div class="col-md-4">
+                <h2>Administer</h2>
+                <p><a class="btn btn-default" href="{{ path('admin_page') }}" role="button">Admin screen &raquo;</a></p>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+
