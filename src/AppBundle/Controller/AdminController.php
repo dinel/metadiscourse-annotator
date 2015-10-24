@@ -81,8 +81,8 @@ class AdminController extends Controller
         $form->handleRequest($request);
         
         if($form->isValid()) {
-            $this->processText($text->getTheText());
             $em = $this->getDoctrine()->getManager();
+            $this->processText($text, $em);            
             $em->persist($text);
             $em->flush();
             
@@ -94,9 +94,13 @@ class AdminController extends Controller
         ));  
     }
     
-    private function processText($the_text) {
+    private function processText(\AppBundle\Entity\Text $text, $em) {
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
-        $tokens = $tokenizer->tokenize($the_text);
-        print_r($tokens);
+        $tokens = $tokenizer->tokenize($text->getTheText());
+        foreach($tokens as $token) {
+            $t = new \AppBundle\Entity\Token($token);
+            $em->persist($t);
+            $text->addToken($t);
+        }
     }
 }
