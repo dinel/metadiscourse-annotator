@@ -12,13 +12,22 @@
                 <p><a class="btn btn-default" href="{{ path('admin_domain_add') }}" role="button">Add domain &raquo;</a></p>
             </div>
             
-            <div class=col-md-4">
+            <div class="col-md-4">
                 <h2>Texts</h2>
                 
                 {% for text in texts %}
                     <div>{{ text.title }}</div>
                 {% endfor %}
                 <p><a class="btn btn-default" href="{{ path('admin_text_add') }}" role="button">Add text &raquo;</a></p>
+            </div>
+            
+            <div class="col-md-4">
+                <h2>Markers</h2>
+                
+                {% for marker in markers %}
+                    <div>{{ marker.text }}</div>
+                {% endfor %}
+                <p><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></p>
             </div>
         </div>
     </div>

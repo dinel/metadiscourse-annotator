@@ -32,9 +32,14 @@ class AdminController extends Controller
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Text");
         $texts = $repository->findAll();
         
+        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
+        $marks = $repository->findAll();
+        
+        
         return $this->render('Admin/index.html.twig', array(
                 'domains' => $domains,
                 'texts' => $texts,
+                'markers' => $marks
             ));
     }
     
@@ -94,7 +99,34 @@ class AdminController extends Controller
         ));  
     }
     
-    private function processText(\AppBundle\Entity\Text $text, $em) {
+    /**
+     * @Route("/admin/marker/add", name="admin_marker_add")
+     */
+    public function newMarkerAdd(\Symfony\Component\HttpFoundation\Request $request) {
+        $mark = new \AppBundle\Entity\Markable();
+        
+        $form = $this->createFormBuilder($mark)
+                ->add('text', 'text')
+                ->add('description', 'text')
+                ->add('save', 'submit', array('label' => 'Add marker'))
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($mark);
+            $em->flush();
+            
+            return $this->redirectToRoute("admin_page");
+        }
+        
+        return $this->render('Admin/new_mark.html.twig', array(
+                'form' => $form->createView(),
+        ));
+    }
+
+        private function processText(\AppBundle\Entity\Text $text, $em) {
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
         $tokens = $tokenizer->tokenize($text->getTheText());
         foreach($tokens as $token) {
