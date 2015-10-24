@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="text")
  */
 class Text {
-        /**
+    /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -42,6 +42,18 @@ class Text {
      * @ORM\Column(type="text")
      */
     protected $the_text;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Token", mappedBy="document")
+     */
+    protected $tokens;
+
+    /**
+     * The constructor
+     */
+    public function __construct() {
+        $this->tokens = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -123,5 +135,40 @@ class Text {
     public function getTheText()
     {
         return $this->the_text;
+    }
+
+    /**
+     * Add token
+     *
+     * @param \AppBundle\Entity\Token $token
+     *
+     * @return Text
+     */
+    public function addToken(\AppBundle\Entity\Token $token)
+    {
+        $this->tokens[] = $token;
+        $token->setDocument($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove token
+     *
+     * @param \AppBundle\Entity\Token $token
+     */
+    public function removeToken(\AppBundle\Entity\Token $token)
+    {
+        $this->tokens->removeElement($token);
+    }
+
+    /**
+     * Get tokens
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTokens()
+    {
+        return $this->tokens;
     }
 }
