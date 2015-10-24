@@ -40,10 +40,17 @@ class Token {
     protected $document;
     
     /**
+     * @ORM\ManyToOne(targetEntity="Markable")
+     * @ORM\JoinColumn(name="markable_id", referencedColumnName="id")
+     **/
+    private $markable;
+    
+    /**
      * The constructor
      */
     public function __construct($content) {
         $this->content = $content;
+        $this->markable = null;
     }
 
     /**
@@ -102,5 +109,29 @@ class Token {
     public function getDocument()
     {
         return $this->document;
+    }
+
+    /**
+     * Set markable
+     *
+     * @param \AppBundle\Entity\Markable $markable
+     *
+     * @return Token
+     */
+    public function setMarkable(\AppBundle\Entity\Markable $markable = null)
+    {
+        $this->markable = $markable;
+
+        return $this;
+    }
+
+    /**
+     * Get markable
+     *
+     * @return \AppBundle\Entity\Markable
+     */
+    public function getMarkable()
+    {
+        return $this->markable;
     }
 }
