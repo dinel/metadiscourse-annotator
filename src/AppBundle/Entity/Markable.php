@@ -94,4 +94,28 @@ class Markable
     {
         return $this->description;
     }
+
+    /**
+     * Set text
+     *
+     * @param string $text
+     *
+     * @return Markable
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
+     * Get text
+     *
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
 }
