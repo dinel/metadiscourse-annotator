@@ -126,11 +126,26 @@ class AdminController extends Controller
         ));
     }
 
-        private function processText(\AppBundle\Entity\Text $text, $em) {
+    private function processText(\AppBundle\Entity\Text $text, $em) {
+        // get the tokens in the text
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
         $tokens = $tokenizer->tokenize($text->getTheText());
+        
+        // load all the markers
+        // TODO: filter by domain
+        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
+        $marks = $repository->findAll();
+        $marks_array = array();
+        
+        foreach($marks as $mark) {
+            $marks_array[$mark->getText()] = $mark;
+        }
+        
         foreach($tokens as $token) {
             $t = new \AppBundle\Entity\Token($token);
+            if(array_key_exists($token, $marks_array)) {
+                $t->setMarkable($marks_array[$token]);
+            }
             $em->persist($t);
             $text->addToken($t);
         }
