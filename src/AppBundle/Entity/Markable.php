@@ -38,6 +38,18 @@ class Markable
      * @ORM\Column(type="text")
      */
     protected $description;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Sense", mappedBy="markable")
+     */
+    protected $senses;
+    
+    /**
+     * The constructor
+     */
+    public function _construct() {
+        $this->senses = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -117,5 +129,47 @@ class Markable
     public function getText()
     {
         return $this->text;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->senses = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add sense
+     *
+     * @param \AppBundle\Entity\Sense $sense
+     *
+     * @return Markable
+     */
+    public function addSense(\AppBundle\Entity\Sense $sense)
+    {
+        $this->senses[] = $sense;
+        $sense->setMarkable($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove sense
+     *
+     * @param \AppBundle\Entity\Sense $sense
+     */
+    public function removeSense(\AppBundle\Entity\Sense $sense)
+    {
+        $this->senses->removeElement($sense);
+    }
+
+    /**
+     * Get senses
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSenses()
+    {
+        return $this->senses;
     }
 }
