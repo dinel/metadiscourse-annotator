@@ -86,6 +86,13 @@ class Token {
     {
         return $this->content;
     }
+    
+    /**
+     * Converts the Token to string
+     */
+    public function __toString() {
+        return $this->getContent();
+    }
 
     /**
      * Set document
@@ -133,5 +140,16 @@ class Token {
     public function getMarkable()
     {
         return $this->markable;
+    }
+    
+    /**
+     * Get class
+     */
+    public function getCSSClass() {
+        if(! $this->markable) {
+            return "normal_tok";
+        } else {
+            return "meta-marker";
+        }
     }
 }
