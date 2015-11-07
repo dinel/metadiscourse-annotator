@@ -16,7 +16,11 @@
             </div>
             <div class="col-md-4">
                 <h2>Administer</h2>
-                <p><a class="btn btn-default" href="{{ path('admin_page') }}" role="button">Admin screen &raquo;</a></p>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <p><a class="btn btn-default" href="{{ path('admin_page') }}" role="button">Admin screen &raquo;</a></p>
+                {% else %}
+                    <p>You have to login first</p>
+                {% endif %}
             </div>
         </div>
     </div>
