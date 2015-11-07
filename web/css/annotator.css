@@ -1,0 +1,29 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 30-Jul-2015, 23:00:32
+    Author     : dinel
+*/
+
+.meta-marker {
+    background-color: yellow;
+    font-weight: bold;
+    display: inline;
+}
+
+#maindoc {
+    height: 500px;
+    overflow-y: auto;
+    line-height: 2.5;
+}
+
+#tag-attributes {
+    padding: 2em;
+    display: none;
+    border: thin dotted #08C;
+    margin-top: 5em;
+    height: 400px;
+}
