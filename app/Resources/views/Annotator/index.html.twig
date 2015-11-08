@@ -1,0 +1,41 @@
+{# app/Resources/views/base.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/annotator.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Text to annotate</h2>
+                <div id="maindoc">
+                    {% for token in tokens %}
+                        <span id="{{ token.id }}" class="{{ token.getcssclass}}">{{ token }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div id="tag-attributes">
+                    Current annotation: <div id="current-annotation"></div><br/>
+                    Senses: <div id="list-senses"></div>
+                    Comment: <input id="comment" name="comment" type="text" />
+                    {# {{ form_widget(form) }} #}
+                    <input id="tok_id" name="tok_id" type="hidden" value=""/>
+                    <input id="mark_id" name="mark_id" type="hidden" value=""/>
+                    {# {{ form_end(form) }} #}
+                </div>
+
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/annotation.js') }}"></script>
+{% endblock %}
+
+
