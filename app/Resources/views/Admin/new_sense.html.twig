@@ -1,0 +1,45 @@
+{# empty Twig template #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+        <div class="row voffset5"> 
+            <div class="col-md-8">
+                Metadiscourse marker: {{ mark.text }}<br/>
+                Description: {{ mark.description }} <br/>
+                Domains: 
+                {% for domain in mark.domains %}
+                    {{ domain.name }},
+                {% endfor %}                
+            </div>
+        </div>
+        <div class="row voffset2">
+            <div class="col-md-8">
+                Current senses:
+                <ol>
+                {% for sense in mark.senses %}
+                    <li>{{ sense.definition }}</li>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="row voffset2">
+            <div class="col-md-8">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <div class="row voffset2">
+            <div class="col-md-8">
+                <a href=" {{ path('admin_page') }} ">Back to admin</a>
+            </div>
+        </div>
+    </div>            
+{% endblock %}
