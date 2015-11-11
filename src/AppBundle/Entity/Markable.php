@@ -45,10 +45,20 @@ class Markable
     protected $senses;
     
     /**
+     * @ORM\ManyToMany(targetEntity="Domain")
+     * @ORM\JoinTable(name="markers_domains",
+     *      joinColumns={@ORM\JoinColumn(name="mark_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="domain_id", referencedColumnName="id")}
+     *      )
+     */
+    protected $domains;
+    
+    /**
      * The constructor
      */
     public function _construct() {
         $this->senses = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->domains = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -171,5 +181,39 @@ class Markable
     public function getSenses()
     {
         return $this->senses;
+    }
+
+    /**
+     * Add domain
+     *
+     * @param \AppBundle\Entity\Domain $domain
+     *
+     * @return Markable
+     */
+    public function addDomain(\AppBundle\Entity\Domain $domain)
+    {
+        $this->domains[] = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Remove domain
+     *
+     * @param \AppBundle\Entity\Domain $domain
+     */
+    public function removeDomain(\AppBundle\Entity\Domain $domain)
+    {
+        $this->domains->removeElement($domain);
+    }
+
+    /**
+     * Get domains
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDomains()
+    {
+        return $this->domains;
     }
 }
