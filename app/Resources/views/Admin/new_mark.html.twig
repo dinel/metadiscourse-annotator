@@ -1,4 +1,20 @@
 {# app/Resources/views/default/new.html.twig #}
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+        <div class="row voffset5">        
+        {{ form_start(form) }}
+        {{ form_row(form.text, { 'attr':{'placeholder':'Enter the metadiscourse marker'} }) }}
+        {{ form_row(form.description, { 'attr':{'placeholder':'Enter a description for the metadiscourse marker'} }) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
