@@ -42,7 +42,7 @@ class Markable
     protected $description;
     
     /**
-     * @ORM\OneToMany(targetEntity="Sense", mappedBy="markable")
+     * @ORM\OneToMany(targetEntity="Sense", mappedBy="markable", cascade={"persist"})
      */
     protected $senses;
     
