@@ -35,7 +35,7 @@ class Sense
     protected $definition;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Markable", inversedBy="senses")
+     * @ORM\ManyToOne(targetEntity="Markable", inversedBy="senses", cascade={"persist"})
      * @ORM\JoinColumn(name="sense_id", referencedColumnName="id")
      */
     protected $markable;
