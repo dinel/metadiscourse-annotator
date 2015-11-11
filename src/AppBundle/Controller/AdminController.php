@@ -80,6 +80,12 @@ class AdminController extends Controller
                 ->add('title', 'text')
                 ->add('description', 'text')
                 ->add('the_text', 'textarea')
+                ->add('domains', 'entity', array(
+                        'class'     => 'AppBundle:Domain',
+                        'choice_label' => 'Domains',
+                        'expanded'  => true,
+                        'multiple'  => true
+                     ))
                 ->add('save', 'submit', array('label' => 'Add text'))
                 ->getForm();
         
@@ -108,6 +114,12 @@ class AdminController extends Controller
         $form = $this->createFormBuilder($mark)
                 ->add('text', 'text')
                 ->add('description', 'text')
+                ->add('domains', 'entity', array(
+                        'class'     => 'AppBundle:Domain',
+                        'choice_label' => 'Domains',
+                        'expanded'  => true,
+                        'multiple'  => true
+                     ))
                 ->add('save', 'submit', array('label' => 'Add marker'))
                 ->getForm();
         
