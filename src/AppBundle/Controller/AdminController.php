@@ -18,6 +18,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use AppBundle\Form\Type\MarkableType;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 class AdminController extends Controller 
@@ -111,17 +112,7 @@ class AdminController extends Controller
     public function newMarkerAdd(\Symfony\Component\HttpFoundation\Request $request) {
         $mark = new \AppBundle\Entity\Markable();
         
-        $form = $this->createFormBuilder($mark)
-                ->add('text', 'text')
-                ->add('description', 'text')
-                ->add('domains', 'entity', array(
-                        'class'     => 'AppBundle:Domain',
-                        'choice_label' => 'Domains',
-                        'expanded'  => true,
-                        'multiple'  => true
-                     ))
-                ->add('save', 'submit', array('label' => 'Add marker'))
-                ->getForm();
+        $form = $this->createForm(new MarkableType(), $mark);
         
         $form->handleRequest($request);
         
