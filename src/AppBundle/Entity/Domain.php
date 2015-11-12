@@ -71,6 +71,10 @@ class Domain
     {
         return $this->name;
     }
+    
+    public function getDomains() {
+        return $this->getName();
+    }
 
     /**
      * Set description
