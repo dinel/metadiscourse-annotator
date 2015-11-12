@@ -47,12 +47,22 @@ class Text {
      * @ORM\OneToMany(targetEntity="Token", mappedBy="document")
      */
     protected $tokens;
-
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Domain")
+     * @ORM\JoinTable(name="texts_domains",
+     *      joinColumns={@ORM\JoinColumn(name="doc_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="domain_id", referencedColumnName="id")}
+     *      )
+     */
+    protected $domains;
+     
     /**
      * The constructor
      */
     public function __construct() {
         $this->tokens = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->domains = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -170,5 +180,39 @@ class Text {
     public function getTokens()
     {
         return $this->tokens;
+    }
+
+    /**
+     * Add domain
+     *
+     * @param \AppBundle\Entity\Domain $domain
+     *
+     * @return Text
+     */
+    public function addDomain(\AppBundle\Entity\Domain $domain)
+    {
+        $this->domains[] = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Remove domain
+     *
+     * @param \AppBundle\Entity\Domain $domain
+     */
+    public function removeDomain(\AppBundle\Entity\Domain $domain)
+    {
+        $this->domains->removeElement($domain);
+    }
+
+    /**
+     * Get domains
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDomains()
+    {
+        return $this->domains;
     }
 }
