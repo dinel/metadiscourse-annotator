@@ -56,8 +56,8 @@ class WebAnnotatorController extends Controller
             //TODO: make the submission secure
 
             $token = $this->getDoctrine()
-                        ->getRepository('AppBundle:Token')
-                        ->find($id_token);
+                          ->getRepository('AppBundle:Token')
+                          ->find($id_token);
             $mark = $token->getMarkable();
             $senses = $mark->getSenses();
 
@@ -79,6 +79,7 @@ class WebAnnotatorController extends Controller
             return new JsonResponse(array(
                     'tok_id' => $id_token, 
                     'mark_id' => $mark->getId(),
+                    'mark_text' => $mark->getText(),
                     'senses' => $a_senses->toArray(),
                     'current_sense' => $current_sense,
                     'comment' => $comment,
