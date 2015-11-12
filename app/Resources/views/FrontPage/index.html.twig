@@ -1,4 +1,4 @@
-{# app/Resources/views/base.html.twig #}
+{# app/Resources/views/FrontPAge/index.html.twig #}
 
 {% extends 'base.html.twig' %}
 
@@ -9,7 +9,17 @@
 
 {% block body %}
     <div class="container">
-        <div class="row"></div>
+        <div class="row header">
+            <div class="col-md-8 col-md-offset-2 highlighted">
+                <p class="text-right">
+                    {% if app.user %}
+                        Hello {{ app.user }}!
+                    {% else %}
+                        <a href="/login">Login</a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
         <div class="row voffset5">
             <div class="col-md-6 col-md-offset-3">
                 <div class="input-group">
