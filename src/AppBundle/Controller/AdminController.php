@@ -17,9 +17,11 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 use AppBundle\Form\Type\MarkableType;
-use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
+use AppBundle\Form\Type\SenseType;
+use AppBundle\Entity\Sense;
 
 class AdminController extends Controller 
 {
@@ -107,13 +109,13 @@ class AdminController extends Controller
     }
     
     /**
+     * Action which adds a new marker to the database
      * @Route("/admin/marker/add", name="admin_marker_add")
      */
     public function newMarkerAdd(\Symfony\Component\HttpFoundation\Request $request) {
         $mark = new \AppBundle\Entity\Markable();
         
         $form = $this->createForm(new MarkableType(), $mark);
-        
         $form->handleRequest($request);
         
         if($form->isValid()) {
@@ -121,14 +123,48 @@ class AdminController extends Controller
             $em->persist($mark);
             $em->flush();
             
-            return $this->redirectToRoute("admin_page");
+            return $this->redirectToRoute("admin_sense_add", 
+                    array('id_marker' => $mark->getId()));
         }
         
         return $this->render('Admin/new_mark.html.twig', array(
                 'form' => $form->createView(),
         ));
     }
+    
+    /**
+     * Action which adds a sense to a given marker
+     * @Route("/admin/sense/add/{id_marker}", name="admin_sense_add")
+     */
+    public function newSenseAdd($id_marker, \Symfony\Component\HttpFoundation\Request $request) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id_marker);
+        // TODO: what to do if the marker is not found. Assumes it works right now
+        if($mark) {
+            $sense = new Sense();
+            $mark->addSense($sense);
+            $form = $this->createForm(new SenseType(), $sense);
+            $form->handleRequest($request);
+            
+            if($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($mark);
+                $em->flush();
+            }
+            
+            return $this->render('Admin/new_sense.html.twig', array(
+                'mark' => $mark,
+                'form' => $form->createView(),
+            ));
+        }
+    }
 
+        /**
+     * 
+     * @param \AppBundle\Entity\Text $text
+     * @param type $em
+     */
     private function processText(\AppBundle\Entity\Text $text, $em) {
         // get the tokens in the text
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
