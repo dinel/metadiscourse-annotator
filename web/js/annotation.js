@@ -19,13 +19,13 @@ $( document ).ready(function() {
                 $('#mark_id').val(data.mark_id);
                 $('#current-annotation').html(data.current_sense);
                 $('#comment').val(data.comment);
-                var $sense_html = "";
+                var sense_html = "";
                 for(var i = 0; i < data.senses.length; i++) {
-                    $sense_html += "<li>" + data.senses[i][1];
-                    $sense_html += "<a class='select_annotation' href='javascript:select_annotation(" 
+                    sense_html += "<li>" + data.senses[i][1];
+                    sense_html += "<a class='select_annotation' href='javascript:select_annotation(" 
                             + data.tok_id + "," + data.senses[i][0] + ")" + "'>Select &raquo;</a>";
                 }
-                $('#list-senses').html('<ul>' + $sense_html + '</ul>');
+                $('#list-senses').html('<ul>' + sense_html + '</ul>');
             }
         });
     });
@@ -43,9 +43,12 @@ $( document ).ready(function() {
 });
 
 function select_annotation(token, sense) {
+    var url = "";
+    if($('#comment').val()) url = '/document/annotation/add/' + token + '/' + sense + '/' + $('#comment').val();
+    else url = '/document/annotation/add/' + token + '/' + sense;
     $.ajax({
         type: 'POST',
-        url: '/document/annotation/add/' + token + '/' + sense + '/' + $('#comment').val(),
+        url: url,
         success: function() {
             alert("Success");
             $('#' + token).css('background-color', 'red');
