@@ -11,22 +11,28 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <h2>Text to annotate</h2>
+                <h2>{{ title }}</h2>
                 <div id="maindoc">
                     {% for token in tokens %}
+                        {% if token.getnewlinebefore %}
+                            <br/><br/>
+                        {% endif %}
                         <span id="{{ token.id }}" class="{{ token.getcssclass}}">{{ token }}</span>
                     {% endfor %}
+                </div>                
+            </div>
+        </div>
+        <div id="tag-attributes" class="navbar navbar-fixed-bottom">
+            <div class="container">
+                <div>
+                Metadiscourse marker: <span id="marker"></span><br/>
+                Current annotation: <span id="current-annotation"></span><br/>
+                Senses: <div id="list-senses"></div>
+                Comment: <input id="comment" name="comment" type="text" />                    
+                <input id="tok_id" name="tok_id" type="hidden" value=""/>
+                <input id="mark_id" name="mark_id" type="hidden" value=""/>
                 </div>
-                
-                <div id="tag-attributes">
-                    Metadiscourse marker: <span id="marker"></span><br/>
-                    Current annotation: <span id="current-annotation"></span><br/>
-                    Senses: <div id="list-senses"></div>
-                    Comment: <input id="comment" name="comment" type="text" />                    
-                    <input id="tok_id" name="tok_id" type="hidden" value=""/>
-                    <input id="mark_id" name="mark_id" type="hidden" value=""/>
-                </div>
-
+            </div>
         </div>
     </div>
     
