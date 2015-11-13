@@ -46,11 +46,17 @@ class Token {
     private $markable;
     
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $newLineBefore;
+    
+    /**
      * The constructor
      */
     public function __construct($content) {
         $this->content = $content;
         $this->markable = null;
+        $newLineBefore = 0;
     }
 
     /**
@@ -151,5 +157,29 @@ class Token {
         } else {
             return "meta-marker";
         }
+    }
+
+    /**
+     * Set newLineBefore
+     *
+     * @param integer $newLineBefore
+     *
+     * @return Token
+     */
+    public function setNewLineBefore($newLineBefore)
+    {
+        $this->newLineBefore = $newLineBefore;
+
+        return $this;
+    }
+
+    /**
+     * Get newLineBefore
+     *
+     * @return integer
+     */
+    public function getNewLineBefore()
+    {
+        return $this->newLineBefore;
     }
 }
