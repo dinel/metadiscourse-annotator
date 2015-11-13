@@ -31,19 +31,12 @@ class WebAnnotatorController extends Controller
                 ->getRepository('AppBundle:Text')
                 ->find($id);
         
-        $sense = new \AppBundle\Entity\Sense();
-      
-        $form = $this->createFormBuilder($sense)
-              ->add("definition", "text")
-              ->add('save', 'submit', array('label' => 'Add marker'))
-              ->getForm();
-        
         if($doc) {
             $tokens = $doc->getTokens();
                         
             return $this->render('Annotator/index.html.twig', array(
+                    'title' => $doc->getTitle(),
                     'tokens' => $tokens,
-                    'form' => $form->createView(),
                 ));
         }
     }
