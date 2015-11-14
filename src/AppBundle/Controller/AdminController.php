@@ -114,6 +114,10 @@ class AdminController extends Controller
                 ->add('domains', 'entity', array(
                         'class'     => 'AppBundle:Domain',
                         'choice_label' => 'Domains',
+                        'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                                return $er->createQueryBuilder('d')
+                                        ->where('d.disabled = 0');
+                        },
                         'expanded'  => true,
                         'multiple'  => true
                      ))

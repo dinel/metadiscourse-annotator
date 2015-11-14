@@ -28,7 +28,11 @@ class MarkableType extends AbstractType {
                     'class'     => 'AppBundle:Domain',
                     'choice_label' => 'Domains',
                     'expanded'  => true,
-                    'multiple'  => true
+                    'multiple'  => true,
+                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                            return $er->createQueryBuilder('d')
+                                      ->where('d.disabled = 0');
+                    },
                 ))
             ->add('save', 'submit', array('label' => 'Add marker'));
     }
