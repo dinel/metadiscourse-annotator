@@ -1,15 +1,37 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+{% endblock stylesheets %}
+
 {% block body %}
     <div class="container">
         <div class="row">
             <div class="col-md-4">
                 <h2>Domain</h2>
                 
+                <strong class="voffset3">Domains available</strong>
+                <ul class="edit-list">
                 {% for domain in domains %}
-                    <div>{{ domain.name }} : {{ domain.description }}</div>
+                    <li>
+                        {% set extra_class = "" %}
+                        {% if domain.disabled %}
+                            <i class="fa fa-times"></i>
+                            {% set extra_class = "faded" %}
+                        {% endif %}
+                        {% if domain.name == 'Any' %}
+                            {{ domain.name }} : {{ domain.description }}
+                        {% else %} 
+                            <a class="{{ extra_class }} editable-link" href="/admin/domain/edit/{{ domain.id }}">{
+                                { domain.name }} : {{ domain.description }} <i class="">&nbsp;</i>
+                            </a>
+                        {% endif %}
+                    </li>
                 {% endfor %}
-                <p><a class="btn btn-default" href="{{ path('admin_domain_add') }}" role="button">Add domain &raquo;</a></p>
+                </ul>
+                <p><a class="btn btn-default" href="{{ path('admin_domain_add') }}" role="button">Add new domain &raquo;</a></p>
             </div>
             
             <div class="col-md-4">
@@ -32,4 +54,9 @@
         </div>
     </div>
     
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/admin.js') }}"></script>
 {% endblock %}
