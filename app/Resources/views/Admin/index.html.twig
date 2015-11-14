@@ -10,9 +10,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <h2>Domain</h2>
+                <h3>Domains</h3>
                 
-                <strong class="voffset3">Domains available</strong>
                 <ul class="edit-list">
                 {% for domain in domains %}
                     <li>
@@ -24,8 +23,8 @@
                         {% if domain.name == 'Any' %}
                             {{ domain.name }} : {{ domain.description }}
                         {% else %} 
-                            <a class="{{ extra_class }} editable-link" href="/admin/domain/edit/{{ domain.id }}">{
-                                { domain.name }} : {{ domain.description }} <i class="">&nbsp;</i>
+                            <a class="{{ extra_class }} editable-link" href="/admin/domain/edit/{{ domain.id }}">
+                                {{ domain.name }} : {{ domain.description }} <i class="">&nbsp;</i>
                             </a>
                         {% endif %}
                     </li>
