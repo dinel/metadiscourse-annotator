@@ -19,3 +19,29 @@ and open the template in the editor.
     background-color: lightskyblue;
     padding-top: 5px;
 }
+
+ul.edit-list {
+    list-style: none;
+    padding: 1em 0 1em 0;
+}
+
+ul.edit-list li {
+    padding-top: 0.5em;
+}
+
+ul.edit-list a {
+    color: black;
+}
+
+ul.edit-list a:hover {
+    text-decoration: none;
+    opacity: 1.0;
+}
+
+ul.edit-list a.faded {
+    opacity: 0.50;
+}
+
+ul.edit-list a.faded:hover {
+    opacity: 1;
+}
