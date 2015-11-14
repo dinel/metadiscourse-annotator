@@ -47,32 +47,60 @@ class AdminController extends Controller
     }
     
     /**
-     * @Route("/admin/domanin/add", name="admin_domain_add")
+     * @Route("/admin/domain/add", name="admin_domain_add")
      */
     public function newDomainAction(\Symfony\Component\HttpFoundation\Request $request) {
         $domain = new \AppBundle\Entity\Domain();
+        return $this->editDomainCommon($domain, $request);        
+    }
+    
+    /**
+     * @Route("/admin/domain/edit/{id}", name="admin_domain_edit")
+     */
+    public function editDomainAction($id, \Symfony\Component\HttpFoundation\Request $request) {
+        $domain = $this->getDoctrine()
+                ->getRepository('AppBundle:Domain')
+                ->find($id);
+        
+        return $this->editDomainCommon($domain, $request, true);
+    }
+    
+    /**
+     * Function which stores the common functionality for creating and editing
+     * domains
+     * @param type $domain
+     * @param type $request
+     * @return type
+     */
+    private function editDomainCommon($domain, $request, $edit = false) {
+        if($edit) $label = "Update details";
+        else $label = "Add domain";
         
         $form = $this->createFormBuilder($domain)
                 ->add('name', 'text')
-                ->add('description', 'text')
-                ->add('save', 'submit', array('label' => 'Add domain'))
+                ->add('description', 'textarea')
+                ->add('disabled', 'checkbox', array('required' => false,))
+                ->add('save', 'submit', array('label' => $label))
+                ->add('reset', 'submit', array('label' => 'Cancel'))
                 ->getForm();
         
         $form->handleRequest($request);
         
         if($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($domain);
-            $em->flush();
+            if($form->get('save')->isClicked()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($domain);
+                $em->flush();
+            }
             
             return $this->redirectToRoute("admin_page");
-        }
+        } 
         
         return $this->render('Admin/new_domain.html.twig', array(
                 'form' => $form->createView(),
-        ));        
+        ));
     }
-    
+
     /**
      * @Route("/admin/text/add", name="admin_text_add")
      */
