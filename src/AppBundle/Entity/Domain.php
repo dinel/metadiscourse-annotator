@@ -38,6 +38,18 @@ class Domain
      * @ORM\Column(type="text")
      */
     protected $description;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $disabled;
+    
+    /**
+     * The constructor
+     */
+    public function __construct() {
+        $this->disabled = false;
+    }
 
     /**
      * Get id
@@ -97,5 +109,29 @@ class Domain
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set disabled
+     *
+     * @param boolean $disabled
+     *
+     * @return Domain
+     */
+    public function setDisabled($disabled)
+    {
+        $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    /**
+     * Get disabled
+     *
+     * @return boolean
+     */
+    public function getDisabled()
+    {
+        return $this->disabled;
     }
 }
