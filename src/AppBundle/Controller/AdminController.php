@@ -110,7 +110,9 @@ class AdminController extends Controller
         $form = $this->createFormBuilder($text)
                 ->add('title', 'text')
                 ->add('description', 'text')
-                ->add('the_text', 'textarea')
+                ->add('the_text', 'textarea', array(
+                        'attr' => array('rows' => '10'),
+                     ))
                 ->add('domains', 'entity', array(
                         'class'     => 'AppBundle:Domain',
                         'choice_label' => 'Domains',
