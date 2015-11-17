@@ -193,8 +193,19 @@ class AdminController extends Controller
             ));
         }
     }
+    
+    private function checkToken($token, $marks_array) {
+        if(array_key_exists($token, $marks_array)) {
+            $t = new \AppBundle\Entity\Token($token);
+            $t->setMarkable($marks_array[$token]);
+            
+            return $t;
+        } else {
+            return null;
+        }
+    }
 
-        /**
+    /**
      * 
      * @param \AppBundle\Entity\Text $text
      * @param type $em
@@ -216,15 +227,57 @@ class AdminController extends Controller
         foreach($lines as $line) {
             $tokens = $tokenizer->tokenize($line);
             $first = true;
+            $el_1 = $el_2 = $el_3 = null;
             foreach($tokens as $token) {
-                $t = new \AppBundle\Entity\Token($token);
-                if(array_key_exists($token, $marks_array)) {
-                    $t->setMarkable($marks_array[$token]);
-                }
-                if($first) $t->setNewLineBefore (1);
-                $first = false;
+                $el_3 = $el_2;
+                $el_2 = $el_1;
+                $el_1 = $token;
+                
+                if($el_3 != null) {
+                    $t = $this->checkToken($el_3 . " " . $el_2 . " " . $el_1, $marks_array);
+                    if($t) {
+                        $el_1 = $el_2 = $el_3 = null;
+                    } else {
+                        $t = $this->checkToken($el_3 . " " . $el_2, $marks_array);
+                        if($t) {
+                            $el_2 = $el_3 = null;
+                        } else {
+                            $t = $this->checkToken($el_3, $marks_array);
+                            if(! $t) {
+                                $t = new \AppBundle\Entity\Token($el_3);
+                            }
+                        }
+                    } 
+                    
+                    if($first) $t->setNewLineBefore (1);
+                    $first = false;
+                    $em->persist($t);
+                    $text->addToken($t);
+                }                
+            }
+            
+            $t = $this->checkToken($el_2 . " " . $el_1, $marks_array);
+            if($t) {
                 $em->persist($t);
                 $text->addToken($t);
+            } else {
+                if($el_2) {
+                    $t = $this->checkToken($el_2, $marks_array);
+                    if(! $t) {
+                        $t = new \AppBundle\Entity\Token($el_2);
+                    }
+                    $em->persist($t);
+                    $text->addToken($t);
+                }
+                 
+                if($el_1) {
+                    $t = $this->checkToken($el_1, $marks_array);
+                    if(! $t) {
+                        $t = new \AppBundle\Entity\Token($el_1);
+                    }
+                    $em->persist($t);
+                    $text->addToken($t);
+                }
             }
         }
     }
