@@ -20,6 +20,9 @@ class SenseType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('definition', 'text')
+            ->add('score', 'text')
+            ->add('fgColor', 'text')
+            ->add('bgColor', 'text')
             ->add('save', 'submit', array('label' => 'Add sense'));
     }
     
