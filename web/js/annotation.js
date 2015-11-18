@@ -14,7 +14,7 @@ $( document ).ready(function() {
             url: '/document/marker/' + $(this).attr("id"),
             dataType: 'json',
             success: function(data) {
-                alert(JSON.stringify(data));
+                /*alert(JSON.stringify(data));*/
                 $('#tok_id').val(data.tok_id);
                 $('#mark_id').val(data.mark_id);
                 $('#current-annotation').html(data.current_sense);
@@ -50,7 +50,7 @@ function select_annotation(token, sense) {
         type: 'POST',
         url: url,
         success: function() {
-            alert("Success");
+            /*alert("Success");*/
             $('#' + token).css('background-color', 'red');
         }
     });        
