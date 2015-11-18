@@ -39,7 +39,21 @@ class Sense
      * @ORM\JoinColumn(name="sense_id", referencedColumnName="id")
      */
     protected $markable;
+    
+    /**
+     * @ORM\Column(type="text", length=10)
+     */
+    protected $fgColor;
 
+    /**
+     * @ORM\Column(type="text", length=10)
+     */
+    protected $bgColor;
+    
+    /**
+     * @ORM\Column(type="integer", nullable = true)
+     */
+    protected $score;
 
     /**
      * Get id
@@ -97,5 +111,77 @@ class Sense
     public function getMarkable()
     {
         return $this->markable;
+    }
+
+    /**
+     * Set fgColor
+     *
+     * @param string $fgColor
+     *
+     * @return Sense
+     */
+    public function setFgColor($fgColor)
+    {
+        $this->fgColor = $fgColor;
+
+        return $this;
+    }
+
+    /**
+     * Get fgColor
+     *
+     * @return string
+     */
+    public function getFgColor()
+    {
+        return $this->fgColor;
+    }
+
+    /**
+     * Set bgColor
+     *
+     * @param string $bgColor
+     *
+     * @return Sense
+     */
+    public function setBgColor($bgColor)
+    {
+        $this->bgColor = $bgColor;
+
+        return $this;
+    }
+
+    /**
+     * Get bgColor
+     *
+     * @return string
+     */
+    public function getBgColor()
+    {
+        return $this->bgColor;
+    }
+
+    /**
+     * Set score
+     *
+     * @param integer $score
+     *
+     * @return Sense
+     */
+    public function setScore($score)
+    {
+        $this->score = $score;
+
+        return $this;
+    }
+
+    /**
+     * Get score
+     *
+     * @return integer
+     */
+    public function getScore()
+    {
+        return $this->score;
     }
 }
