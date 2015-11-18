@@ -13,6 +13,11 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        return $this->render('FrontPage/index.html.twig');
+        $texts = $this->getDoctrine()
+                      ->getRepository('AppBundle:Text')
+                       ->findAll();
+        return $this->render('FrontPage/index.html.twig', array(
+            'texts' => $texts,
+        ));
     }
 }
