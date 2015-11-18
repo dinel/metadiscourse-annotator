@@ -40,7 +40,7 @@ class WebAnnotatorController extends Controller
                 if($ann) {
                     $tokens_style[] = array($token, "meta-marker sense" . $ann[0]->getSense()->getId());
                 } elseif ($token->getMarkable()) {
-                    $tokens_style[] = array($token, "meta-marker");
+                    $tokens_style[] = array($token, "meta-marker meta-marker-todo");
                 } else {
                     $tokens_style[] = array($token, "normal");
                 }
@@ -149,7 +149,9 @@ class WebAnnotatorController extends Controller
             $em->persist($annotation);
             $em->flush();
             
-            return new JsonResponse(array("style" => "sense" . $sense_id));
+            return new JsonResponse(array(
+                "style" => "sense" . $sense_id,
+                "current_sense" => $sense->getDefinition()));
         } else {
             return $this->redirectToRoute('homepage');
         }
