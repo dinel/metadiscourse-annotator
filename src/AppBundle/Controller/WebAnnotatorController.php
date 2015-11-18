@@ -149,7 +149,7 @@ class WebAnnotatorController extends Controller
             $em->persist($annotation);
             $em->flush();
             
-            return new JsonResponse("Success");
+            return new JsonResponse(array("style" => "sense" . $sense_id));
         } else {
             return $this->redirectToRoute('homepage');
         }
