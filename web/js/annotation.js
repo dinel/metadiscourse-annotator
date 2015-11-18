@@ -15,6 +15,7 @@ $( document ).ready(function() {
             dataType: 'json',
             success: function(data) {
                 /*alert(JSON.stringify(data));*/
+                $('#marker').html(data.mark_text);
                 $('#tok_id').val(data.tok_id);
                 $('#mark_id').val(data.mark_id);
                 $('#current-annotation').html(data.current_sense);
@@ -22,7 +23,7 @@ $( document ).ready(function() {
                 var sense_html = "";
                 for(var i = 0; i < data.senses.length; i++) {
                     sense_html += "<li>" + data.senses[i][1];
-                    sense_html += "<a class='select_annotation' href='javascript:select_annotation(" 
+                    sense_html += " <a class='select_annotation' href='javascript:select_annotation(" 
                             + data.tok_id + "," + data.senses[i][0] + ")" + "'>Select &raquo;</a>";
                 }
                 $('#list-senses').html('<ul>' + sense_html + '</ul>');
@@ -53,7 +54,8 @@ function select_annotation(token, sense) {
             /*alert("Success");*/
             $('#' + token).removeClass();
             $('#' + token).addClass("meta-marker");
-            $('#' + token).addClass(data.style);            
+            $('#' + token).addClass(data.style); 
+            $('#current-annotation').html(data.current_sense);
         }
     });        
 }
