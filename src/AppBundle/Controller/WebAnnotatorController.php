@@ -18,6 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use AppBundle\Entity\Sense;
 
@@ -33,10 +34,22 @@ class WebAnnotatorController extends Controller
         
         if($doc) {
             $tokens = $doc->getTokens();
+            $tokens_style = array();
+            foreach($tokens as $token) {
+                $ann = $this->getAnnotation($token);
+                if($ann) {
+                    $tokens_style[] = array($token, "sense" . $ann[0]->getSense()->getId());
+                } elseif ($token->getMarkable()) {
+                    $tokens_style[] = array($token, "meta-marker");
+                } else {
+                    $tokens_style[] = array($token, "normal");
+                }
+                
+            }
                         
             return $this->render('Annotator/index.html.twig', array(
                     'title' => $doc->getTitle(),
-                    'tokens' => $tokens,
+                    'tokens_style' => $tokens_style,
                 ));
         }
     }
@@ -141,6 +154,22 @@ class WebAnnotatorController extends Controller
             return $this->redirectToRoute('homepage');
         }
     }
+    
+   /**
+     * @Route("/annotation/css", name="annotation_css")
+    *  @Method({"GET"})
+     */
+    public function generateAnnotationCSSAction() {
+        $senses = $this->getDoctrine()
+                        ->getRepository('AppBundle:Sense')
+                        ->findAll();
+        
+        return $this->render('Annotator/annotation.css.twig', array(
+            'Content-Type' => 'text/css', 
+            'senses' => $senses,
+        ));
+    }
+
     
     private function getAnnotation($token) {
         return $this->getDoctrine()
