@@ -5,34 +5,44 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/spectrum.css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block body %}
     <div class="container">
         <div class="row voffset5"> 
             <div class="col-md-8">
-                Metadiscourse marker: {{ mark.text }}<br/>
-                Description: {{ mark.description }} <br/>
-                Domains: 
+                <strong>Metadiscourse marker:</strong> {{ mark.text }}<br/>
+                <strong>Description:</strong> {{ mark.description }} <br/>
+                <strong>Domains:</strong>
                 {% for domain in mark.domains %}
-                    {{ domain.name }},
+                    {{ domain.name }}
+                    {% if not loop.last %}
+                        ,
+                    {% endif %}
                 {% endfor %}                
             </div>
         </div>
+        
         <div class="row voffset2">
             <div class="col-md-8">
-                Current senses:
-                <ol>
-                {% for sense in mark.senses %}
-                    <li>{{ sense.definition }}</li>
-                {% endfor %}
-                </ol>
+                {% if mark.senses | length > 1 %}               
+                    <strong>Current senses:</strong> {{ mark.senses | length }}
+                    <ol>
+                    {% for sense in mark.senses %}
+                        <li>{{ sense.definition }}</li>
+                    {% endfor %}
+                    </ol>
+                {% else %}
+                    <strong>There are no senses yet!</strong>
+                {% endif %}
             </div>
-        </div>
-        <div class="row voffset2">
+        </div>        
+        <div class="row voffset3">
             <div class="col-md-8">
                 {{ form_start(form) }}
                 {{ form_widget(form) }}
+                <div id="preview">Preview</div>
                 {{ form_end(form) }}
             </div>
         </div>
@@ -42,4 +52,28 @@
             </div>
         </div>
     </div>            
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/spectrum.js') }}"></script>
+    <script>
+        $("#sense_bgColor").spectrum({
+            color: "#f00",
+            preferredFormat: 'hex',
+            clickoutFiresChange: true, 
+            change: function(color) {
+                $("#preview").css('background-color', color.toHexString());
+            }
+        });
+                
+        $("#sense_fgColor").spectrum({
+            color: "#00ff",
+            preferredFormat: 'hex',
+            clickoutFiresChange: true, 
+            change: function(color) {
+                $("#preview").css('color', color.toHexString());
+            }
+        });
+</script>
 {% endblock %}
