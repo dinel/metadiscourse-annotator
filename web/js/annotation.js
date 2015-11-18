@@ -49,9 +49,11 @@ function select_annotation(token, sense) {
     $.ajax({
         type: 'POST',
         url: url,
-        success: function() {
+        success: function(data) {
             /*alert("Success");*/
-            $('#' + token).css('background-color', 'red');
+            $('#' + token).removeClass();
+            $('#' + token).addClass("meta-marker");
+            $('#' + token).addClass(data.style);            
         }
     });        
 }
