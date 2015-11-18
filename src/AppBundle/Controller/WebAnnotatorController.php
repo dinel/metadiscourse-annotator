@@ -38,7 +38,7 @@ class WebAnnotatorController extends Controller
             foreach($tokens as $token) {
                 $ann = $this->getAnnotation($token);
                 if($ann) {
-                    $tokens_style[] = array($token, "sense" . $ann[0]->getSense()->getId());
+                    $tokens_style[] = array($token, "meta-marker sense" . $ann[0]->getSense()->getId());
                 } elseif ($token->getMarkable()) {
                     $tokens_style[] = array($token, "meta-marker");
                 } else {
@@ -164,10 +164,12 @@ class WebAnnotatorController extends Controller
                         ->getRepository('AppBundle:Sense')
                         ->findAll();
         
-        return $this->render('Annotator/annotation.css.twig', array(
-            'Content-Type' => 'text/css', 
+        $response = new Response($this->render('Annotator/annotation.css.twig', array(
             'senses' => $senses,
-        ));
+        )));
+        $response->headers->set('Content-Type', 'text/css; charset=utf-8');
+        
+        return $response;
     }
 
     
