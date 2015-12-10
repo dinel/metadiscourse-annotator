@@ -38,7 +38,11 @@ class WebAnnotatorController extends Controller
             foreach($tokens as $token) {
                 $ann = $this->getAnnotation($token);
                 if($ann) {
-                    $tokens_style[] = array($token, "meta-marker sense" . $ann[0]->getSense()->getId());
+                    if($ann[0]->getSense()) {
+                        $tokens_style[] = array($token, "meta-marker sense" . $ann[0]->getSense()->getId());
+                    } else {
+                        $tokens_style[] = array($token, "meta-marker false-pos");
+                    }
                 } elseif ($token->getMarkable()) {
                     $tokens_style[] = array($token, "meta-marker meta-marker-todo");
                 } else {
@@ -76,10 +80,16 @@ class WebAnnotatorController extends Controller
 
             $comment = "";
             $current_sense = "";
+            $current_sense_id = 0;
 
             if($annotation) {
                 $comment = $annotation[0]->getComments();
-                $current_sense = $annotation[0]->getSense()->getDefinition();
+                if($annotation[0]->getSense()) {
+                    $current_sense = $annotation[0]->getSense()->getDefinition();
+                    $current_sense_id = $annotation[0]->getSense()->getId();
+                } else {
+                    $current_sense = "Not a marker";                    
+                }                
             }
 
             return new JsonResponse(array(
@@ -88,6 +98,7 @@ class WebAnnotatorController extends Controller
                     'mark_text' => $mark->getText(),
                     'senses' => $a_senses->toArray(),
                     'current_sense' => $current_sense,
+                    'current_sense_id' => $current_sense_id,
                     'comment' => $comment,
                 ));
         } else {
@@ -151,7 +162,7 @@ class WebAnnotatorController extends Controller
             
             return new JsonResponse(array(
                 "style" => "sense" . $sense_id,
-                "current_sense" => $sense->getDefinition()));
+                "current_sense" => $sense ? $sense->getDefinition() : "Not a marker"));
         } else {
             return $this->redirectToRoute('homepage');
         }

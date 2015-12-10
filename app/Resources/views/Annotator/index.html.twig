@@ -5,6 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/annotator.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
     <link href="{{ path('annotation_css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
@@ -25,17 +26,34 @@
         </div>
         <div id="tag-attributes" class="navbar navbar-fixed-bottom">
             <div class="container">
-                <div>
-                    <strong>Metadiscourse marker:</strong> <span id="marker"></span><br/>
-                    <strong>Current annotation:</strong> <span id="current-annotation"></span><br/>
-                    <strong>Notes:</strong> <input id="comment" name="comment" type="text" />
-                    <br/><br/>
-                    <p>To change the current annotation select on of the following senses</p>
-                    <strong>Senses:</strong> <div id="list-senses"></div>
-                                        
-                    <input id="tok_id" name="tok_id" type="hidden" value=""/>
-                    <input id="mark_id" name="mark_id" type="hidden" value=""/>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Metadiscourse marker:</strong> <span id="marker"></span><br/><br/>
+                        <strong id="current-annotation-label">Current annotation:</strong> <span id="current-annotation"></span><br/>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="comment">Notes:</label> <textarea id="comment" name="comment" rows="3" cols="40"></textarea>
+                        <a id="update-annotation" class="btn btn-default disabled" role="button">Update annotation</a>
+                    </div>
                 </div>
+                <div class="row voffset3">
+                    <div class="col-md-8">
+                    <h4>Change annotation</h4>
+                    </div>
+                </div>
+                
+                <div class="row voffset3">
+                    <div class="col-md-4">
+                        <p><a id="not-marker" class="btn btn-default" role="button">Not metadiscourse marker!</a></p>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="list-senses">Select sense:</label> <select id="list-senses"></select>
+                    </div>
+                </div>                                    
+                                        
+                <input id="tok_id" name="tok_id" type="hidden" value=""/>
+                <input id="mark_id" name="mark_id" type="hidden" value=""/>
+                <input id="sense-id" name="sense-id" type="hidden" value="" />
             </div>
         </div>
     </div>
