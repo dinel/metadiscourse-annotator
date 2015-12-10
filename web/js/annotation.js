@@ -7,6 +7,18 @@
 
 $( document ).ready(function() {
     $('#tag-attributes').hide();
+    
+    /*
+     * Called when the user clicks to close the annotation area
+     */
+    $('#close-annotation-area').click(function() {
+        $('#tag-attributes').hide();
+    });
+    
+    /*
+     * Called when the user clicks on a meta-discourse marker
+     * Opens the annotation dialogue
+     */
     $('.meta-marker').click(function() {
         $('#tag-attributes').show(); 
         $.ajax({
@@ -14,7 +26,7 @@ $( document ).ready(function() {
             url: '/document/marker/' + $(this).attr("id"),
             dataType: 'json',
             success: function(data) {
-                /*alert(JSON.stringify(data));*/
+                /* For debugging purposes alert(JSON.stringify(data));*/
                 $('#marker').html(data.mark_text);
                 $('#tok_id').val(data.tok_id);
                 $('#mark_id').val(data.mark_id);
@@ -29,25 +41,15 @@ $( document ).ready(function() {
                 var sense_html = "<option>...</option>";
                 for(var i = 0; i < data.senses.length; i++) {
                     sense_html += "<option value='" + data.senses[i][0] + "'>" + data.senses[i][1] + "</option>";
-                    /*sense_html += " <a class='select_annotation' href='javascript:select_annotation(" 
-                            + data.tok_id + "," + data.senses[i][0] + ")" + "'>Select &raquo;</a>";*/
                 }
                 $('#list-senses').html(sense_html);                
             }
         });
     });
     
-    $('#form_save').click(function() {        
-        $.ajax({
-            type: 'POST',
-            url: '/document/sense/add/' + $('#tok_id').val() + '/' + $('#form_definition').val(),
-            success: function() {
-
-            }
-        });
-        alert("Here");
-    });
-    
+    /*
+     * Function triggered when the user changes the selection of a sense
+     */
     $('#list-senses').change(function() {
         $('#current-annotation-label').html("Current annotation: ");
         $('#current-annotation').html(this.options[this.value].innerHTML);
@@ -56,6 +58,10 @@ $( document ).ready(function() {
         $('#sense-id').val(this.value);
     });
     
+    /*
+     * Function triggered when the user indicates that a word is not a 
+     * meta-discourse marker
+     */
     $('#not-marker').click(function() {
         $('#current-annotation-label').html("Current annotation: ");
         $('#current-annotation').html('Not a real metadiscourse marker');
@@ -64,41 +70,30 @@ $( document ).ready(function() {
         $('#sense-id').val(0);
     });
     
+    /*
+     * Function called when the user saves the annotation to the database
+     */
     $('#update-annotation').click(function() {
         var url = "";
         var token = $('#tok_id').val();
         var sense = $('#sense-id').val();
-        alert(sense);
         if($('#comment').val()) url = '/document/annotation/add/' + token + '/' + sense + '/' + $('#comment').val();
         else url = '/document/annotation/add/' + token + '/' + sense;
         $.ajax({
             type: 'POST',
             url: url,
-            success: function(data) {
-                alert("Success");
+            success: function(data) {                
                 $('#' + token).removeClass();
                 $('#' + token).addClass("meta-marker");
                 $('#' + token).addClass(data.style); 
                 $('#current-annotation').html(data.current_sense);
+                $('#update-annotation').removeClass('red');
+                $('#update-annotation').addClass('disabled');
+                
+                $("#message-area").html("Saved!");
+                $("#message-area").show();
+                setTimeout(function() { $("#message-area").fadeOut(); }, 3000);
             }
         });
     });
 });
-
-function select_annotation(token, sense) {
-    var url = "";
-    if($('#comment').val()) url = '/document/annotation/add/' + token + '/' + sense + '/' + $('#comment').val();
-    else url = '/document/annotation/add/' + token + '/' + sense;
-    $.ajax({
-        type: 'POST',
-        url: url,
-        success: function(data) {
-            /*alert("Success");*/
-            $('#' + token).removeClass();
-            $('#' + token).addClass("meta-marker");
-            $('#' + token).addClass(data.style); 
-            $('#current-annotation').html(data.current_sense);
-        }
-    });        
-}
-
