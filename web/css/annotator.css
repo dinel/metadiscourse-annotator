@@ -39,3 +39,13 @@ body {
   /* Margin bottom by footer height */
   padding-bottom: 300px;
 }
+
+textarea { vertical-align: top; }
+
+#update-annotation.disabled {
+    background-color: gray;
+}
+
+#update-annotation.red {
+    border-color: red;
+}
