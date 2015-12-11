@@ -23,9 +23,9 @@
         <div class="row voffset5">
             <div class="col-md-6 col-md-offset-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Enter expression...">
+                    <input id="search-field" type="text" class="form-control" placeholder="Enter expression...">
                     <span class="input-group-btn">
-                        <button class="btn btn-secondary" type="button">Analyze!</button>
+                        <button id="search-button" class="btn btn-secondary" type="button">Analyze!</button>
                     </span>
                 </div>
                 <p class="voffset2">For a more powerful analysis you can try <a href="">advanced search</a></p>
@@ -57,4 +57,8 @@
     
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/search.js') }}"></script>
+{% endblock %}
 

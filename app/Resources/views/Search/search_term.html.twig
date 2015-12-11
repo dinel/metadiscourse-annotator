@@ -1,0 +1,50 @@
+{# app/Resources/views/Search/search_term.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ path('annotation_css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+        <div class="row header">
+            <div class="col-md-8 col-md-offset-2 highlighted">
+                <p class="text-right">
+                    {% if app.user %}
+                        Hello {{ app.user }}!
+                    {% else %}
+                        <a href="/login">Login</a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    
+        <div class="row voffset3">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>The search results for "{{ term }}"</h3>
+                <table>                    
+                {% for result in search_results %}
+                    <tr>
+                        <td style="max-width: 350px; text-align: right; padding-right: 5px;">
+                            <span class="concordance-left">{{ result[1][0] }}</span>
+                        </td>
+                        <td><span class="{{ result[0] }}"> {{ result[1][1] }}</span></td>
+                        <td style="max-width: 350px; text-align: left; padding-left: 5px;">
+                            <span class="concordance-right">{{ result[1][2] }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+                
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/search.js') }}"></script>
+{% endblock %}
