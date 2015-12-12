@@ -54,6 +54,12 @@ class Sense
      * @ORM\Column(type="integer", nullable = true)
      */
     protected $score;
+    
+    /*
+     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    protected $defCategory;
 
     /**
      * Get id

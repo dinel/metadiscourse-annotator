@@ -31,6 +31,23 @@
                 {% endfor %}
                 </ul>
                 <p><a class="btn btn-default" href="{{ path('admin_domain_add') }}" role="button">Add new domain &raquo;</a></p>
+                
+                <h3>Categories</h3>
+                <ul>
+                {% for category in categories %}
+                    <li>
+                        {{ category[0].name }}
+                        {% if category | length > 1 %}
+                            <ul>
+                                {% for element in category[1:] %}
+                                    <li>{{ element.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %} 
+                </ul>
+                <p><a class="btn btn-default" href="{{ path('admin_category_add') }}" role="button">Add new category &raquo;</a></p>
             </div>
             
             <div class="col-md-4">

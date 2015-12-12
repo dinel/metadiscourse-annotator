@@ -49,6 +49,12 @@ class Annotation {
      * @ORM\Column(type="text")
      */
     protected $userName;
+    
+    /*
+     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    protected $category;
 
     /**
      * Get id

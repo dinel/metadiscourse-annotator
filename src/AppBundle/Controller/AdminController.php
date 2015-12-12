@@ -21,6 +21,8 @@ use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 use AppBundle\Form\Type\MarkableType;
 use AppBundle\Form\Type\SenseType;
+use AppBundle\Form\Type\CategoryType;
+
 use AppBundle\Entity\Sense;
 
 class AdminController extends Controller 
@@ -38,11 +40,26 @@ class AdminController extends Controller
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
         $marks = $repository->findAll();
         
+        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
+        $categories = $repository->findAll();
+        $cat_tree = array();
+        
+        foreach($categories as $category) {
+            if($category->getName() == "No parent category") continue;
+            
+            if($category->getParent()) {
+                $cat_tree[$category->getParent()->getName()][] = $category;                
+            } else {
+                $cat_tree[$category->getName()] = array();
+                $cat_tree[$category->getName()][] = $category;                
+            }
+        }        
         
         return $this->render('Admin/index.html.twig', array(
                 'domains' => $domains,
                 'texts' => $texts,
-                'markers' => $marks
+                'markers' => $marks,
+                'categories' => $cat_tree,
             ));
     }
     
@@ -194,6 +211,32 @@ class AdminController extends Controller
         }
     }
     
+    /**
+     * @Route("/admin/category/add", name="admin_category_add")
+     */
+    public function newCategoryAction(\Symfony\Component\HttpFoundation\Request $request) {
+        $category = new \AppBundle\Entity\Category();
+        $form = $this->createForm(new CategoryType(), $category);
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            if($category->getParent()->getName() == "No parent category") {
+                $category->setParent(null);
+            }
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->flush();
+            
+            return $this->redirectToRoute("admin_page");
+        }
+        
+        return $this->render('Admin/new_category.html.twig', array(
+                'form' => $form->createView(),
+        ));
+    }
+
     private function checkToken($token, $marks_array) {
         if(array_key_exists($token, $marks_array)) {
             $t = new \AppBundle\Entity\Token($token);
