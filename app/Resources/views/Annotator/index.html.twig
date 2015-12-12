@@ -37,7 +37,12 @@
                         <strong id="current-annotation-label">Current annotation:</strong> <span id="current-annotation"></span><br/>
                     </div>
                     <div class="col-md-6">
-                        <label for="comment">Notes:</label> <textarea id="comment" name="comment" rows="3" cols="60"></textarea>
+                        <label for="comment">Notes:</label> <textarea id="comment" name="comment" rows="2" cols="60"></textarea><br/>
+                        <div class="voffset1" style="width:100%">
+                            <div style="float: left; width: 50%"><label for="primary-category">Category:</label> <select id="primary-category"></select></div>                            
+                            <div id="subcategory-div" style="float: right; width: 50%"><label for="secondary-category">Sub-category:</label> <select id="secondary-category"></select></div>
+                        </div>
+                        
                     </div>
                     <div class="col-md-2">
                         <a id="update-annotation" class="btn btn-default disabled" role="button">Update annotation</a><br/>

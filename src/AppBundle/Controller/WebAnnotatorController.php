@@ -62,7 +62,7 @@ class WebAnnotatorController extends Controller
      * @Route( "/document/marker/{id_token}", name="show_annotation" )
      */
     public function createAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
-        if($request->isXmlHttpRequest()) {
+        //if($request->isXmlHttpRequest()) {
             //TODO: make the submission secure
 
             $token = $this->getDoctrine()
@@ -87,9 +87,33 @@ class WebAnnotatorController extends Controller
                 if($annotation[0]->getSense()) {
                     $current_sense = $annotation[0]->getSense()->getDefinition();
                     $current_sense_id = $annotation[0]->getSense()->getId();
+                    $category = $annotation[0]->getCategory();
                 } else {
                     $current_sense = "Not a marker";                    
                 }                
+            }
+            
+            $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
+            
+            $parent_category_id = 0;
+            $sub_category_id = 0;
+            
+            $parent_categories = $repository->findBy(array('parent' => NULL));
+            $a_parent_cats  = array_map(function($value) {
+                return array($value->getId(), $value->getName());
+            }, $parent_categories);
+            
+            $a_subcats = array();
+            if($category && $category->getParent()) {
+                foreach($category->getParent()->getChildren() as $child) {
+                    $a_subcats[] = array($child->getId(), $child->getName());
+                }
+                $parent_category_id = $category->getParent()->getId();
+                $sub_category_id = $category->getId();
+            } else {
+                if($category) {
+                    $parent_category_id = $category->getId();
+                }
             }
 
             return new JsonResponse(array(
@@ -100,13 +124,18 @@ class WebAnnotatorController extends Controller
                     'current_sense' => $current_sense,
                     'current_sense_id' => $current_sense_id,
                     'comment' => $comment,
+                    'parent_categories' => $a_parent_cats,
+                    'sub_categories' => $a_subcats,
+                    'parent_category_id' => $parent_category_id,
+                    'sub_category_id' => $sub_category_id,
                 ));
-        } else {
+        /*} else {
             return $this->redirectToRoute('homepage');
-        }
+        }*/
   }
   
     /**
+     * TODO: check whether it is worth keeping this
      * @Route( "/document/annotation/sense/{id}/{definition}", name="sense_add" )
      */
     public function addSenseAction($id, $definition, \Symfony\Component\HttpFoundation\Request $request) {
@@ -131,10 +160,10 @@ class WebAnnotatorController extends Controller
     }
     
     /**
-     * @Route( "/document/annotation/add/{token_id}/{sense_id}/{comment}", 
+     * @Route( "/document/annotation/add/{token_id}/{sense_id}/{category_id}/{comment}", 
      *         name="annotation_add", defaults={"comment"= ""} )
      */
-    public function addAnnotationAction($token_id, $sense_id, $comment, 
+    public function addAnnotationAction($token_id, $sense_id, $category_id, $comment, 
             \Symfony\Component\HttpFoundation\Request $request) {
         if($request->isXmlHttpRequest()) {
             $token = $this->getDoctrine()
@@ -143,6 +172,9 @@ class WebAnnotatorController extends Controller
             $sense = $this->getDoctrine()
                         ->getRepository('AppBundle:Sense')
                         ->find($sense_id);
+            $category = $this->getDoctrine()
+                        ->getRepository('AppBundle:Category')
+                        ->find($category_id);
             
             $annotation = $this->getAnnotation($token_id);
             if($annotation) {
@@ -155,6 +187,7 @@ class WebAnnotatorController extends Controller
                         
             $annotation->setSense($sense);
             $annotation->setComments($comment);            
+            $annotation->setCategory($category);
             
             $em = $this->getDoctrine()->getManager();
             $em->persist($annotation);
