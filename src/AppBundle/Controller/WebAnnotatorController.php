@@ -83,6 +83,7 @@ class WebAnnotatorController extends Controller
             $current_sense_id = 0;
             $polarity = 0;
             $uncertain = FALSE;
+            $category = null;
 
             if($annotation) {
                 $comment = $annotation[0]->getComments();
