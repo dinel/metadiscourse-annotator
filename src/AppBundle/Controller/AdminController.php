@@ -236,7 +236,56 @@ class AdminController extends Controller
                 'form' => $form->createView(),
         ));
     }
+    
+    
+    /**
+     * @Route("/install", name="install")
+     */
+    public function installAction() {                        
+        // install dummy category which is the base for all the categories
+        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
+        $categories = $repository->findBy(array("name" => "No parent category"));        
+        if(count($categories) == 0) {
+            // insert and remove a category to make sure the first category 
+            // does not have counter 0
+            $cat = new \AppBundle\Entity\Category();
+            $cat->setName("Dummy");
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($cat);
+            $em->flush();
+            
+            $categories = $repository->findBy(array("name" => "Dummy"));
+            $em->remove($categories[0]);
+            $em->flush();
+            
+            $cat = new \AppBundle\Entity\Category();
+            $cat->setName("No parent category");
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($cat);
+            $em->flush();            
+        }
+        
+        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Domain");
+        $domain_any = $repository->findBy(array("name" => "Any"));        
+        if(count($domain_any) == 0) {
+            $domain = new \AppBundle\Entity\Domain();
+            $domain->setName("Any");
+            $domain->setDescription("A general domain");
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($domain);
+            $em->flush();
+        } 
+        
+        return $this->redirectToRoute("admin_page");
+        
+    }
 
+        /**
+     * 
+     * @param type $token
+     * @param type $marks_array
+     * @return \AppBundle\Entity\Token
+     */
     private function checkToken($token, $marks_array) {
         if(array_key_exists($token, $marks_array)) {
             $t = new \AppBundle\Entity\Token($token);
