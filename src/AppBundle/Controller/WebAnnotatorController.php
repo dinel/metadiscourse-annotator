@@ -81,6 +81,8 @@ class WebAnnotatorController extends Controller
             $comment = "";
             $current_sense = "";
             $current_sense_id = 0;
+            $polarity = 0;
+            $uncertain = FALSE;
 
             if($annotation) {
                 $comment = $annotation[0]->getComments();
@@ -90,7 +92,9 @@ class WebAnnotatorController extends Controller
                     $category = $annotation[0]->getCategory();
                 } else {
                     $current_sense = "Not a marker";                    
-                }                
+                }              
+                $polarity = $annotation[0]->getPolarity();
+                $uncertain = $annotation[0]->getUncertain();
             }
             
             $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
@@ -128,6 +132,8 @@ class WebAnnotatorController extends Controller
                     'sub_categories' => $a_subcats,
                     'parent_category_id' => $parent_category_id,
                     'sub_category_id' => $sub_category_id,
+                    'polarity' => $polarity,
+                    'uncertain' => $uncertain,
                 ));
         /*} else {
             return $this->redirectToRoute('homepage');
@@ -160,11 +166,11 @@ class WebAnnotatorController extends Controller
     }
     
     /**
-     * @Route( "/document/annotation/add/{token_id}/{sense_id}/{category_id}/{comment}", 
+     * @Route( "/document/annotation/add/{token_id}/{sense_id}/{category_id}/{polarity}/{uncertain}/{comment}", 
      *         name="annotation_add", defaults={"comment"= ""} )
      */
-    public function addAnnotationAction($token_id, $sense_id, $category_id, $comment, 
-            \Symfony\Component\HttpFoundation\Request $request) {
+    public function addAnnotationAction($token_id, $sense_id, $category_id, 
+            $polarity, $uncertain, $comment, \Symfony\Component\HttpFoundation\Request $request) {
         if($request->isXmlHttpRequest()) {
             $token = $this->getDoctrine()
                         ->getRepository('AppBundle:Token')
@@ -188,6 +194,8 @@ class WebAnnotatorController extends Controller
             $annotation->setSense($sense);
             $annotation->setComments($comment);            
             $annotation->setCategory($category);
+            $annotation->setPolarity($polarity);
+            $annotation->setUncertain($uncertain);
             
             $em = $this->getDoctrine()->getManager();
             $em->persist($annotation);

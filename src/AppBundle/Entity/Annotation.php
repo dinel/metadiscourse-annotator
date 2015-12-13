@@ -55,6 +55,16 @@ class Annotation {
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      */
     protected $category;
+    
+    /**
+     * @ORM\Column(type="integer", nullable = true)
+     */
+    protected $polarity;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $uncertain;
 
     /**
      * Get id
@@ -184,5 +194,53 @@ class Annotation {
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * Set polarity
+     *
+     * @param integer $polarity
+     *
+     * @return Annotation
+     */
+    public function setPolarity($polarity)
+    {
+        $this->polarity = $polarity;
+
+        return $this;
+    }
+
+    /**
+     * Get polarity
+     *
+     * @return integer
+     */
+    public function getPolarity()
+    {
+        return $this->polarity;
+    }
+
+    /**
+     * Set uncertain
+     *
+     * @param boolean $uncertain
+     *
+     * @return Annotation
+     */
+    public function setUncertain($uncertain)
+    {
+        $this->uncertain = $uncertain;
+
+        return $this;
+    }
+
+    /**
+     * Get uncertain
+     *
+     * @return boolean
+     */
+    public function getUncertain()
+    {
+        return $this->uncertain;
     }
 }

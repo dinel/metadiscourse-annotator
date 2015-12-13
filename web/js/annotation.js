@@ -64,6 +64,11 @@ $( document ).ready(function() {
                 } else {
                     $('#subcategory-div').hide();
                 }
+                
+                // the rest: polarity, uncertain
+                $("#slider").slider("value", data.polarity);
+                $("#polarity").val(data.polarity);
+                $('#uncertain').prop("checked", data.uncertain);
             }
         });
     });
@@ -129,9 +134,12 @@ $( document ).ready(function() {
         } else {
             category = $('#secondary-category').val();
         }
+        var polarity = $("#polarity").val();
+        var uncertain = 0;
+        if($('#uncertain').is(':checked')) uncertain = 1;
         
-        if($('#comment').val()) url = '/document/annotation/add/' + token + '/' + sense + '/' + category + '/' + $('#comment').val();
-        else url = '/document/annotation/add/' + token + '/' + sense + '/' + category;
+        if($('#comment').val()) url = '/document/annotation/add/' + token + '/' + sense + '/' + category + '/' + polarity + '/' + uncertain + '/' + $('#comment').val();
+        else url = '/document/annotation/add/' + token + '/' + sense + '/' + category + '/' + polarity + '/' + uncertain;
         $.ajax({
             type: 'POST',
             url: url,
@@ -154,4 +162,25 @@ $( document ).ready(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');   
     });
+    
+    $('#uncertain').change(function() {
+        $('#update-annotation').removeClass('disabled');
+        $('#update-annotation').addClass('red');   
+    });
+    
+});
+
+$(function() {
+    $( "#slider" ).slider({
+        value:0,
+        min: -5,
+        max: 5,
+        step: 1,
+        slide: function( event, ui ) {
+            $( "#polarity" ).val( ui.value );
+            $('#update-annotation').removeClass('disabled');
+            $('#update-annotation').addClass('red');   
+        }
+    });
+    $( "#polarity" ).val( $( "#slider" ).slider( "value" ) );
 });

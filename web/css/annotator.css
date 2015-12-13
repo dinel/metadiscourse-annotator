@@ -49,3 +49,14 @@ textarea { vertical-align: top; }
 #update-annotation.red {
     border-color: red;
 }
+
+.ui-slider .ui-slider-handle {
+    height: 15px;
+    width: 5px;
+    padding-left: 5px; //add this
+}
+
+.ui-slider-horizontal {
+    height: 8px;
+    width: 200px;
+}
