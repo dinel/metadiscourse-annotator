@@ -1,8 +1,16 @@
 {# empty Twig template #}
 
+{# not sure why this is necessary. Probably a bug in a previous css file #}
+
+span.sensedummy {
+    font-size: 12px;
+}
+
 {% for sense in senses %}
     span.sense{{sense.id}} {
       background-color: {{ sense.bgcolor | raw}};
       color: {{ sense.fgcolor | raw}};
+      border: dotted thin black;
+      padding: 2px;
     }
 {% endfor %}
