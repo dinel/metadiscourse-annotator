@@ -5,6 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/search.css') }}" rel="stylesheet">
     <link href="{{ path('annotation_css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
@@ -31,11 +32,13 @@
                         <td style="max-width: 350px; text-align: right; padding-right: 5px;">
                             <span class="concordance-left">{{ result[1][0] }}</span>
                         </td>
-                        <td><span class="{{ result[0] }}"> {{ result[1][1] }}</span></td>
+                        <td><span class="sense{{ result[0] }}"> {{ result[1][1] }}</span></td>
                         <td style="max-width: 350px; text-align: left; padding-left: 5px;">
                             <span class="concordance-right">{{ result[1][2] }}</span>
                         </td>
+                        <td><a id="{{ result[0] }}" class="concordance"> +</a></td>
                     </tr>
+                    <tr class="more-info"><td class="more-info-block" colspan="4"></td></tr>
                 {% endfor %}
                 </table>
             </div>

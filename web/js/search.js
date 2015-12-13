@@ -12,13 +12,43 @@ $( document ).ready(function() {
     });
     
     $('.concordance-left').each(function() {
-        console.log($(this).html());
         $(this).html($.fn.textWidth($(this).html(), 350, true));
     });
     
     $('.concordance-right').each(function() {
-        console.log($(this).html());
         $(this).html($.fn.textWidth($(this).html(), 350, false));
+    });
+    
+    $('.more-info').hide();
+    
+    $('.concordance').click(function() {        
+        var node = $(this).parent().parent().next().find('.more-info-block');
+        if(node.html()) {
+            node.parent().toggle();
+            return;
+        }
+        
+         $.ajax({
+            type: 'POST',
+            url: '/search/retrieve_info/' + $(this).attr("id"),
+            dataType: 'json',
+            success: function(data) {
+                var display = "<strong>Annotator: </strong>" + data.annotator;
+                display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Sense selected: </strong> " + data.sense;
+                display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Category: </strong> " + data.category;
+                display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Polarity: </strong> " + data.polarity;
+                display += "<br/><strong>Notes: </strong>" + data.comments;
+                alert(data.uncertain);
+                if(data.uncertain === true) {
+                    display += "<br/><strong style='text-color: red'>The annotator was uncertain about this annotation!!</strong>";
+                }
+                display += "<br/>";
+                
+                node.html(display);
+            }
+        });
+        
+        node.parent().show();
     });
     
 });
@@ -44,11 +74,13 @@ $.fn.textWidth = function(text, width, reverse) {
         htmlText = $.fn.textWidth.fakeEl.text(htmlText).html(); //encode to Html
         htmlText = htmlText.replace(/\s/g, "&nbsp;"); //replace trailing and leading spaces
         $.fn.textWidth.fakeEl.html(htmlText).css('font', this.css('font'));
-        if($.fn.textWidth.fakeEl.width() > width) {            
+        if($.fn.textWidth.fakeEl.width() > width) { 
+            $.fn.textWidth.fakeEl.html("");
             return ret_str;
         }
         ret_str = tmp_str;
     }
     
+    $.fn.textWidth.fakeEl.html("");    
     return ret_str;
 };

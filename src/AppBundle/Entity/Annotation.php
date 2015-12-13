@@ -195,6 +195,18 @@ class Annotation {
     {
         return $this->category;
     }
+    
+    /**
+     * Get category as a formatted string
+     * 
+     */
+    public function getCategoryName() {
+        if($this->category && $this->category->getParent()) {
+            return $this->category->getParent()->getName() . "/" . $this->getCategory()->getName();
+        } else {
+            return $this->getCategory()->getName();
+        }
+    }
 
     /**
      * Set polarity

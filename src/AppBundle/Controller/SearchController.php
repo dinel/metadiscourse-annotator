@@ -16,6 +16,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\Query\ResultSetMapping;
 
 class SearchController extends Controller 
@@ -30,7 +31,7 @@ class SearchController extends Controller
                         ->findBy(array('content' => $term));
         
         $results = array();
-        
+        // TODO: probably need to change this to start from markers rather than annotation
         foreach ($tokens as $token) {
             $annotations = $this->getDoctrine()
                                 ->getRepository('AppBundle:Annotation')
@@ -38,7 +39,7 @@ class SearchController extends Controller
             $r = array();
             foreach($annotations as $annotation) {
                 if($annotation->getSense()) {
-                    $r[] = "sense" . $annotation->getSense()->getId();
+                    $r[] = $annotation->getSense()->getId();
                 } else {
                     $r[] = "Not a marker";
                 }
@@ -55,6 +56,32 @@ class SearchController extends Controller
         
     }
     
+    /**
+     * @Route("/search/retrieve_info/{id}")
+     */
+    public function getAnnotationInformation($id) {
+        $annotation = $this->getDoctrine()
+                           ->getRepository('AppBundle:Annotation')
+                           ->find($id);
+        
+        return new JsonResponse(array(
+                'annotator' => $annotation->getUserName(),
+                'sense' => $annotation->getSense()->getDefinition(),
+                'comments' => $annotation->getComments(),
+                'category' => $annotation->getCategoryName(),
+                'polarity' => $annotation->getPolarity(),
+                'uncertain' => $annotation->getUncertain(),
+                ));
+    }
+
+    
+
+    /**
+     * 
+     * @param type $term_id
+     * @param type $term
+     * @return type
+     */    
     private function getSentence($term_id, $term) {
         $em = $this->getDoctrine()->getManager();
         
