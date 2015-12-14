@@ -12,11 +12,11 @@ $( document ).ready(function() {
     });
     
     $('.concordance-left').each(function() {
-        $(this).html($.fn.textWidth($(this).html(), 350, true));
+        $(this).html($.fn.textWidth($(this).html(), 335, true));
     });
     
     $('.concordance-right').each(function() {
-        $(this).html($.fn.textWidth($(this).html(), 350, false));
+        $(this).html($.fn.textWidth($(this).html(), 335, false));
     });
     
     $('.more-info').hide();

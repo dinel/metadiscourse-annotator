@@ -26,19 +26,22 @@
         <div class="row voffset3">
             <div class="col-md-8 col-md-offset-2">
                 <h3>The search results for "{{ term }}"</h3>
-                <table>                    
+                <table>          
+                {% set counter = 1 %}
                 {% for result in search_results %}
                     <tr>
-                        <td style="max-width: 350px; text-align: right; padding-right: 5px;">
+                        <td style="padding-right:5px;">{{ counter }}.</td>
+                        <td style="max-width: 335px; text-align: right; padding-right: 5px;">
                             <span class="concordance-left">{{ result[1][0] }}</span>
                         </td>
                         <td><span class="sense{{ result[0] }}"> {{ result[1][1] }}</span></td>
-                        <td style="max-width: 350px; text-align: left; padding-left: 5px;">
+                        <td style="max-width: 335px; text-align: left; padding-left: 5px;">
                             <span class="concordance-right">{{ result[1][2] }}</span>
                         </td>
-                        <td><a id="{{ result[0] }}" class="concordance"> +</a></td>
+                        <td style="padding-left:25px;"><a id="{{ result[0] }}" class="concordance"> +</a></td>
                     </tr>
                     <tr class="more-info"><td class="more-info-block" colspan="4"></td></tr>
+                    {% set counter = counter + 1 %}
                 {% endfor %}
                 </table>
             </div>
