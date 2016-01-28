@@ -31,6 +31,13 @@
                 {% endfor %}
                 </ul>
                 <p><a class="btn btn-default" href="{{ path('admin_domain_add') }}" role="button">Add new domain &raquo;</a></p>
+                <p><a class="btn btn-default" href="{{ path('admin_domain_export') }}" role="button">Export domains to file&raquo;</a></p>
+                <p><a class="btn btn-default" id="import-domains" role="button">Import domains to file&raquo;</a></p>
+                <form id="import-domains-form" action="{{ path('admin_domain_import') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file">
+                    <input type="submit">
+                    <input type="reset" value="Cancel" id="import-domains-cancel">
+                </form>  
                 
                 <h3>Categories</h3>
                 <ul>
