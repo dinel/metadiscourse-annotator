@@ -38,7 +38,7 @@ $( document ).ready(function() {
                 display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Category: </strong> " + data.category;
                 display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Polarity: </strong> " + data.polarity;
                 display += "<br/><strong>Notes: </strong>" + data.comments;
-                alert(data.uncertain);
+                
                 if(data.uncertain === true) {
                     display += "<br/><strong style='text-color: red'>The annotator was uncertain about this annotation!!</strong>";
                 }
