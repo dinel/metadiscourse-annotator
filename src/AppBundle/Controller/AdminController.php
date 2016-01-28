@@ -17,6 +17,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 use AppBundle\Form\Type\MarkableType;
@@ -24,6 +25,7 @@ use AppBundle\Form\Type\SenseType;
 use AppBundle\Form\Type\CategoryType;
 
 use AppBundle\Entity\Sense;
+use AppBundle\Entity\Domain;
 
 class AdminController extends Controller 
 {
@@ -81,6 +83,65 @@ class AdminController extends Controller
         
         return $this->editDomainCommon($domain, $request, true);
     }
+    
+    /**
+     * Exports the domains to a file
+     * @Route("/admin/domain/export", name="admin_domain_export")
+     */
+    public function exportDomainAction(\Symfony\Component\HttpFoundation\Request $request) {
+        $domains = $this->getDoctrine()
+                ->getRepository('AppBundle:Domain')
+                ->findAll();
+        
+        $file_contents = "";
+        foreach($domains as $domain) {
+            $file_contents .= $domain->getName() . "\n";
+            $file_contents .= $domain->getDescription() . "\n";
+            $file_contents .= ($domain->getDisabled() ? "0":"1") . "\n";
+        }
+               
+        return new Response($file_contents, 200, array(
+                'X-Sendfile'          => "domains.txt",
+                'Content-type'        => 'application/octet-stream',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', "domains.txt")));
+    }
+    
+    /**
+     * Imports the domain from a file
+     * @Route("/admin/domain/import", name="admin_domain_import")
+     */
+    public function importDomainAction(\Symfony\Component\HttpFoundation\Request $request) {
+        $file = $request->files->get('file');
+        $handle = fopen($file, "r");
+        if ($handle) {
+            while (TRUE) {
+                if((($name = fgets($handle)) !== false) &&
+                   (($description = fgets($handle)) !== false) &&
+                   (($enabled = fgets($handle)) !== false)) {
+                    $domain = new Domain();
+                    $domain->setName($name);
+                    $domain->setDescription($description);
+                    $domain->setDisabled($enabled === "0");
+                    
+                    $domain_name = $this->getDoctrine()
+                        ->getRepository('AppBundle:Domain')
+                        ->findBy(array('name' => $name));
+                    if(count($domain_name) == 0) {
+                        $em = $this->getDoctrine()->getManager();
+                        $em->persist($domain);
+                        $em->flush();                        
+                    }                                        
+                } else {
+                    break;
+                }                
+            }
+
+            fclose($handle);
+        }
+        
+        return $this->redirectToRoute("admin_page");        
+    }
+
     
     /**
      * Function which stores the common functionality for creating and editing
@@ -296,13 +357,81 @@ class AdminController extends Controller
             return null;
         }
     }
+    
+    private function findMarkable($tokens, $pos, $marks_array) {
+        $best_match = null;
+        $best_match_len = 0;
+        
+        $tokenizer = new WhitespaceAndPunctuationTokenizer();
+        foreach($marks_array as $mark) {
+            $a_text = $tokenizer->tokenize($mark->getText());
+            $match = True;
+            for($i = 0; $i < count($a_text); $i++) {
+                if($pos + $i < count($tokens) && $a_text[$i] != $tokens[$pos + $i]) {
+                    $match = False;
+                    break;
+                }
+            }
+            
+            if($match) {
+                if($best_match_len < count($a_text)) {
+                    $best_match = $mark;
+                    $best_match_len = count($a_text);
+                }
+            }            
+        }
+        
+        if($best_match_len) return array($best_match, $best_match_len);
+        else return null;
+    }
+
+
+    private function processText(\AppBundle\Entity\Text $text, $em) {
+        // get the tokens in the text
+        $lines = explode("\n", $text->getTheText());
+        $tokenizer = new WhitespaceAndPunctuationTokenizer();
+        
+        // load all the markers
+        // TODO: filter by domain
+        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
+        $marks = $repository->findBy(array(), array('text' => 'ASC'));
+        $marks_array = array();
+        foreach($marks as $mark) {
+            $marks_array[$mark->getText()] = $mark;
+        }
+        
+        foreach($lines as $line) {
+            $tokens = $tokenizer->tokenize($line);
+            $first = true;
+            
+            $pos = 0;
+            while($pos < count($tokens)) {                
+                $match = $this->findMarkable($tokens, $pos, $marks_array);
+                if($match) {
+                    $token = "";
+                    for($j = 0; $j < $match[1]; $j++) {
+                        $token = $token . " " . $tokens[$pos++];
+                    }
+                    $t = new \AppBundle\Entity\Token($token);
+                    $t->setMarkable($match[0]);
+                } else {
+                    $t = new \AppBundle\Entity\Token($tokens[$pos++]);
+                }
+                
+                if($first) $t->setNewLineBefore (1);
+                $first = false;
+                $em->persist($t);
+                $text->addToken($t);
+            }
+        }
+    }
 
     /**
      * 
      * @param \AppBundle\Entity\Text $text
      * @param type $em
      */
-    private function processText(\AppBundle\Entity\Text $text, $em) {
+    private function processText_1(\AppBundle\Entity\Text $text, $em) {
         // get the tokens in the text
         $lines = explode("\n", $text->getTheText());
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
