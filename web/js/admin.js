@@ -7,6 +7,7 @@
 
 $( document ).ready(function() {
   $('#import-domains-form').hide();
+  $('#form_the_text').hide();
     
   $('.editable-link').mouseenter(function() {
     $(this).children().last().addClass('fa fa-pencil-square-o'); 
@@ -22,5 +23,9 @@ $( document ).ready(function() {
   
   $('#import-domains-cancel').click(function() {
     $('#import-domains-form').hide();
+  });
+  
+  $('#form_button').change(function() {
+      alert('Aaaaaa');
   });
 });

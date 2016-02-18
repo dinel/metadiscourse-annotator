@@ -19,3 +19,7 @@
     </div>
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/upload_file.js') }}"></script>
+{% endblock %}

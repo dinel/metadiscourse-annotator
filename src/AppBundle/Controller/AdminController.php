@@ -188,9 +188,39 @@ class AdminController extends Controller
         $form = $this->createFormBuilder($text)
                 ->add('title', 'text')
                 ->add('description', 'text')
+                ->add('button', 'choice', array(
+                        'label' => "Method",
+                        'mapped' => False,
+                        'placeholder' => 'Choose an option',
+                        'choices' => array(                            
+                            'Upload a text file' => 1,
+                            'Copy/paste the text'=> 2,
+                            'Upload annotated text (experimental)' => 3,
+                        ),                        
+                        'choices_as_values' => true,
+                    ))
+                ->add('upload_text', 'file', array(
+                        'label' => false,
+                        'mapped' => false,      
+                        'required' => false,
+                    ))
                 ->add('the_text', 'textarea', array(
-                        'attr' => array('rows' => '10'),
-                     ))
+                        'attr' => array(
+                            'rows' => '10',
+                        ),
+                        'label' => false,
+                        'label_attr' => array(
+                            'id' => 'copy-paste-label'
+                        ),
+                        'required' => false,
+                    ))
+                ->add('upload_xml', 'text', array(
+                        'mapped' => false, 
+                        'data' => "This is an experimental feature which is currently disabled",
+                        'disabled' => true,
+                        'label' => false,
+                        'required' => false,
+                    ))
                 ->add('domains', 'entity', array(
                         'class'     => 'AppBundle:Domain',
                         'choice_label' => 'Domains',
@@ -200,13 +230,33 @@ class AdminController extends Controller
                         },
                         'expanded'  => true,
                         'multiple'  => true
-                     ))
+                    ))
                 ->add('save', 'submit', array('label' => 'Add text'))
                 ->getForm();
         
         $form->handleRequest($request);
         
         if($form->isValid()) {
+            if($form["upload_text"]->isValid()) {
+                $tmpfname = tempnam("/tmp", "INP");
+                $form["upload_text"]->getData()->move(dirname($tmpfname), basename($tmpfname));
+                $handle = fopen($tmpfname, "r");
+                
+                if ($handle) {
+                    $input_text = "";
+                    while(TRUE) {
+                        if(($line = fgets($handle)) !== false) {
+                            $input_text .= $line . "\n";
+                        } else {
+                            break;
+                        }
+                    }
+                    $text->setTheText($input_text);
+                }
+                fclose($handle);
+                unlink($tmpfname);
+            }
+            
             $em = $this->getDoctrine()->getManager();
             $this->processText($text, $em);            
             $em->persist($text);
