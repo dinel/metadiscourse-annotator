@@ -41,17 +41,20 @@
                 </div>
                 
                 <div class="row voffset3">
-                    <div class="col-md-4">
-                        <strong>Metadiscourse marker:</strong> <span id="marker"></span><br/><br/>
-                        <strong id="current-annotation-label">Current annotation:</strong> <span id="current-annotation"></span><br/>
+                    <div class="col-md-5 current-annotation">
+                        <div id="annotation-message">Annotation</div>
+                        <p class="voffset3"><a id="not-marker" class="btn btn-default" role="button">Not metadiscourse marker!</a></p>
+                        <p id="list-senses-container"><label class="voffset3" for="list-senses">Select sense:</label> <select id="list-senses"></select></p>
+                        <div id="definition"></div>
                     </div>
+                    
                     <div class="col-md-6">
-                        <label for="comment">Notes:</label> <textarea id="comment" name="comment" rows="2" cols="60"></textarea><br/>
-                        <div class="voffset1" style="width:100%;">
+                        <label for="comment">Notes:</label> <textarea id="comment" name="comment" rows="3" cols="60"></textarea><br/>
+                        <div class="voffset2" style="width:100%;">
                             <div style="display: inline-block;"><label for="primary-category">Category:</label> <select id="primary-category"></select></div>                            
                             <div id="subcategory-div" style="display: inline-block;"><label for="secondary-category">Sub-category:</label> <select id="secondary-category"></select></div>
                         </div>
-                        <div class="voffset1" style="width:100%">
+                        <div class="voffset2" style="width:100%">
                             <div style="display: inline-block;">
                                 <label for="polarity">Polarity:</label>
                                 <input type="text" size="2" id="polarity" readonly style="border:0; background-color: #f5f5f5; ">                                
@@ -61,27 +64,19 @@
                                 <label for="uncertain">Uncertain/problematic case:</label>
                                 <input type="checkbox" id="uncertain">
                             </div>
+                            <div><p id="message-area" class="text-center"></p></div>
+
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <a id="update-annotation" class="btn btn-default disabled" role="button">Update annotation</a><br/>
-                        <p id="message-area" class="text-center"></p>
-                    </div>
-                </div>
-                <div class="row voffset3">
-                    <div class="col-md-8">
-                    <h4>Change annotation</h4>
-                    </div>
-                </div>
+                    
+                </div>                
                 
-                <div class="row voffset3">
-                    <div class="col-md-4">
-                        <p><a id="not-marker" class="btn btn-default" role="button">Not metadiscourse marker!</a></p>
+                <div class="row voffset3">                   
+                    <div class="col-md-12 .text-center">
+                        <a id="update-annotation" class="btn btn-default disabled" role="button">Save changes</a><br/>                        
                     </div>
-                    <div class="col-md-8">
-                        <label for="list-senses">Select sense:</label> <select id="list-senses"></select>
-                    </div>
-                </div>                                    
+                </div>
+                                                
                                         
                 <input id="tok_id" name="tok_id" type="hidden" value=""/>
                 <input id="mark_id" name="mark_id" type="hidden" value=""/>

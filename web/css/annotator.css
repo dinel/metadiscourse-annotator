@@ -68,3 +68,25 @@ textarea { vertical-align: top; }
     font-size: 125%;
     font-family: sans-serif;
 }
+
+.current-annotation {
+    font-size: 125%;
+    text-align: center;
+    padding: 1em;
+    border: black thin dotted;
+    margin-right: 3em;
+}
+
+.select-annotation {
+    font-weight: bold;
+    color:  green;
+}
+
+#annotation-message {
+    font-weight: bold;
+}
+
+#definition {
+    font-size: 75%;
+    height: 25px;
+}

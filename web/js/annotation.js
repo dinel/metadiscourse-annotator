@@ -32,17 +32,16 @@ $( document ).ready(function() {
                 $('#tok_id').val(data.tok_id);
                 $('#mark_id').val(data.mark_id);
                 $('#sense-id').val(data.current_sense_id);
-                if(data.current_sense) {
-                    $('#current-annotation-label').html("Current annotation: ");
-                    $('#current-annotation').html(data.current_sense);                    
-                } else {
-                    $('#current-annotation-label').html("This marker hasn't been annotated yet!!!");
-                    $('#current-annotation').html("");
-                }
+                
+                // select the annotation
+                updateDisplayedAnnotation(data.current_sense);                                                               
+                
                 $('#comment').val(data.comment);
                 var sense_html = "<option>...</option>";
                 for(var i = 0; i < data.senses.length; i++) {
-                    sense_html += "<option value='" + data.senses[i][0] + "'>" + data.senses[i][1] + "</option>";
+                    selected = "";
+                    if(data.senses[i][1] == data.current_sense) selected = " selected ";
+                    sense_html += "<option value='" + data.senses[i][0] + "'" + selected + ">" + data.senses[i][1] + "</option>";
                 }
                 $('#list-senses').html(sense_html);
                 
@@ -69,7 +68,7 @@ $( document ).ready(function() {
                 // the rest: polarity, uncertain
                 $("#slider").slider("value", data.polarity);
                 $("#polarity").val(data.polarity);
-                $('#uncertain').prop("checked", data.uncertain);
+                $('#uncertain').prop("checked", data.uncertain);                                
             }
         });
     });
@@ -155,6 +154,7 @@ $( document ).ready(function() {
                 $("#message-area").html("Saved!");
                 $("#message-area").show();
                 setTimeout(function() { $("#message-area").fadeOut(); }, 3000);
+                updateDisplayedAnnotation(sense);
             }
         });
     });
@@ -185,3 +185,22 @@ $(function() {
     });
     $( "#polarity" ).val( $( "#slider" ).slider( "value" ) );
 });
+
+function updateDisplayedAnnotation(current_annotation) {
+    if(current_annotation) {
+        if(current_annotation == "N/M" || current_annotation == "0") {
+            $('#not-marker').addClass('select-annotation');
+            $('#list-senses-container').removeClass('select-annotation');
+        } else {
+            $('#not-marker').removeClass('select-annotation');
+            $('#list-senses-container').addClass('select-annotation');
+        }
+        $('#annotation-message').html("Annotation");                    
+        $('.current-annotation').css("background-color", '#ffffff')
+    } else {
+        $('#annotation-message').html("Not annotated yet");
+        $('#list-senses-container').removeClass('select-annotation');
+        $('#not-marker').removeClass('select-annotation');
+        $('.current-annotation').css("background-color", '#ffd')
+    }
+}

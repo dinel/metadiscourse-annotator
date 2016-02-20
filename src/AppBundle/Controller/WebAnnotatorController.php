@@ -99,7 +99,7 @@ class WebAnnotatorController extends Controller
                     $current_sense_id = $annotation[0]->getSense()->getId();
                     $category = $annotation[0]->getCategory();
                 } else {
-                    $current_sense = "Not a marker";                    
+                    $current_sense = "N/M";                    
                 }              
                 $polarity = $annotation[0]->getPolarity();
                 $uncertain = $annotation[0]->getUncertain();
