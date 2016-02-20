@@ -27,6 +27,7 @@ $( document ).ready(function() {
             dataType: 'json',
             success: function(data) {
                 /* For debugging purposes alert(JSON.stringify(data));*/
+                $('#context').html(data.context);
                 $('#marker').html(data.mark_text);
                 $('#tok_id').val(data.tok_id);
                 $('#mark_id').val(data.mark_id);

@@ -70,6 +70,13 @@ class WebAnnotatorController extends Controller
                           ->find($id_token);
             $mark = $token->getMarkable();
             $senses = $mark->getSenses();
+            
+            // get the context
+            $toks = $token->getDocument()->getTokens();
+            $pos = $toks->indexOf($token);
+            $context = join(" ", $toks->slice($pos - 10, 10))
+                    . "<strong>" . $token->getContent() . "</strong> "
+                    . join(" ", $toks->slice($pos + 1, 10));            
 
             $a_senses  = $senses->map(function($value) {
                 return array($value->getId(), $value->getDefinition());
@@ -135,6 +142,7 @@ class WebAnnotatorController extends Controller
                     'sub_category_id' => $sub_category_id,
                     'polarity' => $polarity,
                     'uncertain' => $uncertain,
+                    'context' => $context,
                 ));
         /*} else {
             return $this->redirectToRoute('homepage');
