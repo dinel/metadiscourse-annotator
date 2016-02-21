@@ -59,6 +59,48 @@ class WebAnnotatorController extends Controller
     }
     
     /**
+     * @Route("/document/next/{id_token}")
+     */
+    public function nextAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
+        $token = $this->getDoctrine()
+                      ->getRepository('AppBundle:Token')
+                      ->find($id_token);
+        $toks = $token->getDocument()->getTokens();
+        $pos = $toks->indexOf($token) + 1;
+        while($pos < $toks->count()) {
+            $tok = $toks->get($pos);
+            if($tok->getMarkable()) {
+                $id_token = $tok->getId();
+                break;
+            }
+            $pos++;
+        }
+        
+        return $this->createAction($id_token, $request);
+    }
+    
+    /**
+     * @Route("/document/prev/{id_token}")
+     */
+    public function prevAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
+        $token = $this->getDoctrine()
+                      ->getRepository('AppBundle:Token')
+                      ->find($id_token);
+        $toks = $token->getDocument()->getTokens();
+        $pos = $toks->indexOf($token) - 1;
+        while($pos >= 0) {
+            $tok = $toks->get($pos);
+            if($tok->getMarkable()) {
+                $id_token = $tok->getId();
+                break;
+            }
+            $pos--;
+        }
+        
+        return $this->createAction($id_token, $request);
+    }
+
+    /**
      * @Route( "/document/marker/{id_token}", name="show_annotation" )
      */
     public function createAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {

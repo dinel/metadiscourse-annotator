@@ -5,6 +5,7 @@
  */
 
 var explanations = [];
+var currentToken = 0;
 
 $( document ).ready(function() {
     $('#tag-attributes').hide();
@@ -27,52 +28,31 @@ $( document ).ready(function() {
             url: '/document/marker/' + $(this).attr("id"),
             dataType: 'json',
             success: function(data) {
-                /* For debugging purposes alert(JSON.stringify(data));*/
-                $('#context').html(data.context);
-                $('#marker').html(data.mark_text);
-                $('#tok_id').val(data.tok_id);
-                $('#mark_id').val(data.mark_id);
-                $('#sense-id').val(data.current_sense_id);
-                
-                // select the annotation
-                updateDisplayedAnnotation(data.current_sense);                                                               
-                
-                $('#comment').val(data.comment);
-                var sense_html = "<option>...</option>";
-                
-                explanations = [];
-                for(var i = 0; i < data.senses.length; i++) {
-                    selected = "";
-                    if(data.senses[i][1] == data.current_sense) selected = " selected ";
-                    sense_html += "<option value='" + data.senses[i][0] + "'" + selected + ">" + data.senses[i][1] + "</option>";
-                    explanations.push(data.senses[i][2]);
-                }
-                $('#list-senses').html(sense_html);
-                
-                // categories
-                var primary_cat_html = "<option value='0'>...</option>";
-                for(var i = 0; i < data.parent_categories.length; i++) {
-                    primary_cat_html += "<option value='" + data.parent_categories[i][0] + "'>" + data.parent_categories[i][1] + "</option>";
-                }
-                $('#primary-category').html(primary_cat_html);
-                $('#primary-category').val(data.parent_category_id);
-                
-                if(data.sub_categories.length !== 0) {
-                    var sub_categories_html = "<option value='0'>...</option>";
-                    for(var i = 0; i < data.sub_categories.length; i++) {
-                        sub_categories_html += "<option value='" + data.sub_categories[i][0] + "'>" + data.sub_categories[i][1] + "</option>";
-                    }
-                    $('#secondary-category').html(sub_categories_html);
-                    $('#secondary-category').val(data.sub_category_id);
-                    $('#subcategory-div').show();
-                } else {
-                    $('#subcategory-div').hide();
-                }
-                
-                // the rest: polarity, uncertain
-                $("#slider").slider("value", data.polarity);
-                $("#polarity").val(data.polarity);
-                $('#uncertain').prop("checked", data.uncertain);                                
+                updateAnnotationPanel(data);
+            }
+        });
+    });
+    
+    $('#next').click(function() {
+        $('#tag-attributes').show();
+        $.ajax({
+            type: 'POST',
+            url: '/document/next/' + currentToken,
+            dataType: 'json',
+            success: function(data) {
+                updateAnnotationPanel(data);
+            }
+        });
+    });
+    
+    $('#previous').click(function() {
+        $('#tag-attributes').show();
+        $.ajax({
+            type: 'POST',
+            url: '/document/prev/' + currentToken,
+            dataType: 'json',
+            success: function(data) {
+                updateAnnotationPanel(data);
             }
         });
     });
@@ -214,6 +194,62 @@ function updateDisplayedAnnotation(current_annotation) {
         $('#annotation-message').html("Not annotated yet");
         $('#list-senses-container').removeClass('select-annotation');
         $('#not-marker').removeClass('select-annotation');
-        $('.current-annotation').css("background-color", '#ffd')
+        $('.current-annotation').css("background-color", '#ffd');
+        $('#explanation').html("");
+        
     }
+}
+
+function updateAnnotationPanel(data) {
+    /* For debugging purposes alert(JSON.stringify(data));*/
+    currentToken = data.tok_id;
+    
+    $('#context').html(data.context);
+    $('#marker').html(data.mark_text);
+    $('#tok_id').val(data.tok_id);
+    $('#mark_id').val(data.mark_id);
+    $('#sense-id').val(data.current_sense_id);
+
+    // select the annotation
+    updateDisplayedAnnotation(data.current_sense);                                                               
+
+    $('#comment').val(data.comment);
+    var sense_html = "<option>...</option>";
+
+    explanations = [];
+    for(var i = 0; i < data.senses.length; i++) {
+        selected = "";
+        if(data.senses[i][1] == data.current_sense) {
+            selected = " selected ";
+            $('#explanation').html(data.senses[i][2]);
+        }
+        sense_html += "<option value='" + data.senses[i][0] + "'" + selected + ">" + data.senses[i][1] + "</option>";
+        explanations.push(data.senses[i][2]);
+    }
+    $('#list-senses').html(sense_html);
+
+    // categories
+    var primary_cat_html = "<option value='0'>...</option>";
+    for(var i = 0; i < data.parent_categories.length; i++) {
+        primary_cat_html += "<option value='" + data.parent_categories[i][0] + "'>" + data.parent_categories[i][1] + "</option>";
+    }
+    $('#primary-category').html(primary_cat_html);
+    $('#primary-category').val(data.parent_category_id);
+
+    if(data.sub_categories.length !== 0) {
+        var sub_categories_html = "<option value='0'>...</option>";
+        for(var i = 0; i < data.sub_categories.length; i++) {
+            sub_categories_html += "<option value='" + data.sub_categories[i][0] + "'>" + data.sub_categories[i][1] + "</option>";
+        }
+        $('#secondary-category').html(sub_categories_html);
+        $('#secondary-category').val(data.sub_category_id);
+        $('#subcategory-div').show();
+    } else {
+        $('#subcategory-div').hide();
+    }
+
+    // the rest: polarity, uncertain
+    $("#slider").slider("value", data.polarity);
+    $("#polarity").val(data.polarity);
+    $('#uncertain').prop("checked", data.uncertain);                                
 }
