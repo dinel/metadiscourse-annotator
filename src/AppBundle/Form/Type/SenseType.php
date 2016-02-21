@@ -19,10 +19,24 @@ use Symfony\Component\Form\FormBuilderInterface;
 class SenseType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-            ->add('definition', 'text')
-            ->add('score', 'text')
-            ->add('fgColor', 'text')
-            ->add('bgColor', 'text')
+            ->add('definition', 'text', array(
+                    'label' => 'Label:',
+                ))
+            ->add('explanation', 'text', array(
+                    'label' => 'Explanation:',
+                    'required' => False,
+                ))
+            ->add('score', 'text', array(
+                    'label' => 'Default score:',
+                ))
+            ->add('fgColor', 'text', array(
+                    'label' => 'Text color:',
+                    'data' => '#000000',
+                ))
+            ->add('bgColor', 'text', array(
+                    'label' => 'Background color:',
+                    'data' => '#ffffff',
+                ))
             ->add('save', 'submit', array('label' => 'Add sense'));
     }
     

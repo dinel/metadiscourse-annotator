@@ -35,6 +35,11 @@ class Sense
     protected $definition;
     
     /**
+     * @ORM\Column(type="text", nullable = true)
+     */
+    protected $explanation;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Markable", inversedBy="senses", cascade={"persist"})
      * @ORM\JoinColumn(name="sense_id", referencedColumnName="id")
      */
@@ -189,5 +194,29 @@ class Sense
     public function getScore()
     {
         return $this->score;
+    }
+
+    /**
+     * Set explanation
+     *
+     * @param string $explanation
+     *
+     * @return Sense
+     */
+    public function setExplanation($explanation)
+    {
+        $this->explanation = $explanation;
+
+        return $this;
+    }
+
+    /**
+     * Get explanation
+     *
+     * @return string
+     */
+    public function getExplanation()
+    {
+        return $this->explanation;
     }
 }
