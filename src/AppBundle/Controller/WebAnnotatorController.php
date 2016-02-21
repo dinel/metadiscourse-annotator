@@ -75,7 +75,7 @@ class WebAnnotatorController extends Controller
             $toks = $token->getDocument()->getTokens();
             $pos = $toks->indexOf($token);
             $context = join(" ", $toks->slice($pos - 10, 10))
-                    . "<strong>" . $token->getContent() . "</strong> "
+                    . " <strong>" . $token->getContent() . "</strong> "
                     . join(" ", $toks->slice($pos + 1, 10));            
 
             $a_senses  = $senses->map(function($value) {
