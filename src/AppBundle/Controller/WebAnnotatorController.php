@@ -79,7 +79,7 @@ class WebAnnotatorController extends Controller
                     . join(" ", $toks->slice($pos + 1, 10));            
 
             $a_senses  = $senses->map(function($value) {
-                return array($value->getId(), $value->getDefinition());
+                return array($value->getId(), $value->getDefinition(), $value->getExplanation());
             });
 
             // check whether there is already annotation

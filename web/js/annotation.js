@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+var explanations = [];
 
 $( document ).ready(function() {
     $('#tag-attributes').hide();
@@ -38,10 +39,13 @@ $( document ).ready(function() {
                 
                 $('#comment').val(data.comment);
                 var sense_html = "<option>...</option>";
+                
+                explanations = [];
                 for(var i = 0; i < data.senses.length; i++) {
                     selected = "";
                     if(data.senses[i][1] == data.current_sense) selected = " selected ";
                     sense_html += "<option value='" + data.senses[i][0] + "'" + selected + ">" + data.senses[i][1] + "</option>";
+                    explanations.push(data.senses[i][2]);
                 }
                 $('#list-senses').html(sense_html);
                 
@@ -119,6 +123,9 @@ $( document ).ready(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
         $('#sense-id').val(0);
+        $('#not-marker').addClass('select-annotation');
+        $('#list-senses-container').removeClass('select-annotation');
+        $('#explanation').html("This is not a metadiscourse marker");
     });
     
     /*
@@ -167,6 +174,12 @@ $( document ).ready(function() {
     $('#uncertain').change(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');   
+    });
+    
+    $('#list-senses').change(function() {
+        $('#explanation').html(explanations[$('#list-senses').val() - 1]);
+        $('#not-marker').removeClass('select-annotation');
+        $('#list-senses-container').addClass('select-annotation');
     });
     
 });

@@ -86,7 +86,8 @@ textarea { vertical-align: top; }
     font-weight: bold;
 }
 
-#definition {
-    font-size: 75%;
+#explanation {
+    font-size: 80%;
     height: 25px;
+    text-align: left;
 }
