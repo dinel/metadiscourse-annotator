@@ -417,7 +417,8 @@ class AdminController extends Controller
             $a_text = $tokenizer->tokenize($mark->getText());
             $match = True;
             for($i = 0; $i < count($a_text); $i++) {
-                if($pos + $i < count($tokens) && $a_text[$i] != $tokens[$pos + $i]) {
+                if(($pos + $i >= count($tokens)) ||
+                   ($pos + $i < count($tokens) && $a_text[$i] != $tokens[$pos + $i])) {
                     $match = False;
                     break;
                 }
