@@ -25,14 +25,22 @@ class SearchController extends Controller
      * @Route("/search/term/{term}", name="search_term")
      */
     public function searchTermAction($term) {
-        
+
         $tokens = $this->getDoctrine()
-                       ->getRepository('AppBundle:Token')
-                        ->findBy(array('content' => $term));
+                       ->getRepository('\AppBundle\Entity\Token')
+                       //->findBy(array("content" => $term));
+                       ->findAll();
         
         $results = array();
+        $message = "";
         // TODO: probably need to change this to start from markers rather than annotation
         foreach ($tokens as $token) {
+            //$message .= "+";
+            if(trim($token->getContent()) != $term) {
+                //$message .= ($token->getContent() . "=" . $term . "|");
+                continue;
+            }
+            
             $annotations = $this->getDoctrine()
                                 ->getRepository('AppBundle:Annotation')
                                 ->findBy(array('token' => $token->getId()));
@@ -46,12 +54,15 @@ class SearchController extends Controller
                 
                 $r[] = $this->getSentence($token->getId(), $term);
             }
-            if($r) $results[] = $r;
+            if($r) {
+                $results[] = $r;
+            }
         }
         
         return $this->render('Search/search_term.html.twig', array(
                     'term' => $term,
                     'search_results' => $results,
+                    'message' => $message,
                 ));
         
     }

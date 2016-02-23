@@ -26,6 +26,7 @@
         <div class="row voffset3">
             <div class="col-md-8 col-md-offset-2">
                 <h3>The search results for "{{ term }}"</h3>
+                <div>{{ message }}</div>
                 <table>          
                 {% set counter = 1 %}
                 {% for result in search_results %}

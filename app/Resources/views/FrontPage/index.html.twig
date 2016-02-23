@@ -33,7 +33,7 @@
         </div>
         <div class="row voffset3">
             <div class="col-md-4 col-md-offset-2">
-                {% if is_granted('ROLE_ADMIN') %}
+                {% if is_granted('ROLE_ADMIN')  %}
                 <h2>Annotate</h2>
                 <!--
                 <p>This is the button to start the annotation</p>
@@ -41,7 +41,7 @@
                 -->
                 <ul>
                     {% for text in texts%}
-                        <li><a href="/document/{{text.id}}">{{text.title}}</li>
+                        <li><a href="/document/{{text.id}}">{{text.title}}</a></li>
                     {% endfor %}
                 </ul>
                 {% endif %}
