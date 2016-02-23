@@ -201,10 +201,12 @@ class Annotation {
      * 
      */
     public function getCategoryName() {
-        if($this->category && $this->category->getParent()) {
+        if($this->getCategory() && $this->getCategory()->getParent()) {
             return $this->category->getParent()->getName() . "/" . $this->getCategory()->getName();
-        } else {
+        } elseif ($this->getCategory()) {
             return $this->getCategory()->getName();
+        } else {
+            return "";
         }
     }
 
