@@ -211,7 +211,10 @@ function updateAnnotationPanel(data) {
     $('#sense-id').val(data.current_sense_id);
 
     // select the annotation
-    updateDisplayedAnnotation(data.current_sense);                                                               
+    updateDisplayedAnnotation(data.current_sense);  
+    
+    // scroll to element
+    $('html,body').animate({scrollTop: $('#' + data.tok_id).offset().top});
 
     $('#comment').val(data.comment);
     var sense_html = "<option>...</option>";
