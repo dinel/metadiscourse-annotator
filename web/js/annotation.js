@@ -86,8 +86,6 @@ $( document ).ready(function() {
      * Function triggered when the user changes the selection of a sense
      */
     $('#list-senses').change(function() {
-        $('#current-annotation-label').html("Current annotation: ");
-        $('#current-annotation').html(this.options[this.value].innerHTML);
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
         $('#sense-id').val(this.value);
@@ -98,8 +96,6 @@ $( document ).ready(function() {
      * meta-discourse marker
      */
     $('#not-marker').click(function() {
-        $('#current-annotation-label').html("Current annotation: ");
-        $('#current-annotation').html('Not a real metadiscourse marker');
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
         $('#sense-id').val(0);
@@ -134,7 +130,6 @@ $( document ).ready(function() {
                 $('#' + token).removeClass();
                 $('#' + token).addClass("meta-marker");
                 $('#' + token).addClass(data.style); 
-                $('#current-annotation').html(data.current_sense);
                 $('#update-annotation').removeClass('red');
                 $('#update-annotation').addClass('disabled');
                 
