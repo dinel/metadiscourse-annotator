@@ -30,7 +30,7 @@ use AppBundle\Entity\Domain;
 class AdminController extends Controller 
 {
     /**
-     * @Route("/admin", name="admin_page")
+     * @Route("/admin_old", name="admin_page")
      */
     public function indexAction() {
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Domain");

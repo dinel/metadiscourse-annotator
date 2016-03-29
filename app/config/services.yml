@@ -7,3 +7,16 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+    admin.corpuscharacteristicvalue:
+        class: AppBundle\Admin\CorpusCharacteristicValueAdmin
+        arguments: [~, AppBundle\Entity\CorpusCharacteristicValue, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Corpus Characteristic Value }
+            
+    admin.corpuscharacteristic:
+        class: AppBundle\Admin\CorpusCharacteristicAdmin
+        arguments: [~, AppBundle\Entity\CorpusCharacteristic, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Corpus Characteristic  }
+            
