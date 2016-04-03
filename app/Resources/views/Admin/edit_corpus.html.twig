@@ -1,0 +1,47 @@
+{# app/Resources/views/default/new_corpus.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+        <div class="row voffset5"> 
+            <div class="col-md-8">
+                Name: {{ corpus.name }}<br/>
+                Description: {{ corpus.description }}
+                <input type="hidden" id="corpus-id" value="{{ corpus.id }}">
+            </div>
+        </div>
+            
+        <div class="row voffset4"> 
+            <div class="col-md-8">
+                <h4>Characteristics of the corpus</h4>
+                {% for char in chars %}
+                    <div>
+                    {{ char.name }}:
+                    {% for value in char.values %}
+                        {% if value.id in selected_vals %}
+                            <input class="value-corpus" type="checkbox" id="{{ value.id }}" checked>{{ value.name }}
+                        {% else %}
+                            <input class="value-corpus" type="checkbox" id="{{ value.id }}">{{ value.name }}
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/edit_corpus.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+{% endblock %}

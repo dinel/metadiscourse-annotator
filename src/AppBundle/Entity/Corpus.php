@@ -11,43 +11,40 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Description of CorpusCharacteristicValue
+ * Description of Corpus
  *
  * @author dinel
  */
 
-
 /**
  * @ORM\Entity
- * @ORM\Table(name="corpuscharacteristicvalue")
+ * @ORM\Table(name="corpus")
  */
 
-class CorpusCharacteristicValue {
+class Corpus {
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @ORM\Column(type="string", length=100, unique=false)
-     * Name of the value. This is a string like "20th century"
-     */
-    protected $name;
     
     /**
-     * @ORM\ManyToOne(targetEntity="CorpusCharacteristic", inversedBy="values")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
-     * Link to the corpus characteristic
+     * @ORM\Column(type="string", length=100, unique=true)
      */
-    protected $characteristic;   
+    protected $name;  
     
     /**
-     * @ORM\OneToMany(targetEntity="CharacteristicValuePairs", mappedBy="value")
-    */
+     * @ORM\Column(type="string")
+     */
+    protected $description;  
+    
+    /**
+     * @ORM\OneToMany(targetEntity="CharacteristicValuePairs", mappedBy="corpus")
+     */
     protected $pairs;
-    
+
+
     /**
      * Constructor
      */
@@ -71,7 +68,7 @@ class CorpusCharacteristicValue {
      *
      * @param string $name
      *
-     * @return CorpusCharacteristicValue
+     * @return Corpus
      */
     public function setName($name)
     {
@@ -91,27 +88,27 @@ class CorpusCharacteristicValue {
     }
 
     /**
-     * Set characteristic
+     * Set description
      *
-     * @param \AppBundle\Entity\CorpusCharacteristic $characteristic
+     * @param string $description
      *
-     * @return CorpusCharacteristicValue
+     * @return Corpus
      */
-    public function setCharacteristic(\AppBundle\Entity\CorpusCharacteristic $characteristic = null)
+    public function setDescription($description)
     {
-        $this->characteristic = $characteristic;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get characteristic
+     * Get description
      *
-     * @return \AppBundle\Entity\CorpusCharacteristic
+     * @return string
      */
-    public function getCharacteristic()
+    public function getDescription()
     {
-        return $this->characteristic;
+        return $this->description;
     }
 
     /**
@@ -119,7 +116,7 @@ class CorpusCharacteristicValue {
      *
      * @param \AppBundle\Entity\CharacteristicValuePairs $pair
      *
-     * @return CorpusCharacteristicValue
+     * @return Corpus
      */
     public function addPair(\AppBundle\Entity\CharacteristicValuePairs $pair)
     {

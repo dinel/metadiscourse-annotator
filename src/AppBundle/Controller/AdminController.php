@@ -18,19 +18,22 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 use AppBundle\Form\Type\MarkableType;
 use AppBundle\Form\Type\SenseType;
 use AppBundle\Form\Type\CategoryType;
+use AppBundle\Form\Type\CorpusType;
 
 use AppBundle\Entity\Sense;
 use AppBundle\Entity\Domain;
+use AppBundle\Entity\Corpus;
 
 class AdminController extends Controller 
 {
     /**
-     * @Route("/admin_old", name="admin_page")
+     * @Route("/admin", name="admin_page")
      */
     public function indexAction() {
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Domain");
@@ -348,7 +351,93 @@ class AdminController extends Controller
         ));
     }
     
+    /**
+     * @Route("/admin/corpus/new")
+     */
+    public function newCorpusAction(\Symfony\Component\HttpFoundation\Request $request) {
+        $corpus = new \AppBundle\Entity\Corpus();
+                
+        $form = $this->createForm(new CorpusType(), $corpus);        
+        $form->handleRequest($request);
+                        
+        if($form->isValid()) {           
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($corpus);
+            $em->flush();
+            
+            return $this->redirectToRoute("edit_corpus", array('id' => $corpus->getId()));
+        }
+        
+        return $this->render('Admin/new_corpus.html.twig', array(
+                'form' => $form->createView(),
+        ));
+        
+    }    
     
+    /**
+     * @Route("/admin/corpus/edit/{id}", name="edit_corpus")
+     */
+    public function editCorpusAction($id) {
+        
+        $characteristics = $this->getDoctrine()
+                    ->getRepository('AppBundle:CorpusCharacteristic')
+                    ->findAll();
+        
+        $corpus = $this->getDoctrine()
+                    ->getRepository('AppBundle:Corpus')
+                    ->find($id);
+        
+        $sel_vals = $this->getDoctrine()
+                    ->getRepository('AppBundle:CharacteristicValuePairs')
+                    ->findBy(array('corpus' => $corpus->getId()));
+        
+        $selected_vals = array_map(function($value) {
+                        return $value->getValue()->getId();
+                }, $sel_vals);
+        
+        return $this->render('Admin/edit_corpus.html.twig', array(
+                    'corpus' => $corpus,
+                    'chars' => $characteristics,
+                    'selected_vals' => $selected_vals,
+        ));
+    }
+    
+    /**
+     * @Route("/admin/corpus/category/{corpus_id}/{value_id}")
+     */
+    public function editCorpusCategory(\Symfony\Component\HttpFoundation\Request $request, 
+            $corpus_id, $value_id) {
+        if($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            
+            $value = $this->getDoctrine()
+                    ->getRepository('AppBundle:CharacteristicValuePairs')
+                    ->findBy(array('corpus' => $corpus_id, 'value' => $value_id));
+            if(count($value)) {
+                $em->remove($value[0]);
+            } else {            
+                $corpus = $this->getDoctrine()
+                        ->getRepository('AppBundle:Corpus')
+                        ->find($corpus_id);
+
+                $value = $this->getDoctrine()
+                        ->getRepository('AppBundle:CorpusCharacteristicValue')
+                        ->find($value_id);
+
+                $pair = new \AppBundle\Entity\CharacteristicValuePairs();
+                $pair->setValue($value);
+                $pair->setCorpus($corpus);
+
+                $em->persist($pair);                
+            }
+            $em->flush();
+            
+            return new JsonResponse("Success");  
+        } else {
+            return $this->redirectToRoute("admin_page");
+        }        
+    }
+
     /**
      * @Route("/install", name="install")
      */

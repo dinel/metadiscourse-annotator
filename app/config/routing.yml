@@ -23,10 +23,10 @@ fos_user_change_password:
     
 admin_area:
     resource: "@SonataAdminBundle/Resources/config/routing/sonata_admin.xml"
-    prefix: /admin    
+    prefix: /admin_new
     
 _sonata_admin:
     resource: .
     type: sonata_admin
-    prefix: /admin
+    prefix: /admin_new
 

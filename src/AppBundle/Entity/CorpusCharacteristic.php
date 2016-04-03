@@ -36,8 +36,7 @@ class CorpusCharacteristic {
     /**
      * @ORM\OneToMany(targetEntity="CorpusCharacteristicValue", mappedBy="characteristic")
      */
-    private $values;
-    
+    protected $values;    
     /**
      * Constructor
      */
