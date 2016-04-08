@@ -260,12 +260,25 @@ class AdminController extends Controller
                 unlink($tmpfname);
             }
             
+            $session = $request->getSession();
+            if(null != $session->get('corpus')) {
+                $corpus_id = $session->get('corpus');
+                $corpus = $this->getDoctrine()
+                    ->getRepository('AppBundle:Corpus')
+                    ->find($corpus_id);                
+                $text->addCorpora($corpus);
+            }
+            
             $em = $this->getDoctrine()->getManager();
             $this->processText($text, $em);            
             $em->persist($text);
             $em->flush();
             
-            return $this->redirectToRoute("admin_page");
+            if(isset($corpus_id)) {
+                return $this->redirectToRoute('edit_corpus', array('id' => $corpus_id));
+            } else {
+                return $this->redirectToRoute("admin_page");
+            }
         }
         
         return $this->render('Admin/new_text.html.twig', array(
@@ -379,6 +392,9 @@ class AdminController extends Controller
      */
     public function editCorpusAction($id) {
         
+        $session = $this->getRequest()->getSession();
+        $session->set('corpus', $id);
+        
         $characteristics = $this->getDoctrine()
                     ->getRepository('AppBundle:CorpusCharacteristic')
                     ->findAll();
@@ -394,11 +410,22 @@ class AdminController extends Controller
         $selected_vals = array_map(function($value) {
                         return $value->getValue()->getId();
                 }, $sel_vals);
+                
+
+        $repository = $this->getDoctrine()
+                    ->getRepository('AppBundle:Text');                
+                
+        $texts = $repository->createQueryBuilder('t')
+                ->innerJoin('t.corpora', 'c')
+                ->where('c.id = :corpus_id')
+                ->setParameter('corpus_id', $id)
+                ->getQuery()->getResult();        
         
         return $this->render('Admin/edit_corpus.html.twig', array(
                     'corpus' => $corpus,
                     'chars' => $characteristics,
                     'selected_vals' => $selected_vals,
+                    'texts' => $texts,
         ));
     }
     
@@ -413,6 +440,7 @@ class AdminController extends Controller
             $value = $this->getDoctrine()
                     ->getRepository('AppBundle:CharacteristicValuePairs')
                     ->findBy(array('corpus' => $corpus_id, 'value' => $value_id));
+            
             if(count($value)) {
                 $em->remove($value[0]);
             } else {            
@@ -436,6 +464,36 @@ class AdminController extends Controller
         } else {
             return $this->redirectToRoute("admin_page");
         }        
+    }
+    
+    /**
+     * @Route("/admin/corpus/remove_text/{corpus_id}/{text_id}")
+     */
+    public function removeTextFromCorpusAction(\Symfony\Component\HttpFoundation\Request $request, 
+            $corpus_id, $text_id) {
+        
+        if($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            
+            $corpus = $this->getDoctrine()
+                    ->getRepository('AppBundle:Corpus')
+                    ->find($corpus_id);
+            
+            $text = $this->getDoctrine()
+                    ->getRepository('AppBundle:Text')
+                    ->find(substr($text_id, 1));
+            
+            if($text && $corpus) {
+                $corpus->removeText($text);
+                $em->persist($corpus);
+                $em->flush();
+                return new JsonResponse("Success");
+            } else {
+                return new JsonResponse("Failed");
+            }
+        } else {
+            return $this->redirectToRoute("admin_page");
+        }                   
     }
 
     /**

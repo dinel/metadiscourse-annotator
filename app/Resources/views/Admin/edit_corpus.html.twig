@@ -8,13 +8,14 @@
     
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 {% endblock stylesheets %}
 
 {% block body %}
     <div class="container">
         <div class="row voffset5"> 
             <div class="col-md-8">
-                Name: {{ corpus.name }}<br/>
+                <h2>Name: {{ corpus.name }}</h2>
                 Description: {{ corpus.description }}
                 <input type="hidden" id="corpus-id" value="{{ corpus.id }}">
             </div>
@@ -37,6 +38,20 @@
                 {% endfor %}
             </div>
         </div>
+        <div class="row voffset4">
+            <div class="col-md-8">
+                <h4>List of texts included</h4>
+                <ol>
+                {% for text in texts %}
+                    <li><a href="" class="editable-link" id="t{{ text.id }}">{{ text.title }} <i class="">&nbsp;</i></a></li>
+                {% endfor %}
+                </ol>
+                <br/><br/>
+                <a id="new-text" href="{{ path('admin_text_add') }}" class="btn btn-default" role="button">Add new text</a>
+                <a id="existing-text" class="btn btn-default" role="button">Add existing text</a>
+            </div>
+        </div>
+                
     </div>
 {% endblock %}
 

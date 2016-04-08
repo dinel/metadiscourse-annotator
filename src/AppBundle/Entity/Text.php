@@ -49,6 +49,11 @@ class Text {
     protected $tokens;
     
     /**
+     * @ORM\ManyToMany(targetEntity="Corpus")
+     */
+    protected $corpora;
+    
+    /**
      * @ORM\ManyToMany(targetEntity="Domain")
      * @ORM\JoinTable(name="texts_domains",
      *      joinColumns={@ORM\JoinColumn(name="doc_id", referencedColumnName="id")},
@@ -214,5 +219,40 @@ class Text {
     public function getDomains()
     {
         return $this->domains;
+    }
+
+    /**
+     * Add corpora
+     *
+     * @param \AppBundle\Entity\Corpus $corpora
+     *
+     * @return Text
+     */
+    public function addCorpora(\AppBundle\Entity\Corpus $corpus)
+    {
+        $this->corpora[] = $corpus;
+        $corpus->addText($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove corpora
+     *
+     * @param \AppBundle\Entity\Corpus $corpus
+     */
+    public function removeCorpora(\AppBundle\Entity\Corpus $corpus)
+    {
+        $this->corpora->removeElement($corpus);
+    }
+
+    /**
+     * Get corpora
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCorpora()
+    {
+        return $this->corpora;
     }
 }

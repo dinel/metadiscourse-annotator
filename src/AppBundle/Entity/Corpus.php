@@ -43,6 +43,11 @@ class Corpus {
      * @ORM\OneToMany(targetEntity="CharacteristicValuePairs", mappedBy="corpus")
      */
     protected $pairs;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Text")
+     */
+    protected $texts;
 
 
     /**
@@ -143,5 +148,40 @@ class Corpus {
     public function getPairs()
     {
         return $this->pairs;
+    }
+
+    /**
+     * Add text
+     *
+     * @param \AppBundle\Entity\Text $text
+     *
+     * @return Corpus
+     */
+    public function addText(\AppBundle\Entity\Text $text)
+    {
+        $this->texts[] = $text;
+
+        return $this;
+    }
+
+    /**
+     * Remove text
+     *
+     * @param \AppBundle\Entity\Text $text
+     */
+    public function removeText(\AppBundle\Entity\Text $text)
+    {
+        $this->texts->removeElement($text);
+        $text->removeCorpora($this);
+    }
+
+    /**
+     * Get texts
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTexts()
+    {
+        return $this->texts;
     }
 }
