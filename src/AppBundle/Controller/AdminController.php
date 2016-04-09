@@ -275,6 +275,7 @@ class AdminController extends Controller
             $em->flush();
             
             if(isset($corpus_id)) {
+                $request->getSession()->remove('corpus');
                 return $this->redirectToRoute('edit_corpus', array('id' => $corpus_id));
             } else {
                 return $this->redirectToRoute("admin_page");
