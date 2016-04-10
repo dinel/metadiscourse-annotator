@@ -49,3 +49,18 @@ ul.edit-list a.faded:hover {
 .red {
     color: red;
 }
+
+#add-existing-div {
+    margin-top: 1em;
+    padding: 1em 0.5em 0.5em 0.5em;
+    border: thin black solid;
+    display: none;
+}
+
+#add-existing-div #list-files {
+    min-height: 200px;
+}
+
+#add-existing-div input {
+    width: 100%;
+}

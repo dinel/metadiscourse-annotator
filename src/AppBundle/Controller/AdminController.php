@@ -496,6 +496,67 @@ class AdminController extends Controller
             return $this->redirectToRoute("admin_page");
         }                   
     }
+    
+    /**
+     * @Route("/admin/corpus/list_texts/{corpus_id}/{hint}")
+     */
+    public function returnListOfTextsAction(\Symfony\Component\HttpFoundation\Request $request, 
+            $corpus_id, $hint) {
+        
+        /*$repository = $this->getDoctrine()
+                    ->getRepository('AppBundle:Text'); 
+        
+        $texts = $repository->createQueryBuilder('t')
+                ->innerJoin('t.corpora', 'c')
+                ->where('c.id != :corpus_id')
+                ->setParameter('corpus_id', $corpus_id)
+                ->getQuery()->getResult(); 
+         * 
+         */
+        
+        $texts = $this->getDoctrine()
+                ->getRepository('AppBundle:Text')
+                ->findAll();
+        
+        $corpus = $this->getDoctrine()
+                ->getRepository('AppBundle:Corpus')
+                ->find($corpus_id);
+        
+        $a_texts = array_map(function($value) {
+                                return array($value->getId(), $value->getTitle());
+                            }, array_values(array_filter($texts, function($value) use($hint, $corpus) {
+                                                                    if($corpus->getTexts()->contains($value)) return FALSE;
+                                                                    return strstr($value->getTitle(), $hint);
+                                                                 })));
+        
+        return new JsonResponse(array('texts' => $a_texts));        
+    }
+
+    /**
+     * @Route("/admin/corpus/add_existing/{corpus_id}/{text_id}")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param type $corpus_id
+     * @param type $text_id
+     */
+    public function addExistingText2Corpus(\Symfony\Component\HttpFoundation\Request $request, 
+            $corpus_id, $text_id) {
+        
+        $text = $this->getDoctrine()
+                ->getRepository('AppBundle:Text')
+                ->find($text_id);
+        
+        $corpus = $this->getDoctrine()
+                ->getRepository('AppBundle:Corpus')
+                ->find($corpus_id);
+        
+        $text->addCorpora($corpus);
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($text);
+        $em->flush();
+        
+        return $this->redirectToRoute("edit_corpus", array('id' => $corpus_id));
+    }
 
     /**
      * @Route("/install", name="install")
