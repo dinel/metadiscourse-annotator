@@ -5,6 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/front_page.css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block body %}
@@ -20,39 +21,26 @@
                 </p>
             </div>
         </div>
+                
         <div class="row voffset5">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="input-group">
-                    <input id="search-field" type="text" class="form-control" placeholder="Enter expression...">
-                    <span class="input-group-btn">
-                        <button id="search-button" class="btn btn-secondary" type="button">Analyze!</button>
-                    </span>
-                </div>
-                <p class="voffset2">For a more powerful analysis you can try <a href="">advanced search</a></p>
+            <div class="col-md-3 col-md-offset-2">
+                <div class="options upload"><a href="/admin/corpora/">Manage corpora</a></div>
+            </div>            
+            <div class="col-md-3 col-md-offset-2">
+                <div class="options annotate">Annotate corpus</div>
             </div>
         </div>
-        <div class="row voffset3">
-            <div class="col-md-4 col-md-offset-2">
-                {% if is_granted('ROLE_ADMIN')  %}
-                <h2>Annotate</h2>
-                <!--
-                <p>This is the button to start the annotation</p>
-                <p><a class="btn btn-default" href="{ path('dinel_annotator_annotate') }}" role="button">Begin annotation &raquo;</a></p>
-                -->
-                <ul>
-                    {% for text in texts%}
-                        <li><a href="/document/{{text.id}}">{{text.title}}</a></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+                
+        <div class="row voffset5">
+            <div class="col-md-3 col-md-offset-2">
+                <div class="options analyse">Analyse corpus</div>
             </div>
-            <div class="col-md-4 col-md-offset-2">
-                {% if is_granted('ROLE_ADMIN') %}
-                <h2>Administer</h2>                
-                    <p><a class="btn btn-default" href="{{ path('admin_page') }}" role="button">Admin screen &raquo;</a></p>
-                {% endif %}
+            
+            <div class="col-md-3 col-md-offset-2">
+                <div class="options configure-system">Configure settings</div>
             </div>
         </div>
+                
     </div>
     
 {% endblock %}
