@@ -1,0 +1,38 @@
+{# app/Resources/views/default/new_corpus.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+        <div class="row voffset5"> 
+            <div class="col-md-8">
+                
+                {% for corpus in corpora %}
+                    <div class="voffset3">
+                        <strong>{{ corpus.name }}</strong><br/>
+                        {{ corpus.description | truncate(200) }} ...<br/>
+                        No of texts: {{ corpus.texts | length }} <br/>
+                        <a id="new-text" href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
+                        <a id="new-text" href="{{ path('admin_text_add') }}" class="btn btn-default" role="button">Delete</a>
+                    </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/edit_corpus.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+{% endblock %}

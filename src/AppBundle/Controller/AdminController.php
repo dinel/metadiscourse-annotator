@@ -366,10 +366,18 @@ class AdminController extends Controller
     }
     
     /**
-     * @Route("/admin/corpus/new")
+     * @Route("/admin/corpus/new/{id}", name="admin_new_corpus")
      */
-    public function newCorpusAction(\Symfony\Component\HttpFoundation\Request $request) {
-        $corpus = new \AppBundle\Entity\Corpus();
+    public function newCorpusAction(\Symfony\Component\HttpFoundation\Request $request,
+            $id = null) {
+        
+        if($id) {
+            $corpus = $this->getDoctrine()
+                    ->getRepository("AppBundle:Corpus")
+                    ->find($id);
+        } else {
+            $corpus = new \AppBundle\Entity\Corpus();
+        }
                 
         $form = $this->createForm(new CorpusType(), $corpus);        
         $form->handleRequest($request);
