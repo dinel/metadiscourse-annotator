@@ -209,7 +209,7 @@ function updateAnnotationPanel(data) {
     updateDisplayedAnnotation(data.current_sense);  
     
     // scroll to element
-    $('html,body').animate({scrollTop: $('#' + data.tok_id).offset().top});
+    $('html,body').animate({scrollTop: $('#' + data.tok_id).offset().top - 50});
 
     $('#comment').val(data.comment);
     var sense_html = "<option>...</option>";
