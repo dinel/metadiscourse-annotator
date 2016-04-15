@@ -40,14 +40,13 @@ $( document ).ready(function() {
     $('.editable-link').click(function() {
         var value = $(this).attr('id');
         var corpus = $("#corpus-id").val();
-        var r = confirm("Do you really want to remove the text from the corpus?" + "C" + corpus + "T" + value);
-        if(r == true) {
+        var r = confirm("Do you really want to remove the text from the corpus?");
+        if(r === true) {
             $.ajax({
                 type: 'POST',
                 url: '/admin/corpus/remove_text/' + corpus + "/" + value,
                 dataType: 'json',
                 success: function(data) {
-                    alert("text removed" + data);
                 }
             });
         }
