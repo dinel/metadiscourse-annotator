@@ -22,7 +22,7 @@
         </div>
             
         <div class="row voffset4"> 
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <h4>Characteristics of the corpus</h4>
                 {% for char in chars %}
                     <div>
@@ -36,10 +36,9 @@
                     {% endfor %}
                     </div>
                 {% endfor %}
-            </div>
-        </div>
-        <div class="row voffset4">
-            <div class="col-md-8">
+                
+                <div class="voffset4"></div>
+
                 <h4>List of texts included</h4>
                 <ol>
                 {% for text in texts %}
@@ -54,6 +53,24 @@
                     <input id="text-name" type="text" placeholder="Enter a few words from the name (at least 5 characters"><br/>
                     <div id="list-files">
                     </div>
+                </div>
+            </div>
+                
+            <div class="col-md-4 col-md-offset-1">
+                <h4>Statistics of the corpus</h4>
+                <div id="corpus-statistics">
+                    Number of texts: <span id="no-files"> {{ texts | length }}</span><br/>
+                    
+                    {% if corpus.statisticsoutdated %}
+                        Number of tokens: <span id="no-words">???</span><br/>
+                        Number of types: <span id="no-types">???</span><br/><br/>
+                        <p><a id="update-stats" class="btn btn-default" role="button">Update statistics &raquo;</a></p>
+                        
+                    {% else %}
+                        Number of tokens: <span id="no-words">{{ corpus.numbertokens }}</span><br/>
+                        Number of types: <span id="no-types">{{ corpus.numbertypes }}</span><br/><br/>
+                    {% endif %}
+                    
                 </div>
             </div>
         </div>

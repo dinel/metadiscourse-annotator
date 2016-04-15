@@ -48,7 +48,21 @@ class Corpus {
      * @ORM\ManyToMany(targetEntity="Text")
      */
     protected $texts;
-
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $statistics_outdated;
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $numberTypes;
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $numberTokens;
 
     /**
      * Constructor
@@ -56,6 +70,7 @@ class Corpus {
     public function __construct()
     {
         $this->pairs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->statistics_outdated = true;
     }
 
     /**
@@ -160,6 +175,7 @@ class Corpus {
     public function addText(\AppBundle\Entity\Text $text)
     {
         $this->texts[] = $text;
+        $this->statistics_outdated = 1;
 
         return $this;
     }
@@ -173,6 +189,7 @@ class Corpus {
     {
         $this->texts->removeElement($text);
         $text->removeCorpora($this);
+        $this->statistics_outdated = 1;
     }
 
     /**
@@ -183,5 +200,77 @@ class Corpus {
     public function getTexts()
     {
         return $this->texts;
+    }
+
+    /**
+     * Set statisticsOutdated
+     *
+     * @param integer $statisticsOutdated
+     *
+     * @return Corpus
+     */
+    public function setStatisticsOutdated($statisticsOutdated)
+    {
+        $this->statistics_outdated = $statisticsOutdated;
+
+        return $this;
+    }
+
+    /**
+     * Get statisticsOutdated
+     *
+     * @return integer
+     */
+    public function getStatisticsOutdated()
+    {
+        return $this->statistics_outdated;
+    }
+
+    /**
+     * Set numberTypes
+     *
+     * @param integer $numberTypes
+     *
+     * @return Corpus
+     */
+    public function setNumberTypes($numberTypes)
+    {
+        $this->numberTypes = $numberTypes;
+
+        return $this;
+    }
+
+    /**
+     * Get numberTypes
+     *
+     * @return integer
+     */
+    public function getNumberTypes()
+    {
+        return $this->numberTypes;
+    }
+
+    /**
+     * Set numberTokens
+     *
+     * @param integer $numberTokens
+     *
+     * @return Corpus
+     */
+    public function setNumberTokens($numberTokens)
+    {
+        $this->numberTokens = $numberTokens;
+
+        return $this;
+    }
+
+    /**
+     * Get numberTokens
+     *
+     * @return integer
+     */
+    public function getNumberTokens()
+    {
+        return $this->numberTokens;
     }
 }

@@ -63,6 +63,20 @@ $( document ).ready(function() {
     $('#text-name').on('keydown', function () {
         clearTimeout(typingTimer);
     });    
+    
+    $('#update-stats').click(function() {
+        var corpus = $("#corpus-id").val();
+        $.ajax({
+            type: 'POST',
+            url: '/admin/corpus/stats/' + corpus,
+            dataType: 'json',
+            success: function(data) {
+                $('#no-words').html(data.nowords);
+                $('#no-types').html(data.notypes);
+                $('#update-stats').hide();
+            }
+        });
+    });
 });
 
 function searchTexts() {
