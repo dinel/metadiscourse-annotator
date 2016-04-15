@@ -24,11 +24,9 @@ use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 use AppBundle\Form\Type\MarkableType;
 use AppBundle\Form\Type\SenseType;
 use AppBundle\Form\Type\CategoryType;
-use AppBundle\Form\Type\CorpusType;
 
 use AppBundle\Entity\Sense;
 use AppBundle\Entity\Domain;
-use AppBundle\Entity\Corpus;
 
 class AdminController extends Controller 
 {
@@ -363,37 +361,6 @@ class AdminController extends Controller
         return $this->render('Admin/new_category.html.twig', array(
                 'form' => $form->createView(),
         ));
-    }
-    
-    /**
-     * @Route("/admin/corpus/new/{id}", name="admin_new_corpus")
-     */
-    public function newCorpusAction(\Symfony\Component\HttpFoundation\Request $request,
-            $id = null) {
-        
-        if($id) {
-            $corpus = $this->getDoctrine()
-                    ->getRepository("AppBundle:Corpus")
-                    ->find($id);
-        } else {
-            $corpus = new \AppBundle\Entity\Corpus();
-        }
-                
-        $form = $this->createForm(new CorpusType(), $corpus);        
-        $form->handleRequest($request);
-                        
-        if($form->isValid()) {           
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($corpus);
-            $em->flush();
-            
-            return $this->redirectToRoute("edit_corpus", array('id' => $corpus->getId()));
-        }
-        
-        return $this->render('Admin/new_corpus.html.twig', array(
-                'form' => $form->createView(),
-        ));
-        
     }    
     
     /**
