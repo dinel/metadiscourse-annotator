@@ -192,6 +192,31 @@ class CorpusAdminController extends Controller
         }
     }    
     
+    /**
+     * @Route("/admin/corpus/{id}", name="admin_corpus_delete")
+     * @param Request $request
+     * @param type $id
+     */
+    public function corpusRemove(Request $request, $id) {
+        $corpus = $this->getCorpus($id);
+        if($corpus) {
+            $em = $this->getDoctrine()->getManager();
+            foreach($corpus->getTexts() as $text) {
+                $corpus->removeText($text);
+            }
+            
+            foreach($corpus->getPairs() as $pair) {
+                $corpus->removePair($pair);
+                $em->remove($pair);
+            }
+                        
+            $em->remove($corpus);
+            $em->flush();
+        }
+        
+        return $this->redirectToRoute("corpora_admin_page");
+    }
+
     /****************************************************************
      * Utility methods
      ****************************************************************/

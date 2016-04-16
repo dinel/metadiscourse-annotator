@@ -22,8 +22,8 @@
                         <strong>{{ corpus.name }}</strong><br/>
                         {{ corpus.description | truncate(200) }} ...<br/>
                         No of texts: {{ corpus.texts | length }} <br/>
-                        <a id="new-text" href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
-                        <a id="new-text" href="{{ path('admin_text_add') }}" class="btn btn-default" role="button">Delete</a>
+                        <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
+                        <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation" role="button">Delete</a>
                     </div>
                 {% endfor %}
                 </div>
