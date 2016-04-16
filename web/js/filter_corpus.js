@@ -39,6 +39,25 @@ $( document ).ready(function() {
             }  
         });
     });
+    
+    $('#reset-filters').click(function() {
+        $('.filter-value').each(function(i) {
+            $(this).prop('checked', false);
+        });
+        
+        $.ajax({
+            type: 'POST',
+            url: '/admin/corpus/filter_all',
+            dataType: 'json',
+            success: function(data) {
+                var h = "";
+                for(var i = 0; i < data.corpora.length; i++) {
+                    h += getHTML(data.corpora[i]);                
+                }
+                $('#list-corpora').html(h);
+            }  
+        });
+    });
 });
 
 function getFilter() {
