@@ -103,7 +103,7 @@ class CorpusAdminController extends Controller
      * @param type $filter
      */
     public function corpusFilterAll(Request $request, $filter = null) {
-        //if($request->isXmlHttpRequest()) {
+        if($request->isXmlHttpRequest()) {
             $rep = $this->getDoctrine()->getRepository("AppBundle:CorpusCharacteristicValue");
             $corpora_ids_tmp = array();
             $corpora_ids = array();
@@ -145,9 +145,9 @@ class CorpusAdminController extends Controller
             }
             
             return new JsonResponse(array('corpora' => $corpora_ids));
-        //} else {
-        //    return $this->redirectToRoute("admin_page");
-        //}
+        } else {
+            return $this->redirectToRoute("admin_page");
+        }
     }
 
     /**
@@ -156,7 +156,7 @@ class CorpusAdminController extends Controller
      * @param type $filter
      */
     public function corpusFilterAny(Request $request, $filter = null) {
-        //if($request->isXmlHttpRequest()) {
+        if($request->isXmlHttpRequest()) {
             $rep = $this->getDoctrine()->getRepository("AppBundle:CorpusCharacteristicValue");
             $corpora_ids = array();
             $seen_corpora = array();
@@ -187,11 +187,10 @@ class CorpusAdminController extends Controller
             }
             
             return new JsonResponse(array('corpora' => $corpora_ids));
-        //} else {
-        //    return $this->redirectToRoute("admin_page");
-        //}
-    }
-    
+        } else {
+            return $this->redirectToRoute("admin_page");
+        }
+    }    
     
     /****************************************************************
      * Utility methods
@@ -221,6 +220,11 @@ class CorpusAdminController extends Controller
         $em->flush();
     }
     
+    /**
+     * Returns an array which contains the necessary information about a corpus
+     * @param type $corpus
+     * @return type
+     */
     private function getCorpusArray($corpus) {
         return array($corpus->getId(),
                      $corpus->getName(),
