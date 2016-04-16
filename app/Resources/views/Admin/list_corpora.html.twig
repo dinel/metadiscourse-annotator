@@ -14,8 +14,9 @@
 {% block body %}
     <div class="container">
         <div class="row voffset5"> 
-            <div class="col-md-8">
+            <div class="col-md-6">
                 
+                <div id="list-corpora">
                 {% for corpus in corpora %}
                     <div class="voffset3">
                         <strong>{{ corpus.name }}</strong><br/>
@@ -25,10 +26,27 @@
                         <a id="new-text" href="{{ path('admin_text_add') }}" class="btn btn-default" role="button">Delete</a>
                     </div>
                 {% endfor %}
+                </div>
                 <div class="voffset5">
                     <a id="new-text" href="{{ path('admin_new_corpus') }}" class="btn btn-default" role="button">New corpus</a>
                 </div>
                 
+            </div>
+                
+            <div class="col-md-4 col-md-offset-1">
+                <h4>Filter conditions</h4>
+                {% for char in chars %}
+                    <div class="voffset2">
+                    <strong>{{ char.name }}</strong>
+                    {% for value in char.values %}
+                        <input class="filter-value" type="checkbox" id="c{{ value.id }}">{{ value.name }}
+                    {% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="voffset3">
+                    <a id="filter-on-all" class="btn btn-default" role="button">Filter on all</a>
+                    <a id="filter-on-any" class="btn btn-default" role="button">Filter on any</a>
+                </div>
             </div>
         </div>
                 
@@ -42,6 +60,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/edit_corpus.js') }}"></script>
+    <script src="{{ asset('js/filter_corpus.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 {% endblock %}

@@ -32,8 +32,13 @@ class CorpusAdminController extends Controller
                     ->getRepository("AppBundle:Corpus")
                     ->findAll();
         
+        $chars = $this->getDoctrine()
+                    ->getRepository("AppBundle:CorpusCharacteristic")
+                    ->findAll();
+        
         return $this->render('Admin/list_corpora.html.twig', array(
                 'corpora' => $corpora,
+                'chars' => $chars,
             ));
     }
     
@@ -90,8 +95,103 @@ class CorpusAdminController extends Controller
         } else {
             return $this->redirectToRoute("admin_page");
         }
-        
     }
+        
+    /**
+     * @Route("/admin/corpus/filter_all/{filter}")
+     * @param Request $request
+     * @param type $filter
+     */
+    public function corpusFilterAll(Request $request, $filter = null) {
+        //if($request->isXmlHttpRequest()) {
+            $rep = $this->getDoctrine()->getRepository("AppBundle:CorpusCharacteristicValue");
+            $corpora_ids_tmp = array();
+            $corpora_ids = array();
+            $seen_corpora = array();
+            $counter = 0;
+            
+            if($filter) {
+                $values = explode("c", $filter);
+                foreach($values as $id) {
+                    $value = $rep->find($id);
+                    if($value) {
+                        $counter++;
+                        $pairs = $value->getPairs();
+                        foreach($pairs as $pair) {                            
+                            if($pair->getCorpus()) {
+                                if(! array_key_exists($pair->getCorpus()->getId(), $seen_corpora)) {
+                                    $corpora_ids_tmp[] = $this->getCorpusArray($pair->getCorpus());
+                                    $seen_corpora[$pair->getCorpus()->getId()] = 1;
+                                } else {
+                                    $seen_corpora[$pair->getCorpus()->getId()] += 1;
+                                }
+                            }
+                        }                
+                    }
+                }
+                               
+                foreach($corpora_ids_tmp as $tmp) {
+                    if($seen_corpora[$tmp[0]] == $counter) {
+                        $corpora_ids[] = $tmp;
+                    }
+                }
+            } else {
+                $corpora = $this->getDoctrine()
+                    ->getRepository("AppBundle:Corpus")
+                    ->findAll();
+                foreach($corpora as $corpus) {
+                    $corpora_ids[] = $this->getCorpusArray($corpus);
+                }
+            }
+            
+            return new JsonResponse(array('corpora' => $corpora_ids));
+        //} else {
+        //    return $this->redirectToRoute("admin_page");
+        //}
+    }
+
+    /**
+     * @Route("/admin/corpus/filter_any/{filter}")
+     * @param Request $request
+     * @param type $filter
+     */
+    public function corpusFilterAny(Request $request, $filter = null) {
+        //if($request->isXmlHttpRequest()) {
+            $rep = $this->getDoctrine()->getRepository("AppBundle:CorpusCharacteristicValue");
+            $corpora_ids = array();
+            $seen_corpora = array();
+            
+            if($filter) {
+                $values = explode("c", $filter);
+                foreach($values as $id) {
+                    $value = $rep->find($id);
+                    if($value) {
+                        $pairs = $value->getPairs();
+                        foreach($pairs as $pair) {
+                            if($pair->getCorpus()) {
+                                if(! array_key_exists($pair->getCorpus()->getId(), $seen_corpora)) {
+                                    $corpora_ids[] = $this->getCorpusArray($pair->getCorpus());
+                                    $seen_corpora[$pair->getCorpus()->getId()] = 1;
+                                }
+                            }
+                        }                
+                    }
+                }
+            } else {
+                $corpora = $this->getDoctrine()
+                    ->getRepository("AppBundle:Corpus")
+                    ->findAll();
+                foreach($corpora as $corpus) {
+                    $corpora_ids[] = $this->getCorpusArray($corpus);
+                }
+            }
+            
+            return new JsonResponse(array('corpora' => $corpora_ids));
+        //} else {
+        //    return $this->redirectToRoute("admin_page");
+        //}
+    }
+    
     
     /****************************************************************
      * Utility methods
@@ -119,6 +219,14 @@ class CorpusAdminController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($corpus);
         $em->flush();
+    }
+    
+    private function getCorpusArray($corpus) {
+        return array($corpus->getId(),
+                     $corpus->getName(),
+                     $corpus->getDescription(),
+                     count($corpus->getTexts()),
+                    );
     }
     
 }
