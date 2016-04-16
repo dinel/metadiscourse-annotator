@@ -24,7 +24,7 @@ $( document ).ready(function() {
             url: '/admin/corpus/category/' + corpus + "/" + value,
             dataType: 'json',
             success: function(data) {
-                alert("success");
+                
             }
         });
     });
