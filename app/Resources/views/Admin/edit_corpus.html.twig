@@ -26,7 +26,7 @@
                 <h4>Characteristics of the corpus</h4>
                 {% for char in chars %}
                     <div>
-                    {{ char.name }}:
+                    <strong>{{ char.name }}:</strong>
                     {% for value in char.values %}
                         {% if value.id in selected_vals %}
                             <input class="value-corpus" type="checkbox" id="{{ value.id }}" checked>{{ value.name }}
