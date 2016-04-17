@@ -535,20 +535,26 @@ class AdminController extends Controller
     }
     
     /**
-     * @Route("/admin/reannotate/{id}")
+     * @Route("/admin/reannotate/{id}/{corpus_id}", name="reannotate")
      * @param \AppBundle\Controller\Request $request
      * @param type $id
      */
-    public function reannotate(Request $request, $id) {
+    public function reannotate(Request $request, $id, $corpus_id = null) {
         
         $text = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
                 ->find($id);
         $em = $this->getDoctrine()->getManager();
         $this->annotateTextInDatabase($text, $em);
-        $em->flush();
+        $em->flush();  
         
-        return $this->redirectToRoute("admin_page");
+        if($corpus_id) {        
+            return $this->redirectToRoute("corpus_annotate", 
+                array('id' => $corpus_id));
+        } else {
+            return $this->redirectToRoute("document_show", 
+                array('id' => $corpus_id));
+        }
         
     }
 
