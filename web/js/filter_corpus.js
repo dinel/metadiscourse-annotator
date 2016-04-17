@@ -88,6 +88,7 @@ function getHTML(data) {
     h += '<a id="new-text" href="/admin/corpus/new/' + data[0] + '" class="btn btn-default" role="button">Edit</a>';
     h += '<a id="new-text" href="/admin/corpus/remove/' + data[0] + 
             '" class="btn btn-default confirmation" role="button" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+    h += '<a id="new-text" href="/corpus/annotate/' + data[0] + '" class="btn btn-default" role="button">Annotate</a>';
     h += '</div>';
     
     return h;
