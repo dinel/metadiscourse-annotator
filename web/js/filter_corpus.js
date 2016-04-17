@@ -86,7 +86,8 @@ function getHTML(data) {
     h += data[2].substring(0, 200) + '...<br/>';
     h += 'No of texts: ' + data[3] + ' <br/>';
     h += '<a id="new-text" href="/admin/corpus/new/' + data[0] + '" class="btn btn-default" role="button">Edit</a>';
-        /*<a id="new-text" href="{{ path('admin_text_add') }}" class="btn btn-default" role="button">Delete</a>*/
+    h += '<a id="new-text" href="/admin/corpus/remove/' + data[0] + 
+            '" class="btn btn-default confirmation" role="button" onclick="return confirm(\'Are you sure?\')">Delete</a>';
     h += '</div>';
     
     return h;
