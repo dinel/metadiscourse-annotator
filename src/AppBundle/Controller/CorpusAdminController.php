@@ -216,6 +216,18 @@ class CorpusAdminController extends Controller
         
         return $this->redirectToRoute("corpora_admin_page");
     }
+    
+    /**
+     * @Route("/corpus/annotate/{id}", name="corpus_annotate")
+     */
+    public function corpusAnnotateAction(Request $request, $id) {
+        $corpus = $this->getCorpus($id);
+        
+        return $this->render('Annotator/annotate_corpus.html.twig', array(
+                'texts' => $corpus->getTexts(),
+        ));
+        
+    }
 
     /****************************************************************
      * Utility methods
