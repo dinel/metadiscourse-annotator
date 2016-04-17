@@ -1,0 +1,31 @@
+{# app/Resources/views/base.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/annotator.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ path('annotation_css') }}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+{% endblock stylesheets %}
+
+{% block body %}    
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+            {% for text in texts %}
+                <div>
+                    {{ text.title }}
+                    <a href="{{ path('document_show', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate</a>
+                    <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-default" role="button">Re-process</a>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>    
+    
+{% endblock %}
