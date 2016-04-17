@@ -193,7 +193,7 @@ class CorpusAdminController extends Controller
     }    
     
     /**
-     * @Route("/admin/corpus/{id}", name="admin_corpus_delete")
+     * @Route("/admin/corpus/remove/{id}", name="admin_corpus_delete")
      * @param Request $request
      * @param type $id
      */
