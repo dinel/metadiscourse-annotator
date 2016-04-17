@@ -18,6 +18,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
@@ -532,6 +533,24 @@ class AdminController extends Controller
         
         return $this->redirectToRoute("edit_corpus", array('id' => $corpus_id));
     }
+    
+    /**
+     * @Route("/admin/reannotate/{id}")
+     * @param \AppBundle\Controller\Request $request
+     * @param type $id
+     */
+    public function reannotate(Request $request, $id) {
+        
+        $text = $this->getDoctrine()
+                ->getRepository('AppBundle:Text')
+                ->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $this->annotateTextInDatabase($text, $em);
+        $em->flush();
+        
+        return $this->redirectToRoute("admin_page");
+        
+    }
 
     /**
      * @Route("/install", name="install")
@@ -620,7 +639,6 @@ class AdminController extends Controller
         else return null;
     }
 
-
     private function processText(\AppBundle\Entity\Text $text, $em) {
         // get the tokens in the text
         $lines = explode("\n", $text->getTheText());
@@ -660,81 +678,69 @@ class AdminController extends Controller
             }
         }
     }
-
-    /**
-     * 
-     * @param \AppBundle\Entity\Text $text
-     * @param type $em
-     */
-    private function processText_1(\AppBundle\Entity\Text $text, $em) {
-        // get the tokens in the text
-        $lines = explode("\n", $text->getTheText());
+    
+    private function findMarkableInDatabase($tokens, $pos, $marks_array) {
+        $best_match = null;
+        $best_match_len = 0;
+        
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
+        foreach($marks_array as $mark) {
+            $a_text = $tokenizer->tokenize($mark->getText());
+            $match = True;
+            for($i = 0; $i < count($a_text); $i++) {
+                if(($pos + $i >= count($tokens)) ||
+                   ($tokens[$pos + $i]->getMarkable()) ||
+                   ($a_text[$i] != $tokens[$pos + $i]->getContent())) {
+                    $match = False;
+                    break;
+                }
+            }
+            
+            if($match) {
+                if($best_match_len < count($a_text)) {
+                    $best_match = $mark;
+                    $best_match_len = count($a_text);
+                }
+            }            
+        }
+        
+        if($best_match_len) return array($best_match, $best_match_len);
+        else return null;
+    }    
+
+    private function annotateTextInDatabase(\AppBundle\Entity\Text $text, $em) {       
         
         // load all the markers
         // TODO: filter by domain
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
-        $marks = $repository->findAll();
+        $marks = $repository->findBy(array(), array('text' => 'ASC'));
         $marks_array = array();
         foreach($marks as $mark) {
             $marks_array[$mark->getText()] = $mark;
-        }        
-                
-        foreach($lines as $line) {
-            $tokens = $tokenizer->tokenize($line);
-            $first = true;
-            $el_1 = $el_2 = $el_3 = null;
-            foreach($tokens as $token) {
-                $el_3 = $el_2;
-                $el_2 = $el_1;
-                $el_1 = $token;
-                
-                if($el_3 != null) {
-                    $t = $this->checkToken($el_3 . " " . $el_2 . " " . $el_1, $marks_array);
-                    if($t) {
-                        $el_1 = $el_2 = $el_3 = null;
-                    } else {
-                        $t = $this->checkToken($el_3 . " " . $el_2, $marks_array);
-                        if($t) {
-                            $el_2 = $el_3 = null;
-                        } else {
-                            $t = $this->checkToken($el_3, $marks_array);
-                            if(! $t) {
-                                $t = new \AppBundle\Entity\Token($el_3);
-                            }
-                        }
-                    } 
-                    
-                    if($first) $t->setNewLineBefore (1);
-                    $first = false;
-                    $em->persist($t);
-                    $text->addToken($t);
-                }                
-            }
-            
-            $t = $this->checkToken($el_2 . " " . $el_1, $marks_array);
-            if($t) {
-                $em->persist($t);
-                $text->addToken($t);
+        }
+        
+        $tokens = $text->getTokens()->toArray();
+        $pos = 0;
+        while($pos < count($tokens)) {                
+            $match = $this->findMarkableInDatabase($tokens, $pos, $marks_array);
+            if($match) {
+                $token = "";
+                $pos_saved = $pos;
+                for($j = 0; $j < $match[1]; $j++) {
+                    $token = $token . " " . $tokens[$pos]->getContent();
+                    if($j > 0) {
+                        $em->remove($tokens[$pos]);
+                        $text->removeToken($tokens[$pos]);
+                    }
+                    $pos++;
+                }
+                $tokens[$pos_saved]->setContent($token);
+                $tokens[$pos_saved]->setMarkable($match[0]);
+                $em->persist($tokens[$pos_saved]);
             } else {
-                if($el_2) {
-                    $t = $this->checkToken($el_2, $marks_array);
-                    if(! $t) {
-                        $t = new \AppBundle\Entity\Token($el_2);
-                    }
-                    $em->persist($t);
-                    $text->addToken($t);
-                }
-                 
-                if($el_1) {
-                    $t = $this->checkToken($el_1, $marks_array);
-                    if(! $t) {
-                        $t = new \AppBundle\Entity\Token($el_1);
-                    }
-                    $em->persist($t);
-                    $text->addToken($t);
-                }
+                $pos++;
             }
         }
     }
+
 }
