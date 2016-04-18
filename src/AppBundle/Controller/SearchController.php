@@ -50,10 +50,10 @@ class SearchController extends Controller
             
             $annotations = $this->getDoctrine()
                                 ->getRepository('AppBundle:Annotation')
-                                ->findBy(array('token' => $token->getId()));
-            $r = array();
+                                ->findBy(array('token' => $token->getId()));            
             
             foreach($annotations as $annotation) {
+                $r = array();
                 $r[] = $annotation->getId();
                 
                 if($annotation->getSense()) {
