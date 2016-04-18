@@ -52,7 +52,10 @@ class SearchController extends Controller
                                 ->getRepository('AppBundle:Annotation')
                                 ->findBy(array('token' => $token->getId()));
             $r = array();
+            
             foreach($annotations as $annotation) {
+                $r[] = $annotation->getId();
+                
                 if($annotation->getSense()) {
                     $r[] = $annotation->getSense()->getId();
                 } else {
@@ -60,9 +63,10 @@ class SearchController extends Controller
                 }
                 
                 $r[] = $this->getSentence($token->getId(), $term);
-            }
-            if($r) {
-                $results[] = $r;
+            
+                if($r) {
+                    $results[] = $r;
+                }
             }
         }
         
