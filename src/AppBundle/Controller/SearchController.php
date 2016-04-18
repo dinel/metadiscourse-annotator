@@ -19,8 +19,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\Query\ResultSetMapping;
 
-class SearchController extends Controller 
+class SearchController extends Controller
 {
+    /**
+     * @Route("/search")
+     */
+    public function indexAction() {
+        return $this->render('FrontPage/index.html.twig');
+    }
+
     /**
      * @Route("/search/term/{term}", name="search_term")
      */
