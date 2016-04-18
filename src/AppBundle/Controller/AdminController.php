@@ -288,10 +288,11 @@ class AdminController extends Controller
     
     /**
      * Action which adds a new marker to the database
-     * @Route("/admin/marker/add", name="admin_marker_add")
+     * @Route("/admin/marker/add/{marker_text}", name="admin_marker_add")
      */
-    public function newMarkerAdd(\Symfony\Component\HttpFoundation\Request $request) {
+    public function newMarkerAdd(\Symfony\Component\HttpFoundation\Request $request, $marker_text = "") {
         $mark = new \AppBundle\Entity\Markable();
+        $mark->setText($marker_text);
         
         $form = $this->createForm(new MarkableType(), $mark);
         $form->handleRequest($request);
@@ -553,7 +554,7 @@ class AdminController extends Controller
                 array('id' => $corpus_id));
         } else {
             return $this->redirectToRoute("document_show", 
-                array('id' => $corpus_id));
+                array('id' => $id));
         }
         
     }

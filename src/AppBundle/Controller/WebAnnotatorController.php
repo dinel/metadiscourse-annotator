@@ -54,6 +54,7 @@ class WebAnnotatorController extends Controller
             return $this->render('Annotator/index.html.twig', array(
                     'title' => $doc->getTitle(),
                     'tokens_style' => $tokens_style,
+                    'id_text' => $id,
                 ));
         }
     }

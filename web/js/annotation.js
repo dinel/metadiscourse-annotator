@@ -9,12 +9,22 @@ var currentToken = 0;
 
 $( document ).ready(function() {
     $('#tag-attributes').hide();
+    $('#reprocess').hide();
     
     /*
      * Called when the user clicks to close the annotation area
      */
     $('#close-annotation-area').click(function() {
-        $('#tag-attributes').hide();
+        $('#tag-attributes').hide();        
+    });
+    
+    /*
+     * Called when a missing markable is added
+     */
+    $('#add-markable').click(function() {
+        $('#reprocess').show();
+        var win = window.open("/admin/marker/add/" + getSelectionText(), '_blank');
+        win.focus();
     });
     
     /*
@@ -250,4 +260,14 @@ function updateAnnotationPanel(data) {
     $("#slider").slider("value", data.polarity);
     $("#polarity").val(data.polarity);
     $('#uncertain').prop("checked", data.uncertain);                                
+}
+
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
 }

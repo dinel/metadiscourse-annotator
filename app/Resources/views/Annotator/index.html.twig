@@ -26,6 +26,15 @@
                     {% endfor %}
                 </div>                
             </div>
+                
+            <div class="col-md-3 col-md-offset-1 voffset5">
+                <a id="add-markable" class="btn btn-default" role="button">Add markable</a>
+                <div id="reprocess" class="voffset4">
+                    Do not forget to 
+                    <a class="btn btn-default" role="button" href="{{ path('reannotate', {'id': id_text } ) }}">reprocess</a>
+                    the document after you finished adding all the missing markables.
+                </div>
+            </div>
         </div>
         <div id="tag-attributes" class="navbar navbar-fixed-bottom">
             <div class="container">
