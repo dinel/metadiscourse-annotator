@@ -28,6 +28,10 @@
             height: 8px;
             width: 200px;
         }
+        
+        li.sense a {
+            color: inherit;
+        }
     </style>
 {% endblock stylesheets %}
 
@@ -54,8 +58,8 @@
                     <ol>
                     {% for sense in mark.senses %}
                         {% if sense.definition %}
-                            <li><span style="color:{{ sense.fgcolor}};background-color:{{ sense.bgcolor}};">
-                                    {{ sense.definition }}
+                            <li class="sense"><span style="color:{{ sense.fgcolor}};background-color:{{ sense.bgcolor}};">
+                                    <a href="{{ path('admin_sense_edit', {'id_marker': mark.id, 'id_sense': sense.id}) }}">{{ sense.definition }}</a>
                                 </span>: {{ sense.explanation }} (Default score: {{ sense.score }})
                             </li>
                         {% endif %}
@@ -69,7 +73,7 @@
             
         <hr width="75%" align="center"/>
         
-        <h3>Add a new sense</h3>
+        <h3>{{ message }}</h3>
         
         <div class="row voffset3">
             <div class="col-md-8">
@@ -94,7 +98,7 @@
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
         $("#sense_bgColor").spectrum({
-            color: "#ffffff",
+            color: "{{ initial_sense.bgcolor }}",
             preferredFormat: 'hex',
             clickoutFiresChange: true, 
             change: function(color) {
@@ -103,7 +107,7 @@
         });
                 
         $("#sense_fgColor").spectrum({
-            color: "#000000",
+            color: "{{ initial_sense.fgcolor }}",
             preferredFormat: 'hex',
             clickoutFiresChange: true, 
             change: function(color) {
@@ -113,7 +117,7 @@
     
         $(function() {
             $( "#slider" ).slider({
-                value: 0,
+                value: {{ initial_sense.score }},
                 min: -5,
                 max: 5,
                 step: 1,
@@ -125,5 +129,8 @@
             $( "#polarity" ).val( $( "#slider" ).slider( "value" ) );
             $( "#sense-score").val( $( "#slider" ).slider( "value" ) );
         });
+        $("#preview").css('background-color', "{{ initial_sense.bgcolor }}");
+        $("#preview").css('color', "{{ initial_sense.fgcolor }}");
+        
    </script>
 {% endblock %}

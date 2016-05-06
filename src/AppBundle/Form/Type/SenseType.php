@@ -17,6 +17,13 @@ use Symfony\Component\Form\FormBuilderInterface;
  * @author dinel
  */
 class SenseType extends AbstractType {
+    private $in_edit_mode = false;
+
+
+    public function __construct($in_edit_mode = false) {
+        $this->in_edit_mode = $in_edit_mode;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('definition', 'text', array(
@@ -37,7 +44,8 @@ class SenseType extends AbstractType {
                     'label' => 'Background color:',
                     'data' => '#ffffff',
                 ))
-            ->add('save', 'submit', array('label' => 'Add sense'));
+            ->add('save', 'submit', array(
+                'label' => $this->in_edit_mode ? 'Edit sense' : 'Add sense'));
     }
     
     public function getName() {

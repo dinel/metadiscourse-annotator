@@ -18,12 +18,21 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 
 class MarkableType extends AbstractType {
+    private $in_edit_mode = false;
+
+
+    public function __construct($in_edit_mode = false) {
+        $this->in_edit_mode = $in_edit_mode;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('text', 'text', array(
-                'label' => 'Metadiscourse marker'
+                'label' => 'Metadiscourse marker',
+                'disabled' => $this->in_edit_mode,
             ))
             ->add('description', 'text')
+            /*
             ->add('domains', 'entity', array(
                     'class'     => 'AppBundle:Domain',
                     'choice_label' => 'Domains',
@@ -33,8 +42,10 @@ class MarkableType extends AbstractType {
                             return $er->createQueryBuilder('d')
                                       ->where('d.disabled = 0');
                     },
-                ))
-            ->add('save', 'submit', array('label' => 'Add marker'));
+                ))*/
+            ->add('save', 'submit', array(
+                'label' => $this->in_edit_mode ? 'Edit marker' : 'Add marker')
+            );
     }
 
     public function getName() {

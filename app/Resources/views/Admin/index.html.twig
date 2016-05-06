@@ -74,7 +74,7 @@
                 <h2>Markers</h2>
                 
                 {% for marker in markers %}
-                    <div>{{ marker.text }}</div>
+                    <div><a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a></div>
                 {% endfor %}
                 <p><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></p>
             </div>

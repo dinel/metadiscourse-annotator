@@ -313,6 +313,32 @@ class AdminController extends Controller
     }
     
     /**
+     * Action which edits an existing marker 
+     * @Route("/admin/marker/edit/{id}", name="admin_marker_edit")
+     */
+    public function newMarkerEdit(\Symfony\Component\HttpFoundation\Request $request, $id) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id);
+        
+        $form = $this->createForm(new MarkableType(true), $mark);
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($mark);
+            $em->flush();
+            
+            return $this->redirectToRoute("admin_sense_add", 
+                    array('id_marker' => $mark->getId()));
+        }
+        
+        return $this->render('Admin/new_mark.html.twig', array(
+                'form' => $form->createView(),
+        ));
+    }
+    
+    /**
      * Action which adds a sense to a given marker
      * @Route("/admin/sense/add/{id_marker}", name="admin_sense_add")
      */
@@ -323,8 +349,49 @@ class AdminController extends Controller
         // TODO: what to do if the marker is not found. Assumes it works right now
         if($mark) {
             $sense = new Sense();
+            $sense->setBgColor('#ffffff');
+            $sense->setFgColor('#000000');
+            $sense->setScore(0);
             $mark->addSense($sense);
             $form = $this->createForm(new SenseType(), $sense);
+            $form->handleRequest($request);
+            
+            if($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($mark);
+                $em->flush();
+                
+                $sense = new Sense();
+                $sense->setBgColor('#ffffff');
+                $sense->setFgColor('#000000');
+                $sense->setScore(0);
+                $form = $this->createForm(new SenseType(), $sense);
+            }
+            
+            return $this->render('Admin/new_sense.html.twig', array(
+                'mark' => $mark,
+                'form' => $form->createView(),
+                'message' => 'Add a new sense',
+                'initial_sense' => $sense,
+            ));
+        }
+    }
+    
+    /**
+     * Action which adds a sense to a given marker
+     * @Route("/admin/sense/edit/{id_marker}/{id_sense}", name="admin_sense_edit")
+     */
+    public function newSenseEdit($id_marker, $id_sense, \Symfony\Component\HttpFoundation\Request $request) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id_marker);
+        
+        $sense = $this->getDoctrine()
+                     ->getRepository('AppBundle:Sense')
+                     ->find($id_marker);
+        // TODO: what to do if the marker is not found. Assumes it works right now
+        if($mark && $sense) {
+            $form = $this->createForm(new SenseType(true), $sense);
             $form->handleRequest($request);
             
             if($form->isValid()) {
@@ -336,6 +403,8 @@ class AdminController extends Controller
             return $this->render('Admin/new_sense.html.twig', array(
                 'mark' => $mark,
                 'form' => $form->createView(),
+                'message' => 'Edit sense',
+                'initial_sense' => $sense,
             ));
         }
     }
