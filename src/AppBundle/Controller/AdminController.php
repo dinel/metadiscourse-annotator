@@ -196,8 +196,8 @@ class AdminController extends Controller
                         'placeholder' => 'Choose an option',
                         'choices' => array(                            
                             'Upload a text file' => 1,
-                            'Copy/paste the text'=> 2,
-                            'Upload annotated text (experimental)' => 3,
+                            //'Copy/paste the text'=> 2,
+                            //'Upload annotated text (experimental)' => 3,
                         ),                        
                         'choices_as_values' => true,
                     ))
@@ -223,6 +223,7 @@ class AdminController extends Controller
                         'label' => false,
                         'required' => false,
                     ))
+                /*
                 ->add('domains', 'entity', array(
                         'class'     => 'AppBundle:Domain',
                         'choice_label' => 'Domains',
@@ -232,7 +233,7 @@ class AdminController extends Controller
                         },
                         'expanded'  => true,
                         'multiple'  => true
-                    ))
+                    ))*/
                 ->add('save', 'submit', array('label' => 'Add text'))
                 ->getForm();
         
