@@ -388,7 +388,7 @@ class AdminController extends Controller
         
         $sense = $this->getDoctrine()
                      ->getRepository('AppBundle:Sense')
-                     ->find($id_marker);
+                     ->find($id_sense);
         // TODO: what to do if the marker is not found. Assumes it works right now
         if($mark && $sense) {
             $form = $this->createForm(new SenseType(true), $sense);
