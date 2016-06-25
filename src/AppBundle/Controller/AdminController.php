@@ -688,6 +688,13 @@ class AdminController extends Controller
         }
     }
     
+    /**
+     * Finds markables in an array of tokens
+     * @param array $tokens the array of tokens
+     * @param int $pos the position from which the search starts
+     * @param array $marks_array an array with the markables
+     * @return array the longest markable that starts at position pos
+     */
     private function findMarkable($tokens, $pos, $marks_array) {
         $best_match = null;
         $best_match_len = 0;
@@ -698,7 +705,8 @@ class AdminController extends Controller
             $match = True;
             for($i = 0; $i < count($a_text); $i++) {
                 if(($pos + $i >= count($tokens)) ||
-                   ($pos + $i < count($tokens) && $a_text[$i] != $tokens[$pos + $i])) {
+                   (($pos + $i < count($tokens)) 
+                     && strtolower($a_text[$i]) != strtolower($tokens[$pos + $i]))) {
                     $match = False;
                     break;
                 }
@@ -756,6 +764,14 @@ class AdminController extends Controller
         }
     }
     
+    /**
+     * Finds markables in an array of tokens
+     * @param array $tokens the array of tokens
+     * @param int $pos the position from which the search starts
+     * @param array $marks_array an array with the markables
+     * @return array the longest markable that starts at position pos
+     * TODO: findMarkable is very similar. have only one of them. 
+     */
     private function findMarkableInDatabase($tokens, $pos, $marks_array) {
         $best_match = null;
         $best_match_len = 0;
@@ -767,7 +783,7 @@ class AdminController extends Controller
             for($i = 0; $i < count($a_text); $i++) {
                 if(($pos + $i >= count($tokens)) ||
                    ($tokens[$pos + $i]->getMarkable()) ||
-                   ($a_text[$i] != $tokens[$pos + $i]->getContent())) {
+                   (strtolower($a_text[$i]) != strtolower($tokens[$pos + $i]->getContent()))) {
                     $match = False;
                     break;
                 }
