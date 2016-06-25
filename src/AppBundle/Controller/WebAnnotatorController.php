@@ -252,6 +252,7 @@ class WebAnnotatorController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($annotation);
             $em->flush();
+            $em->clear();
             
             return new JsonResponse(array(
                 "style" => "sense" . $sense_id,

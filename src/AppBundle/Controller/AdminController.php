@@ -273,6 +273,7 @@ class AdminController extends Controller
             $this->processText($text, $em);            
             $em->persist($text);
             $em->flush();
+            $em->clear();
             
             if(isset($corpus_id)) {
                 $request->getSession()->remove('corpus');
@@ -617,7 +618,8 @@ class AdminController extends Controller
                 ->find($id);
         $em = $this->getDoctrine()->getManager();
         $this->annotateTextInDatabase($text, $em);
-        $em->flush();  
+        $em->flush(); 
+        $em->clear();
         
         if($corpus_id) {        
             return $this->redirectToRoute("corpus_annotate", 
