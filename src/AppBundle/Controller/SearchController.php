@@ -69,7 +69,7 @@ class SearchController extends Controller
                     $r[] = "Not a marker";
                 }
                 
-                $r[] = $this->getSentence($token->getId(), $term);
+                $r[] = $this->getSentence($token->getId(), $token->getContent());
                 
                 if($r) {
                     $results[] = $r;
