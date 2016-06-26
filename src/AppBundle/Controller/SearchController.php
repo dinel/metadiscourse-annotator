@@ -31,6 +31,8 @@ class SearchController extends Controller
      * @Route("/search/term/{term}", name="search_term")
      */
     public function searchTermAction($term) {
+        
+        $statistics = array();
 
         $tokens = $this->getDoctrine()
                        ->getRepository('\AppBundle\Entity\Token')
@@ -72,6 +74,40 @@ class SearchController extends Controller
                 if($r) {
                     $results[] = $r;
                 }
+                
+                // the statistics
+                if(! array_key_exists($annotation->getUserName(), $statistics)) {
+                    $statistics[$annotation->getUserName()] = array();
+                }                
+                $s_user =& $statistics[$annotation->getUserName()];
+                
+                if(!array_key_exists($annotation->getToken()->getContent(), $s_user)) {
+                        $s_user[$annotation->getToken()->getContent()] = array();
+                }
+                $a_markable =& $s_user[$annotation->getToken()->getContent()];
+                
+                
+                if($annotation->getSense()) {                         
+                    if(!array_key_exists($annotation->getSense()->getDefinition(), $a_markable)) {
+                        $a_markable[$annotation->getSense()->getDefinition()] = array();
+                    }
+                    $a_sense =& $a_markable[$annotation->getSense()->getDefinition()];
+
+                    if(!array_key_exists($annotation->getCategory()->getName(), $a_sense)) {
+                        $a_sense[$annotation->getCategory()->getName()] = 0;
+                    }
+                    $a_sense[$annotation->getCategory()->getName()] += 1;                
+                } else {
+                    if(!array_key_exists("Not marker", $a_markable)) {
+                        $a_markable["Not marker"] = array();
+                    }
+                    $a_sense =& $a_markable["Not marker"];
+
+                    if(!array_key_exists("   ", $a_sense)) {
+                        $a_sense["   "] = 0;
+                    }
+                    $a_sense["   "] += 1;                
+                }
             }
             
             $em->detach($token);
@@ -82,6 +118,7 @@ class SearchController extends Controller
                     'term' => $term,
                     'search_results' => $results,
                     'message' => $message,
+                    'stats' => $statistics,
                 ));
         
     }
