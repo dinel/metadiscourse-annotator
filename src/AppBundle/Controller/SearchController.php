@@ -17,7 +17,6 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Doctrine\ORM\Query\ResultSetMapping;
 
 class SearchController extends Controller
 {
@@ -35,22 +34,28 @@ class SearchController extends Controller
 
         $tokens = $this->getDoctrine()
                        ->getRepository('\AppBundle\Entity\Token')
-                       //->findBy(array("content" => $term));
-                       ->findAll();
+                       ->createQueryBuilder('t')
+                       ->where('upper(t.content) = upper(:token)')
+                       ->setParameter('token', trim($term))
+                       ->getQuery()
+                       //->execute();
+                       ->iterate();
         
         $results = array();
         $message = "";
-        // TODO: probably need to change this to start from markers rather than annotation
-        foreach ($tokens as $token) {
-            //$message .= "+";
-            if(trim($token->getContent()) != $term) {
-                //$message .= ($token->getContent() . "=" . $term . "|");
-                continue;
-            }
+        $em = $this->getDoctrine()->getManager();
+        
+        while (($row = $tokens->next()) !== false) {
+            $token = $row[0];
+            //$message .= "+" . ($token->getId()) . "+";
             
             $annotations = $this->getDoctrine()
                                 ->getRepository('AppBundle:Annotation')
-                                ->findBy(array('token' => $token->getId()));            
+                                ->createQueryBuilder('a')
+                                ->where('a.token = :id')
+                                ->setParameter('id', $token->getId())
+                                ->getQuery()
+                                ->execute();
             
             foreach($annotations as $annotation) {
                 $r = array();
@@ -63,12 +68,15 @@ class SearchController extends Controller
                 }
                 
                 $r[] = $this->getSentence($token->getId(), $term);
-            
+                
                 if($r) {
                     $results[] = $r;
                 }
             }
+            
+            $em->detach($token);
         }
+        $em->clear();
         
         return $this->render('Search/search_term.html.twig', array(
                     'term' => $term,
@@ -95,9 +103,7 @@ class SearchController extends Controller
                 'uncertain' => $annotation->getUncertain(),
                 ));
     }
-
     
-
     /**
      * 
      * @param type $term_id
@@ -109,23 +115,27 @@ class SearchController extends Controller
         
         $query = $em->createQuery("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id > ?1 ORDER BY t.id");
         $query->setParameter(1, $term_id);
-        $query->setMaxResults(20);
+        $query->setMaxResults(15);
                 
         $str_r = "";
         $tokens = $query->execute();
         foreach($tokens as $token) {
             $str_r .= ($token["content"] . " ");
+            if(strlen($str_r) > 40) break;
         }
         
         $query = $em->createQuery("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id < ?1 ORDER BY t.id DESC");
         $query->setParameter(1, $term_id);
-        $query->setMaxResults(20);
+        $query->setMaxResults(15);
                 
         $str_l = "";
         $tokens = $query->execute();
         foreach($tokens as $token) {
             $str_l = ($token["content"] . " ") . $str_l;
+            if(strlen($str_l) > 40) break;
         }
+        
+        $em->clear();
                 
         return array($str_l, $term, $str_r);        
     } 
