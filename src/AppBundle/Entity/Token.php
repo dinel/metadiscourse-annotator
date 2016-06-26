@@ -54,7 +54,7 @@ class Token {
      * The constructor
      */
     public function __construct($content) {
-        $this->content = $content;
+        $this->content = trim($content);
         $this->markable = null;
         $this->newLineBefore = 0;
     }
