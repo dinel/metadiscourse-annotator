@@ -133,7 +133,7 @@ class SearchController extends Controller
         
         return new JsonResponse(array(
                 'annotator' => $annotation->getUserName(),
-                'sense' => $annotation->getSense()->getDefinition(),
+                'sense' => $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker",
                 'comments' => $annotation->getComments(),
                 'category' => $annotation->getCategoryName(),
                 'polarity' => $annotation->getPolarity(),
