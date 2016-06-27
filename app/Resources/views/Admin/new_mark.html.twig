@@ -15,6 +15,19 @@
         {{ form_row(form.description, { 'attr':{'placeholder':'Enter a description for the metadiscourse marker'} }) }}
         {{ form_widget(form) }}
         {{ form_end(form) }}
+        {% if in_edit_mode == 1 %}
+            <div><a href="{{ path('admin_mark_delete', {'id_marker': mark_id}) }}" class="btn btn-default confirmation">Delete this marker? (use with great care!!!)</a></div>
+        {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>    
+        $('.confirmation').on('click', function () {
+            return confirm('Are you sure you want to delete the marker? As a result you will also remove annotation that uses this marker. The operation is permanent.');
+        });
+    </script>
 {% endblock %}

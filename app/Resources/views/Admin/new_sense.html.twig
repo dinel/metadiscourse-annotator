@@ -81,7 +81,10 @@
                 {{ form_row(form.definition) }}
                 {{ form_widget(form.score) }}                
                 {{ form_end(form) }}
-                <div id="preview">Preview</div>
+                {% if delete_button == 1 %}
+                    <div><a href="{{ path('admin_sense_delete', {'id_marker': mark.id, 'id_sense': initial_sense.id}) }}" class="btn btn-default confirmation">Delete this sense (use with great care!!!)</a></div>
+                {% endif %}
+                <div id="preview" class="voffset2">Preview</div>
             </div>
         </div>
         <div class="row voffset2">
@@ -129,8 +132,13 @@
             $( "#polarity" ).val( $( "#slider" ).slider( "value" ) );
             $( "#sense-score").val( $( "#slider" ).slider( "value" ) );
         });
+        
         $("#preview").css('background-color', "{{ initial_sense.bgcolor }}");
         $("#preview").css('color', "{{ initial_sense.fgcolor }}");
+        
+        $('.confirmation').on('click', function () {
+            return confirm('Are you sure you want to delete the sense? As a result you will also remove annotation that uses this sense. The operation is permanent.');
+        });
         
    </script>
 {% endblock %}

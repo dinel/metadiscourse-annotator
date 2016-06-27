@@ -310,6 +310,8 @@ class AdminController extends Controller
         
         return $this->render('Admin/new_mark.html.twig', array(
                 'form' => $form->createView(),
+                'in_edit_mode' => 0,
+                'mark_id' => $mark->getId(),
         ));
     }
     
@@ -336,10 +338,37 @@ class AdminController extends Controller
         
         return $this->render('Admin/new_mark.html.twig', array(
                 'form' => $form->createView(),
+                'in_edit_mode' => 1,
+                'mark_id' => $mark->getId(),
         ));
     }
     
     /**
+     * 
+     * @param Request $request
+     * @param type $id_marker
+     * @Route("/admin/marker/delete/{id_marker}", name="admin_mark_delete")
+     */
+    public function deleteMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $id_marker) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id_marker);
+        $em = $this->getDoctrine()->getManager();
+        
+        if($mark) {
+            // Step 1: delete all the senses associated with this marker
+            foreach($mark->getSenses() as  $sense) {
+                $this->removeSense($sense, $mark, $em);
+            }
+            
+            // Step 2: find all the tokens that have a markable remove the markable
+            $this->removeMarkable($mark, $em);            
+        }
+        
+        return $this->redirectToRoute("admin_page");
+    }
+
+        /**
      * Action which adds a sense to a given marker
      * @Route("/admin/sense/add/{id_marker}", name="admin_sense_add")
      */
@@ -374,6 +403,7 @@ class AdminController extends Controller
                 'form' => $form->createView(),
                 'message' => 'Add a new sense',
                 'initial_sense' => $sense,
+                'delete_button' => 0,
             ));
         }
     }
@@ -406,8 +436,35 @@ class AdminController extends Controller
                 'form' => $form->createView(),
                 'message' => 'Edit sense',
                 'initial_sense' => $sense,
+                'delete_button' => 1,
             ));
         }
+    }
+    
+    /**
+     * Action which deletes a sense
+     * @Route("/admin/sense/delete/{id_marker}/{id_sense}", name="admin_sense_delete")
+     */
+    public function senseDeleteAction($id_marker, $id_sense, \Symfony\Component\HttpFoundation\Request $request) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id_marker);
+        
+        $sense = $this->getDoctrine()
+                     ->getRepository('AppBundle:Sense')
+                     ->find($id_sense);
+        
+        // TODO: what to do if the marker is not found. Assumes it works right now
+        if($mark && $sense) {
+            $em = $this->getDoctrine()->getManager();
+            
+            $this->removeSense($sense, $mark, $em);
+            
+            return $this->redirectToRoute("admin_sense_add", 
+                    array('id_marker' => $mark->getId()));
+        }
+        
+        return $this->redirectToRoute("admin_page");
     }
     
     /**
@@ -837,5 +894,76 @@ class AdminController extends Controller
             }
         }
     }
+    
+    /**
+     * Removes a sense
+     * @param AppBundle\Entity\Sense $sense
+     * @param AppBundle\Entity\Markable $mark
+     * @param type $em
+     */
+    private function removeSense($sense, $mark, $em) {
+        $annotations = $this->getDoctrine()
+                            ->getRepository('AppBundle:Annotation')
+                            ->createQueryBuilder('a')
+                            ->where('a.sense = :id')
+                            ->setParameter('id', $sense->getId())
+                            ->getQuery()
+                            ->iterate();
+            
+        while (($row = $annotations->next()) !== false) {
+            $annotation = $row[0];
+            $em->remove($annotation);
+        }
+        $mark->removeSense($sense);
+        if(! $em->contains($sense)) {
+            $sense = $em->merge($sense);
+        }
+        $em->remove($sense);
+        $em->flush();
+        $em->clear();
+    }
+    
+    /**
+     * Removes a markable
+     * @param type $mark
+     * @param type $em
+     */
+    private function removeMarkable($mark, $em) {
+        $tokens = $this->getDoctrine()
+                       ->getRepository('\AppBundle\Entity\Token')
+                       ->createQueryBuilder('t')
+                       ->where('t.markable = :id')
+                       ->setParameter('id', $mark->getId())
+                       ->getQuery()
+                       ->iterate();
+            
+        while (($row = $tokens->next()) !== false) {
+            
+            $token = $row[0];
+            
+            $token->setMarkable(null);
+            $em->persist($token);
+            
+            // tidy up if there is any left annotation with senseid = 0 (not metadiscourse)
+            $annotations = $this->getDoctrine()
+                                ->getRepository('AppBundle:Annotation')
+                                ->createQueryBuilder('a')
+                                ->where('a.token = :id')
+                                ->setParameter('id', $token->getId())
+                                ->getQuery()
+                                ->iterate();
+            while (($row = $annotations->next()) !== false) {
+                $annotation = $row[0];
+                $em->remove($annotation);
+            }
+        }
+        if(! $em->contains($mark)) {
+            $mark = $em->merge($mark);
+        }
 
+        $em->flush();
+        $em->remove($mark);
+        $em->flush();
+        $em->clear();
+    }
 }
