@@ -31,77 +31,28 @@ class SearchController extends Controller
      * @Route("/search/term/{term}", name="search_term")
      */
     public function searchTermAction($term) {
-        
         $statistics = array();
-
-        $tokens = $this->getDoctrine()
-                       ->getRepository('\AppBundle\Entity\Token')
-                       ->createQueryBuilder('t')
-                       ->where('upper(t.content) = upper(:token)')
-                       ->setParameter('token', trim($term))
-                       ->getQuery()
-                       //->execute();
-                       ->iterate();
-        
         $results = array();
-        $message = "";
         $em = $this->getDoctrine()->getManager();
+        
+        $tokens = $this->retrieveTokensWithCondition(
+                'upper(t.content) = upper(:param)', trim($term));
         
         while (($row = $tokens->next()) !== false) {
             $token = $row[0];
-            //$message .= "+" . ($token->getId()) . "+";
             
             $annotations = $this->getAnnotationsForToken($token->getId());
             
             foreach($annotations as $annotation) {
                 $r = array();
                 $r[] = $annotation->getId();
-                
-                if($annotation->getSense()) {
-                    $r[] = $annotation->getSense()->getId();
-                } else {
-                    $r[] = "Not a marker";
-                }
-                
+                $r[] = $annotation->getSense() ? 
+                            $annotation->getSense()->getId() :
+                            "Not a marker";
                 $r[] = $this->getSentence($token->getId(), $token->getContent());
+                $results[] = $r;
                 
-                if($r) {
-                    $results[] = $r;
-                }
-                
-                // the statistics
-                if(! array_key_exists($annotation->getUserName(), $statistics)) {
-                    $statistics[$annotation->getUserName()] = array();
-                }                
-                $s_user =& $statistics[$annotation->getUserName()];
-                
-                if(!array_key_exists($annotation->getToken()->getContent(), $s_user)) {
-                        $s_user[$annotation->getToken()->getContent()] = array();
-                }
-                $a_markable =& $s_user[$annotation->getToken()->getContent()];
-                
-                
-                if($annotation->getSense()) {                         
-                    if(!array_key_exists($annotation->getSense()->getDefinition(), $a_markable)) {
-                        $a_markable[$annotation->getSense()->getDefinition()] = array();
-                    }
-                    $a_sense =& $a_markable[$annotation->getSense()->getDefinition()];
-
-                    if(!array_key_exists($annotation->getCategory()->getName(), $a_sense)) {
-                        $a_sense[$annotation->getCategory()->getName()] = 0;
-                    }
-                    $a_sense[$annotation->getCategory()->getName()] += 1;                
-                } else {
-                    if(!array_key_exists("Not marker", $a_markable)) {
-                        $a_markable["Not marker"] = array();
-                    }
-                    $a_sense =& $a_markable["Not marker"];
-
-                    if(!array_key_exists("   ", $a_sense)) {
-                        $a_sense["   "] = 0;
-                    }
-                    $a_sense["   "] += 1;                
-                }
+                $this->updateStatisticsForSenses($statistics, $annotation);
             }
             
             $em->detach($token);
@@ -111,12 +62,10 @@ class SearchController extends Controller
         return $this->render('Search/search_term.html.twig', array(
                     'term' => $term,
                     'search_results' => $results,
-                    'message' => $message,
                     'stats' => $statistics,
-                ));
-        
+                ));        
     }
-    
+       
     /**
      * @Route("/statistics/by-category/{corpus_id}", name="statistics_by_category") 
      */
@@ -144,16 +93,11 @@ class SearchController extends Controller
         foreach($corpus->getTexts() as $text) {
             $list_texts .= ("," . $text->getId());
         }
-        $list_texts = substr($list_texts, 1);        
-
-        $tokens = $this->getDoctrine()
-                       ->getRepository('\AppBundle\Entity\Token')
-                       ->createQueryBuilder('t')
-                       ->where('t.document IN (:list_texts)')
-                       ->setParameter('list_texts', $list_texts)
-                       ->getQuery()
-                       ->iterate();
+        $list_texts = substr($list_texts, 1);       
         
+        $tokens = $this->retrieveTokensWithCondition(
+                't.document IN (:param)', $list_texts);
+
         $em = $this->getDoctrine()->getManager();
         
         while (($row = $tokens->next()) !== false) {
@@ -164,9 +108,9 @@ class SearchController extends Controller
             foreach($annotations as $annotation) {
                 $category = $annotation->getCategory();
                 if($category) {
-                    $this->updateStatistics($statistics, $category->getName());
+                    $this->updateStatisticsForCategories($statistics, $category->getName());
                     if($category->getParent()) {
-                        $this->updateStatistics($statistics, $category->getParent()->getName());
+                        $this->updateStatisticsForCategories($statistics, $category->getParent()->getName());
                     }
                 }
             }
@@ -184,15 +128,7 @@ class SearchController extends Controller
                     'cats' => $cats,
                     'corpus' => $corpus,
                 ));        
-    }
-    
-    private function updateStatistics(&$statistics, $category_name) {
-        if(! key_exists($category_name, $statistics)) {
-            $statistics[$category_name] = 0;
-        }
-        
-        $statistics[$category_name] += 1;
-    }
+    }    
 
     /**
      * @Route("/search/retrieve_info/{id}")
@@ -216,44 +152,70 @@ class SearchController extends Controller
      * @Route("/search/
      */
     
-    /**
+    /***********************************************************************
      * 
-     * @param type $term_id
-     * @param type $term
-     * @return type
-     */    
-    private function getSentence($term_id, $term) {
+     * Private methods from here
+     * 
+     ***********************************************************************/    
+    
+    /**
+     * Helper function that retrieves the left or right context for a term
+     * @param string $str_query the query that needs to be run to retrieve the 
+     * context
+     * @param int $term_id the ID of the term
+     * @param int $direction indicates whether it is left context (value 1) or 
+     * right context (any other value)
+     * @return string the context
+     */
+    private function getContext($str_query, $term_id, $direction) {
         $em = $this->getDoctrine()->getManager();
         
-        $query = $em->createQuery("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id > ?1 ORDER BY t.id");
+        $query = $em->createQuery($str_query);
         $query->setParameter(1, $term_id);
         $query->setMaxResults(15);
                 
-        $str_r = "";
+        $str = "";
         $tokens = $query->execute();
         foreach($tokens as $token) {
-            $str_r .= ($token["content"] . " ");
-            if(strlen($str_r) > 40) break;
-        }
-        
-        $query = $em->createQuery("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id < ?1 ORDER BY t.id DESC");
-        $query->setParameter(1, $term_id);
-        $query->setMaxResults(15);
-                
-        $str_l = "";
-        $tokens = $query->execute();
-        foreach($tokens as $token) {
-            $str_l = ($token["content"] . " ") . $str_l;
-            if(strlen($str_l) > 40) break;
+            if($direction == 1) {
+                $str .= ($token["content"] . " ");
+            } else {
+                $str = ($token["content"] . " ") . $str;
+            }
+            
+            if (strlen($str) > 40) {
+                break;
+            }
         }
         
         $em->clear();
-                
-        return array($str_l, $term, $str_r);        
-    } 
+        
+        return $str;        
+    }
     
     /**
+     * Function that returns a tuple that contain the left and right context 
+     * for concordances
+     * 
+     * @param int $term_id the ID of the term for which the context is retrieved
+     * @param string $term the actual term. Probably it will be removed because it
+     *                     is not really necessary 
+     * @return array a tuple that contains (left context, term, right context)
+     */    
+    private function getSentence($term_id, $term) {
+        $str_r = $this->getContext(
+                "SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id > ?1 ORDER BY t.id", 
+                $term_id, 1);
+                
+        $str_l = $this->getContext("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id < ?1 ORDER BY t.id DESC", 
+                $term_id, 2);
+        
+        return array($str_l, $term, $str_r);        
+    }
+
+    /**
      * Returns the annotations assigned to a token 
+     * 
      * @param int $token_id the ID of the token for which the annotation is 
      *            to be returned
      * @return array The list of annotations
@@ -266,5 +228,79 @@ class SearchController extends Controller
                     ->setParameter('id', $token_id)
                     ->getQuery()
                     ->execute();
+    }
+    
+    /**
+     * Returns an iterator which gives access to tokens that fulfil a certain
+     * condition
+     * 
+     * @param string $condition the condition used in the WHERE statement
+     * @param string $param parameter for the WHERE statement
+     * @return iterator iterator which gives access to tokens
+     */
+    private function retrieveTokensWithCondition($condition, $param) {
+        return $this->getDoctrine()
+                    ->getRepository('\AppBundle\Entity\Token')
+                    ->createQueryBuilder('t')
+                    ->where($condition)
+                    ->setParameter('param', $param)
+                    ->getQuery()
+                    ->iterate();
+    }
+    
+    /**
+     * Update the statistics about categories on the basis of the name of category
+     * 
+     * @param array $statistics the associative array that stores the statistics
+     * @param string $category_name the name of category
+     */
+    private function updateStatisticsForCategories(&$statistics, $category_name) {
+        if(! key_exists($category_name, $statistics)) {
+            $statistics[$category_name] = 0;
+        }
+        
+        $statistics[$category_name] += 1;
+    }
+    
+    /**
+     * Update the statistics about senses on the basis of an annotation
+     * 
+     * @param array $statistics an associative array that is passed by reference.
+     *                          It contains the statistics
+     * @param type $annotation the annotation
+     */
+    private function updateStatisticsForSenses(&$statistics, $annotation) {
+        if(! array_key_exists($annotation->getUserName(), $statistics)) {
+            $statistics[$annotation->getUserName()] = array();
+        }                
+        $s_user =& $statistics[$annotation->getUserName()];
+
+        if(!array_key_exists($annotation->getToken()->getContent(), $s_user)) {
+                $s_user[$annotation->getToken()->getContent()] = array();
+        }
+        $a_markable =& $s_user[$annotation->getToken()->getContent()];
+
+
+        if($annotation->getSense()) {                         
+            if(!array_key_exists($annotation->getSense()->getDefinition(), $a_markable)) {
+                $a_markable[$annotation->getSense()->getDefinition()] = array();
+            }
+            $a_sense =& $a_markable[$annotation->getSense()->getDefinition()];
+
+            if(!array_key_exists($annotation->getCategory()->getName(), $a_sense)) {
+                $a_sense[$annotation->getCategory()->getName()] = 0;
+            }
+            $a_sense[$annotation->getCategory()->getName()] += 1;                
+        } else {
+            if(!array_key_exists("Not marker", $a_markable)) {
+                $a_markable["Not marker"] = array();
+            }
+            $a_sense =& $a_markable["Not marker"];
+
+            if(!array_key_exists("   ", $a_sense)) {
+                $a_sense["   "] = 0;
+            }
+            $a_sense["   "] += 1;                
+        }
     }
 }
