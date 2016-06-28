@@ -25,9 +25,10 @@ class CorpusAdminController extends Controller
 {
     /**
      * Lists all the corpora available
+     * @Route("/select-corpus/{path}", name="select-corpus")
      * @Route("/admin/corpora/", name="corpora_admin_page")
      */
-    public function listCorporaAction() {
+    public function listCorporaAction($path = null) {
         $corpora = $this->getDoctrine()
                     ->getRepository("AppBundle:Corpus")
                     ->findAll();
@@ -39,6 +40,7 @@ class CorpusAdminController extends Controller
         return $this->render('Admin/list_corpora.html.twig', array(
                 'corpora' => $corpora,
                 'chars' => $chars,
+                'path' => $path,
             ));
     }
     
