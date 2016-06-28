@@ -64,3 +64,13 @@ ul.edit-list a.faded:hover {
 #add-existing-div input {
     width: 100%;
 }
+
+.with-border {
+    border: thin dotted black;
+    padding: 1em;
+}
+
+.explanation {
+    font-size: 80%;
+    font-style: italic;
+}
