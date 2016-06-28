@@ -1,0 +1,73 @@
+{# app/Resources/views/Search/search_term.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/search.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">    
+        <div class="row voffset3">
+            <div class="col-md-8 col-md-offset-2">
+                <div>
+                    <h4>Statistics</h4>
+                    <table class="table table-hover">
+                        <tr>
+                            <td>User</td>
+                            <td>Marker</td>
+                            <td>Sense</td>
+                            <td>Category</td>
+                            <td>Count</td>
+                        </tr>
+                        {% for user, u_stats in stats %}
+                            {% for mark, m_stats in u_stats %}
+                                {% for sense, s_stats in m_stats %}
+                                    {% for cat, val in s_stats %}
+                                        <tr>
+                                            <td>{{ user }}</td>
+                                            <td>{{ mark }}</td>
+                                            <td>{{ sense }}</td>
+                                            <td>{{ cat }}</td>
+                                            <td>{{ val }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </div>
+                <br/>
+                    
+                    
+                <h4>The annotation</h4>
+                <table class="table-hover">
+                {% set counter = 1 %}
+                {% for result in search_results %}
+                    <tr>
+                        <td style="padding-right:5px;">{{ counter }}.</td>
+                        <td style="max-width: 335px; text-align: right; padding-right: 5px;">
+                            <span class="concordance-left">{{ result[2][0] }}</span>
+                        </td>
+                        <td><span class="sense{{ result[1] }}"> {{ result[2][1] }}</span></td>
+                        <td style="max-width: 335px; text-align: left; padding-left: 5px;">
+                            <span class="concordance-right">{{ result[2][2] }}</span>
+                        </td>
+                        <td style="padding-left:25px;"><a id="{{ result[0] }}" class="concordance"> +</a></td>
+                    </tr>
+                    <tr class="more-info"><td class="more-info-block" colspan="4"></td></tr>
+                    {% set counter = counter + 1 %}
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+                
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/search.js') }}"></script>
+{% endblock %}

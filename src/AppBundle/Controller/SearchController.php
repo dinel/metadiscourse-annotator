@@ -30,7 +30,18 @@ class SearchController extends Controller
     /**
      * @Route("/search/term/{term}", name="search_term")
      */
-    public function searchTermAction($term) {
+    public function searchTermAction($term) {        
+        return $this->render('Search/search_term.html.twig', array(
+                    'message' => " keyword <i>" . $term . "</i>",
+                    'stats_for' => "term",
+                    'parameter_to_controller' => $term,
+                ));        
+    }
+    
+    /**
+     * @Route("/search/term_intern/{term}", name="search_term_intern")
+     */
+    public function searchTermInternAction($term) {
         $statistics = array();
         $results = array();
         $em = $this->getDoctrine()->getManager();
@@ -59,8 +70,7 @@ class SearchController extends Controller
         }
         $em->clear();
         
-        return $this->render('Search/search_term.html.twig', array(
-                    'term' => $term,
+        return $this->render('Search/search_term_intern.html.twig', array(
                     'search_results' => $results,
                     'stats' => $statistics,
                 ));        
@@ -70,6 +80,21 @@ class SearchController extends Controller
      * @Route("/search/category/{category_id}", name="search_category")
      */
     public function searchCategoryAction($category_id) {
+        $cat = $this->getDoctrine()
+                    ->getRepository('AppBundle:Category')
+                    ->find($category_id);                               
+        
+        return $this->render('Search/search_term.html.twig', array(
+                    'message' => " category <i>" . $cat->getName() . "</i>",
+                    'stats_for' => "category",
+                    'parameter_to_controller' => $category_id,
+                ));        
+    }
+    
+    /**
+     * @Route("/search/category_intern/{category_id}", name="search_category_intern")
+     */
+    public function searchCategoryInternAction($category_id) {
         $statistics = array();
         $results = array();
         $em = $this->getDoctrine()->getManager();
@@ -85,7 +110,7 @@ class SearchController extends Controller
             
             foreach($annotations as $annotation) {
                 $category = $annotation->getCategory();
-                if($category && 
+                if($category && $annotation->getSense() &&
                   (($category->getId() == $category_id) ||
                    ($category->getParent() && $category->getParent()->getId() == $category_id))) {
                     $r = array();
@@ -105,8 +130,7 @@ class SearchController extends Controller
             $em->clear();
         }        
         
-        return $this->render('Search/search_term.html.twig', array(
-                    'term' => "",
+        return $this->render('Search/search_term_intern.html.twig', array(        
                     'search_results' => $results,
                     'stats' => $statistics,
                 ));        
@@ -330,7 +354,6 @@ class SearchController extends Controller
                 $s_user[$annotation->getToken()->getContent()] = array();
         }
         $a_markable =& $s_user[$annotation->getToken()->getContent()];
-
 
         if($annotation->getSense()) {                         
             if(!array_key_exists($annotation->getSense()->getDefinition(), $a_markable)) {
