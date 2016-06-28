@@ -17,22 +17,10 @@
                 
                 <div><b>Corpus</b>: {{ corpus.name }}</div>
                 
-                <table  class="table voffset4">
-                {% for cat in cats %}
-                    {% if not cat.parent and cat.name != "No parent category" %}
-                        <tr>
-                            <td rowspan="{{ cat.children | length ? cat.children | length : 1}}">{{ cat.name }}: {{ attribute(stats, cat.name) is defined ? stats[cat.name] : 0 }}</td>
-                            {% set first = 1 %}
-                            {% for subcat in cat.children %}
-                                {% if first != 1 %}
-                                    <tr>
-                                {% endif %}
-                                {% set first = 2 %}
-                                <td>{{ subcat.name }}: {{ attribute(stats, subcat.name) is defined ? stats[subcat.name] : 0 }}</td></tr>
-                            {% endfor %}
-                    {% endif %}                        
-                {% endfor %}
-                </tr></table>
+                <div class="voffset3 text-center">
+                    {{ render_hinclude(controller('AppBundle:Search:statisticsByCategoryIntern', {'corpus_id': corpus.id}), 
+                            {'default': 'misc/wait.html.twig'}) }}
+                </div>
             </div>
         </div>
     </div>
@@ -40,4 +28,5 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('js/hinclude.js') }}"></script>
 {% endblock %}

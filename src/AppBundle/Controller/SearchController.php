@@ -51,13 +51,7 @@ class SearchController extends Controller
             $token = $row[0];
             //$message .= "+" . ($token->getId()) . "+";
             
-            $annotations = $this->getDoctrine()
-                                ->getRepository('AppBundle:Annotation')
-                                ->createQueryBuilder('a')
-                                ->where('a.token = :id')
-                                ->setParameter('id', $token->getId())
-                                ->getQuery()
-                                ->execute();
+            $annotations = $this->getAnnotationsForToken($token->getId());
             
             foreach($annotations as $annotation) {
                 $r = array();
@@ -127,6 +121,19 @@ class SearchController extends Controller
      * @Route("/statistics/by-category/{corpus_id}", name="statistics_by_category") 
      */
     public function statisticsByCategoryAction($corpus_id) {
+        $corpus = $this->getDoctrine()
+                      ->getRepository('\AppBundle\Entity\Corpus')
+                      ->find($corpus_id);                
+        
+        return $this->render('Search/statistics_by_category.html.twig', array(
+                    'corpus' => $corpus,
+                ));        
+    }
+    
+    /**
+     * @Route("/statistics/by-category-intern/{corpus_id}", name="statistics_by_category_intern") 
+     */
+    public function statisticsByCategoryInternAction($corpus_id) {
         $statistics = array();
         
         $corpus = $this->getDoctrine()
@@ -152,13 +159,7 @@ class SearchController extends Controller
         while (($row = $tokens->next()) !== false) {
             $token = $row[0];
             
-            $annotations = $this->getDoctrine()
-                                ->getRepository('AppBundle:Annotation')
-                                ->createQueryBuilder('a')
-                                ->where('a.token = :id')
-                                ->setParameter('id', $token->getId())
-                                ->getQuery()
-                                ->execute();
+            $annotations = $this->getAnnotationsForToken($token->getId());                    
             
             foreach($annotations as $annotation) {
                 $category = $annotation->getCategory();
@@ -178,12 +179,11 @@ class SearchController extends Controller
         
         $em->clear();
         
-        return $this->render('Search/statistics_by_category.html.twig', array(
+        return $this->render('Search/statistics_by_category_intern.html.twig', array(
                     'stats' => $statistics,
                     'cats' => $cats,
                     'corpus' => $corpus,
-                ));
-        
+                ));        
     }
     
     private function updateStatistics(&$statistics, $category_name) {
@@ -251,4 +251,20 @@ class SearchController extends Controller
                 
         return array($str_l, $term, $str_r);        
     } 
+    
+    /**
+     * Returns the annotations assigned to a token 
+     * @param int $token_id the ID of the token for which the annotation is 
+     *            to be returned
+     * @return array The list of annotations
+     */
+    private function getAnnotationsForToken($token_id){
+        return $this->getDoctrine()
+                    ->getRepository('AppBundle:Annotation')
+                    ->createQueryBuilder('a')
+                    ->where('a.token = :id')
+                    ->setParameter('id', $token_id)
+                    ->getQuery()
+                    ->execute();
+    }
 }
