@@ -33,9 +33,22 @@ class WebAnnotatorController extends Controller
                 ->find($id);
         
         if($doc) {
-            $tokens = $doc->getTokens();
+            //$tokens = $doc->getTokens();
+            
+            $tokens = $this->getDoctrine()
+                       ->getRepository('\AppBundle\Entity\Token')
+                       ->createQueryBuilder('t')
+                       ->where('t.document = :id')
+                       ->setParameter('id', $id)
+                       ->getQuery()
+                       //->execute();
+                       ->iterate();
+            
             $tokens_style = array();
-            foreach($tokens as $token) {
+            $em = $this->getDoctrine()->getManager();
+
+            while (($row = $tokens->next()) !== false) {
+                $token = $row[0];
                 $ann = $this->getAnnotation($token);
                 if($ann) {
                     if($ann[0]->getSense()) {
@@ -48,8 +61,9 @@ class WebAnnotatorController extends Controller
                 } else {
                     $tokens_style[] = array($token, "normal");
                 }
-                
+                $em->detach($token);
             }
+            $em->clear();
                         
             return $this->render('Annotator/index.html.twig', array(
                     'title' => $doc->getTitle(),
