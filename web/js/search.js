@@ -21,7 +21,7 @@ $( document ).ready(function() {
     
     $('.more-info').hide();
     
-    $('.concordance').click(function() {        
+    $("#results").on('click', '.concordance', function() {        
         var node = $(this).parent().parent().next().find('.more-info-block');
         if(node.html()) {
             node.parent().toggle();

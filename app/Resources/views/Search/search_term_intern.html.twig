@@ -43,7 +43,7 @@
                     
                     
                 <h4>The annotation</h4>
-                <table class="table-hover">
+                <table id="concordances" class="table-hover">
                 {% set counter = 1 %}
                 {% for result in search_results %}
                     <tr>
@@ -65,9 +65,4 @@
         </div>
     </div>
                 
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('js/search.js') }}"></script>
 {% endblock %}
