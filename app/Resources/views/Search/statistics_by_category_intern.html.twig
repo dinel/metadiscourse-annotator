@@ -17,14 +17,22 @@
                 {% for cat in cats %}
                     {% if not cat.parent and cat.name != "No parent category" %}
                         <tr>
-                            <td rowspan="{{ cat.children | length ? cat.children | length : 1}}">{{ cat.name }}: {{ attribute(stats, cat.name) is defined ? stats[cat.name] : 0 }}</td>
+                            <td rowspan="{{ cat.children | length ? cat.children | length : 1}}">{{ cat.name }}: 
+                                <a href="{{ path('search_category', {'category_id':cat.id }) }}">
+                                    {{ attribute(stats, cat.name) is defined ? stats[cat.name] : 0 }}
+                                </a>
+                            </td>                                
                             {% set first = 1 %}
                             {% for subcat in cat.children %}
                                 {% if first != 1 %}
                                     <tr>
                                 {% endif %}
                                 {% set first = 2 %}
-                                <td>{{ subcat.name }}: {{ attribute(stats, subcat.name) is defined ? stats[subcat.name] : 0 }}</td></tr>
+                                <td>{{ subcat.name }}: 
+                                    <a href="{{ path('search_category', {'category_id':subcat.id }) }}">
+                                        {{ attribute(stats, subcat.name) is defined ? stats[subcat.name] : 0 }}
+                                    </a>
+                                </td></tr>
                             {% endfor %}
                     {% endif %}                        
                 {% endfor %}

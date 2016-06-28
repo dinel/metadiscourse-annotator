@@ -65,6 +65,52 @@ class SearchController extends Controller
                     'stats' => $statistics,
                 ));        
     }
+    
+    /**
+     * @Route("/search/category/{category_id}", name="search_category")
+     */
+    public function searchCategoryAction($category_id) {
+        $statistics = array();
+        $results = array();
+        $em = $this->getDoctrine()->getManager();
+        
+        $tokens = $this->retrieveTokensWithCondition(null, null);
+        
+        set_time_limit(0);
+        
+        while (($row = $tokens->next()) !== false) {
+            $token = $row[0];
+            
+            $annotations = $this->getAnnotationsForToken($token->getId());
+            
+            foreach($annotations as $annotation) {
+                $category = $annotation->getCategory();
+                if($category && 
+                  (($category->getId() == $category_id) ||
+                   ($category->getParent() && $category->getParent()->getId() == $category_id))) {
+                    $r = array();
+                    $r[] = $annotation->getId();
+                    $r[] = $annotation->getSense() ? 
+                                $annotation->getSense()->getId() :
+                                "Not a marker";
+                    $r[] = $this->getSentence($token->getId(), $token->getContent());
+                    $results[] = $r;
+
+                    $this->updateStatisticsForSenses($statistics, $annotation);
+                }
+                $em->detach($annotation);
+            }
+            
+            $em->detach($token);
+            $em->clear();
+        }        
+        
+        return $this->render('Search/search_term.html.twig', array(
+                    'term' => "",
+                    'search_results' => $results,
+                    'stats' => $statistics,
+                ));        
+    }
        
     /**
      * @Route("/statistics/by-category/{corpus_id}", name="statistics_by_category") 
@@ -234,18 +280,23 @@ class SearchController extends Controller
      * Returns an iterator which gives access to tokens that fulfil a certain
      * condition
      * 
-     * @param string $condition the condition used in the WHERE statement
+     * @param string $condition the condition used in the WHERE statement. If
+     *                          the condition is empty no WHERE statement is used.
      * @param string $param parameter for the WHERE statement
      * @return iterator iterator which gives access to tokens
      */
     private function retrieveTokensWithCondition($condition, $param) {
-        return $this->getDoctrine()
-                    ->getRepository('\AppBundle\Entity\Token')
-                    ->createQueryBuilder('t')
-                    ->where($condition)
-                    ->setParameter('param', $param)
-                    ->getQuery()
-                    ->iterate();
+        $query = $this->getDoctrine()
+                      ->getRepository('\AppBundle\Entity\Token')
+                      ->createQueryBuilder('t');
+        
+        if($condition) {
+            $query = $query->where($condition)
+                           ->setParameter('param', $param);
+        }
+        
+        return $query->getQuery()
+                     ->iterate();
     }
     
     /**
