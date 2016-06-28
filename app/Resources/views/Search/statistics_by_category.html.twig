@@ -1,0 +1,43 @@
+{# empty Twig template #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/search.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+
+{% block body %}
+    <div class="container">
+        <div class="row voffset3"> 
+            <div class="col-md-6">
+                <h2>Statistics per categories</h2>
+                
+                <div><b>Corpus</b>: {{ corpus.name }}</div>
+                
+                <table  class="table voffset4">
+                {% for cat in cats %}
+                    {% if not cat.parent and cat.name != "No parent category" %}
+                        <tr>
+                            <td rowspan="{{ cat.children | length ? cat.children | length : 1}}">{{ cat.name }}: {{ attribute(stats, cat.name) is defined ? stats[cat.name] : 0 }}</td>
+                            {% set first = 1 %}
+                            {% for subcat in cat.children %}
+                                {% if first != 1 %}
+                                    <tr>
+                                {% endif %}
+                                {% set first = 2 %}
+                                <td>{{ subcat.name }}: {{ attribute(stats, subcat.name) is defined ? stats[subcat.name] : 0 }}</td></tr>
+                            {% endfor %}
+                    {% endif %}                        
+                {% endfor %}
+                </tr></table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
