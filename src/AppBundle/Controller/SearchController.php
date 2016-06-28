@@ -24,7 +24,7 @@ class SearchController extends Controller
      * @Route("/search")
      */
     public function indexAction() {
-        return $this->render('FrontPage/index.html.twig');
+        return $this->render('Search/index.html.twig');
     }
 
     /**
@@ -124,6 +124,77 @@ class SearchController extends Controller
     }
     
     /**
+     * @Route("/statistics/by-category/{corpus_id}", name="statistics_by_category") 
+     */
+    public function statisticsByCategoryAction($corpus_id) {
+        $statistics = array();
+        
+        $corpus = $this->getDoctrine()
+                      ->getRepository('\AppBundle\Entity\Corpus')
+                      ->find($corpus_id);
+        
+        $list_texts = "";
+        foreach($corpus->getTexts() as $text) {
+            $list_texts .= ("," . $text->getId());
+        }
+        $list_texts = substr($list_texts, 1);        
+
+        $tokens = $this->getDoctrine()
+                       ->getRepository('\AppBundle\Entity\Token')
+                       ->createQueryBuilder('t')
+                       ->where('t.document IN (:list_texts)')
+                       ->setParameter('list_texts', $list_texts)
+                       ->getQuery()
+                       ->iterate();
+        
+        $em = $this->getDoctrine()->getManager();
+        
+        while (($row = $tokens->next()) !== false) {
+            $token = $row[0];
+            
+            $annotations = $this->getDoctrine()
+                                ->getRepository('AppBundle:Annotation')
+                                ->createQueryBuilder('a')
+                                ->where('a.token = :id')
+                                ->setParameter('id', $token->getId())
+                                ->getQuery()
+                                ->execute();
+            
+            foreach($annotations as $annotation) {
+                $category = $annotation->getCategory();
+                if($category) {
+                    $this->updateStatistics($statistics, $category->getName());
+                    if($category->getParent()) {
+                        $this->updateStatistics($statistics, $category->getParent()->getName());
+                    }
+                }
+            }
+            $em->detach($token);
+        }
+        
+        $cats = $this->getDoctrine()
+                     ->getRepository('AppBundle:Category')
+                     ->findAll();
+        
+        $em->clear();
+        
+        return $this->render('Search/statistics_by_category.html.twig', array(
+                    'stats' => $statistics,
+                    'cats' => $cats,
+                    'corpus' => $corpus,
+                ));
+        
+    }
+    
+    private function updateStatistics(&$statistics, $category_name) {
+        if(! key_exists($category_name, $statistics)) {
+            $statistics[$category_name] = 0;
+        }
+        
+        $statistics[$category_name] += 1;
+    }
+
+    /**
      * @Route("/search/retrieve_info/{id}")
      */
     public function getAnnotationInformation($id) {
@@ -140,6 +211,10 @@ class SearchController extends Controller
                 'uncertain' => $annotation->getUncertain(),
                 ));
     }
+    
+    /**
+     * @Route("/search/
+     */
     
     /**
      * 
