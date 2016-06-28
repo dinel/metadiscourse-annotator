@@ -1,0 +1,43 @@
+{# app/Resources/views/FrontPAge/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="row voffset4">
+            <div class="col-md-6 col-md-offset-3 with-border">
+                <h4>Simple search</h4>
+                <div class="input-group">                    
+                    <input id="search-field" type="text" class="form-control" placeholder="Enter expression...">
+                    <span class="input-group-btn">
+                        <button id="search-button" class="btn btn-secondary" type="button">Analyze!</button>
+                    </span>
+                </div>
+                <p class="voffset1 explanation">Useful for quick searches, but does not allow setting any restrictions.</p>
+            </div>
+        </div>
+        
+        <div class="row voffset4">
+            <div class="col-md-6 col-md-offset-3 with-border">
+                <h4>Extract statistics and search corpus by:</h4>
+                <ul>
+                    <li><a href="{{ path('select-corpus', {'path':'by-category'}) }}">categories</a></li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/search.js') }}"></script>
+{% endblock %}
+
