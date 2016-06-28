@@ -22,15 +22,23 @@
                         <strong>{{ corpus.name }}</strong><br/>
                         {{ corpus.description | truncate(200) }} ...<br/>
                         No of texts: {{ corpus.texts | length }} <br/>
-                        <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
-                        <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation" role="button">Delete</a>
-                        <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default" role="button">Annotate</a>
+                        {% if not path %}
+                            <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
+                            <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation" role="button">Delete</a>                        
+                            <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default" role="button">Annotate</a>
+                        {% endif %}
+                        {% if path == "by-category" %}
+                            <a href="{{ path('statistics_by_category', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
+                        {% endif %}
                     </div>
                 {% endfor %}
                 </div>
+                
+                {% if not path %}
                 <div class="voffset5">
                     <a id="new-text" href="{{ path('admin_new_corpus') }}" class="btn btn-default" role="button">New corpus</a>
                 </div>
+                {% endif %}
                 
             </div>
                 
