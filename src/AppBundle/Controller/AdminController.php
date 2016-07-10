@@ -831,7 +831,7 @@ class AdminController extends Controller
      * @return array the longest markable that starts at position pos
      * TODO: findMarkable is very similar. have only one of them. 
      */
-    private function findMarkableInDatabase($tokens, $pos, $marks_array) {
+    private function findMarkableInDatabase($tokens, $pos, $marks_array, $ignore_annotated = true) {
         $best_match = null;
         $best_match_len = 0;
         
@@ -841,7 +841,7 @@ class AdminController extends Controller
             $match = True;
             for($i = 0; $i < count($a_text); $i++) {
                 if(($pos + $i >= count($tokens)) ||
-                   ($tokens[$pos + $i]->getMarkable()) ||
+                   ($ignore_annotated && $tokens[$pos + $i]->getMarkable()) ||
                    (strtolower($a_text[$i]) != strtolower($tokens[$pos + $i]->getContent()))) {
                     $match = False;
                     break;
@@ -861,9 +861,12 @@ class AdminController extends Controller
     }    
 
     private function annotateTextInDatabase(\AppBundle\Entity\Text $text, $em) {       
+        set_time_limit(0);
+        
+        // TODO: get this from database/configuration
+        $ignore_annotated = false;
         
         // load all the markers
-        // TODO: filter by domain
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
         $marks = $repository->findBy(array(), array('text' => 'ASC'));
         $marks_array = array();
@@ -874,25 +877,53 @@ class AdminController extends Controller
         $tokens = $text->getTokens()->toArray();
         $pos = 0;
         while($pos < count($tokens)) {                
-            $match = $this->findMarkableInDatabase($tokens, $pos, $marks_array);
+            $match = $this->findMarkableInDatabase($tokens, $pos, $marks_array, 
+                        $ignore_annotated);
             if($match) {
                 $token = "";
                 $pos_saved = $pos;
                 for($j = 0; $j < $match[1]; $j++) {
                     $token = $token . " " . $tokens[$pos]->getContent();
+                                        
                     if($j > 0) {
-                        $em->remove($tokens[$pos]);
+                        if($tokens[$pos]->getMarkable()) {
+                            // is there annotation?
+                            $annotations = $this->getDoctrine()
+                                    ->getRepository('AppBundle:Annotation')
+                                    ->createQueryBuilder('a')
+                                    ->where('a.token = :id')
+                                    ->setParameter('id', $tokens[$pos]->getId())
+                                    ->getQuery()
+                                    ->iterate();
+                            
+                            while (($row = $annotations->next()) !== false) {
+                                $annotation = $row[0];
+                                $em->remove($annotation);
+                            }
+                        }
+                        $tokens[$pos]->setMarkable(null);
                         $text->removeToken($tokens[$pos]);
+                        $tokens[$pos]->setDocument(null);
+                        if(! $em->contains($tokens[$pos])) {
+                            $tokens[$pos] = $em->merge($tokens[$pos]);
+                        }
+                        
+                        $em->remove($tokens[$pos]);                        
                     }
                     $pos++;
                 }
                 $tokens[$pos_saved]->setContent($token);
                 $tokens[$pos_saved]->setMarkable($match[0]);
-                $em->persist($tokens[$pos_saved]);
+                if($em->contains($tokens[$pos_saved])) {
+                    $em->persist($tokens[$pos_saved]);
+                } else {
+                    $em->merge($tokens[$pos_saved]);
+                }
             } else {
                 $pos++;
             }
         }
+        $em->flush();
     }
     
     /**
