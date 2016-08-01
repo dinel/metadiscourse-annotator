@@ -8,7 +8,8 @@
 $( document ).ready(function() {
     $('#search-button').click(function() {
         var search_term  = $('#search-field').val();
-        window.location.href = "/search/term/" + search_term ;
+        var corpus = $('#corpus-id').val();
+        window.location.href = "/search/term/" + corpus + "/" + search_term ;
     });
     
     $('.concordance-left').each(function() {

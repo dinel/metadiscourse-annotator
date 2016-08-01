@@ -30,6 +30,11 @@
                         {% if path == "by-category" %}
                             <a href="{{ path('statistics_by_category', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
                         {% endif %}
+                        
+                        {% if path == "concordance" %}
+                            <a href="{{ path('enter_term', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
+                        {% endif %}
+
                     </div>
                 {% endfor %}
                 </div>

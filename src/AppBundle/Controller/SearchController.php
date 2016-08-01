@@ -26,28 +26,49 @@ class SearchController extends Controller
     public function indexAction() {
         return $this->render('Search/index.html.twig');
     }
+    
+    /**
+     * @Route("/search/enter_term/{corpus_id}", name="enter_term")
+     */
+    public function enterTermAction($corpus_id) {
+        $corpus = $this->getDoctrine()
+                  ->getRepository('\AppBundle\Entity\Corpus')
+                  ->find($corpus_id);
+        
+        return $this->render("Search/enter_term.html.twig", array(
+                    'corpus_id' => $corpus_id,
+                    'corpus_name' => $corpus->getName(),
+        ));
+    }
 
     /**
-     * @Route("/search/term/{term}", name="search_term")
+     * @Route("/search/term/{corpus_id}/{term}", name="search_term")
      */
-    public function searchTermAction($term) {        
+    public function searchTermAction($corpus_id, $term) {        
         return $this->render('Search/search_term.html.twig', array(
                     'message' => " keyword <i>" . $term . "</i>",
                     'stats_for' => "term",
+                    'corpus_id' => $corpus_id,
                     'parameter_to_controller' => $term,
                 ));        
     }
     
     /**
-     * @Route("/search/term_intern/{term}", name="search_term_intern")
+     * @Route("/search/term_intern/{corpus_id}/{term}", name="search_term_intern")
      */
-    public function searchTermInternAction($term) {
+    public function searchTermInternAction($corpus_id, $term) {
         $statistics = array();
         $results = array();
         $em = $this->getDoctrine()->getManager();
         
-        $tokens = $this->retrieveTokensWithCondition(
-                'upper(t.content) = upper(:param)', trim($term));
+        if($corpus_id === "none") {
+            $tokens = $this->retrieveTokensWithCondition(
+                    'upper(t.content) = upper(:param)', trim($term));
+        } else {
+            $tokens = $this->retrieveTokensWithCondition(
+                        'upper(t.content) = upper(:param)', trim($term),
+                        't.document IN (:param2)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
+        }
         
         while (($row = $tokens->next()) !== false) {
             $token = $row[0];
@@ -209,6 +230,7 @@ class SearchController extends Controller
                 'category' => $annotation->getCategoryName(),
                 'polarity' => $annotation->getPolarity(),
                 'uncertain' => $annotation->getUncertain(),
+                'source' => $annotation->getToken()->getDocument()->getTitle(),
                 ));
     }
         
@@ -299,7 +321,7 @@ class SearchController extends Controller
      * @param string $param parameter for the WHERE statement
      * @return iterator iterator which gives access to tokens
      */
-    private function retrieveTokensWithCondition($condition, $param) {
+    private function retrieveTokensWithCondition($condition, $param, $condition2 = null, $param2 = null) {
         $query = $this->getDoctrine()
                       ->getRepository('\AppBundle\Entity\Token')
                       ->createQueryBuilder('t');
@@ -307,6 +329,11 @@ class SearchController extends Controller
         if($condition) {
             $query = $query->where($condition)
                            ->setParameter('param', $param);
+        }
+        
+        if($condition2) {
+            $query = $query->andWhere($condition2)
+                           ->setParameter('param2', $param2);
         }
         
         return $query->getQuery()
@@ -373,7 +400,19 @@ class SearchController extends Controller
      * @param int $corpus_id the id of the corpus
      * @return iterator return an iterator which contains the tokens
      */
-    private function getTokensFromCorpus($corpus_id) {
+    private function getTokensFromCorpus($corpus_id) {        
+        $tokens = $this->retrieveTokensWithCondition(
+                't.document IN (:param)', $this->getListIdTextFromCorpus($corpus_id));
+        
+        return $tokens;
+    }        
+    
+    /**
+     * Function which returns a list with the IDs of texts from a corpus
+     * @param int $corpus_id the ID of corpus
+     * @return string a string which contains the IDs of texts separated by comma
+     */
+    private function getListIdTextFromCorpus($corpus_id) {
         $corpus = $this->getDoctrine()
                   ->getRepository('\AppBundle\Entity\Corpus')
                   ->find($corpus_id);
@@ -382,12 +421,8 @@ class SearchController extends Controller
         foreach($corpus->getTexts() as $text) {
             $list_texts .= ("," . $text->getId());
         }
-        $list_texts = substr($list_texts, 1);       
         
-        $tokens = $this->retrieveTokensWithCondition(
-                't.document IN (:param)', $list_texts);
-        
-        return $tokens;
-    }        
+        return substr($list_texts, 1);
+    }
     
 }

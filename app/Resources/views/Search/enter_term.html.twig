@@ -1,0 +1,34 @@
+{# app/Resources/views/search/enter_term.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="row voffset4">
+            <div class="col-md-6 col-md-offset-3 with-border">
+                <h4>Enter a work or phrase you want to search for</h4>
+                <div class="input-group">                    
+                    <input id="search-field" type="text" class="form-control" placeholder="Enter expression...">
+                    <span class="input-group-btn">
+                        <button id="search-button" class="btn btn-secondary" type="button">Analyze!</button>
+                    </span>
+                    <input id="corpus-id" type="hidden" value="{{ corpus_id }}">
+                </div>
+                <p class="voffset1 explanation">The search will be restricted to <strong>{{ corpus_name }}</strong>.</p>
+            </div>
+        </div>        
+    </div>
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/search.js') }}"></script>
+{% endblock %}
+

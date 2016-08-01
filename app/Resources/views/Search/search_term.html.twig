@@ -38,7 +38,8 @@
                 {% endif %}
                 
                 {% if stats_for == "term" %}
-                    {{ render_hinclude(controller('AppBundle:Search:searchTermIntern', {'term': parameter_to_controller}), 
+                    {{ render_hinclude(controller('AppBundle:Search:searchTermIntern', 
+                            {'term': parameter_to_controller, 'corpus_id': corpus_id }), 
                             {'default': 'misc/wait.html.twig'}) }}
                 {% endif %}
             </div>

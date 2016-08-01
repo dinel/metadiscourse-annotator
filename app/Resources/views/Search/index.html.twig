@@ -18,8 +18,19 @@
                     <span class="input-group-btn">
                         <button id="search-button" class="btn btn-secondary" type="button">Analyze!</button>
                     </span>
+                    <input id="corpus-id" type="hidden" value="none">
                 </div>
                 <p class="voffset1 explanation">Useful for quick searches, but does not allow setting any restrictions.</p>
+            </div>
+        </div>
+        
+        <div class="row voffset4">
+            <div class="col-md-6 col-md-offset-3 with-border">
+                <h4>Extract concordance from </h4>
+                <ul>
+                    <li><a href="{{ path('select-corpus', {'path':'concordance'}) }}">a selected corpus</a></li>
+                </ul>
+
             </div>
         </div>
         
