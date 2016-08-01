@@ -181,6 +181,10 @@ class SearchController extends Controller
                      ->getRepository('AppBundle:Category')
                      ->findAll();
         
+        $corpus = $this->getDoctrine()
+                  ->getRepository('\AppBundle\Entity\Corpus')
+                  ->find($corpus_id);
+        
         $em->clear();
         
         return $this->render('Search/statistics_by_category_intern.html.twig', array(

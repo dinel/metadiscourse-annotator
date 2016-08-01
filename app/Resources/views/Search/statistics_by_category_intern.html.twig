@@ -18,7 +18,7 @@
                     {% if not cat.parent and cat.name != "No parent category" %}
                         <tr>
                             <td rowspan="{{ cat.children | length ? cat.children | length : 1}}">{{ cat.name }}: 
-                                <a href="{{ path('search_category', {'category_id':cat.id }) }}">
+                                <a href="{{ path('search_category', {'corpus_id': corpus.id, 'category_id': cat.id }) }}">
                                     {{ attribute(stats, cat.name) is defined ? stats[cat.name] : 0 }}
                                 </a>
                             </td>                                
@@ -29,7 +29,7 @@
                                 {% endif %}
                                 {% set first = 2 %}
                                 <td>{{ subcat.name }}: 
-                                    <a href="{{ path('search_category', {'category_id':subcat.id }) }}">
+                                    <a href="{{ path('search_category', {'corpus_id': corpus.id, 'category_id':subcat.id }) }}">
                                         {{ attribute(stats, subcat.name) is defined ? stats[subcat.name] : 0 }}
                                     </a>
                                 </td></tr>
