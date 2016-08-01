@@ -77,9 +77,9 @@ class SearchController extends Controller
     }
     
     /**
-     * @Route("/search/category/{category_id}", name="search_category")
+     * @Route("/search/category/{corpus_id}/{category_id}", name="search_category")
      */
-    public function searchCategoryAction($category_id) {
+    public function searchCategoryAction($corpus_id, $category_id) {
         $cat = $this->getDoctrine()
                     ->getRepository('AppBundle:Category')
                     ->find($category_id);                               
@@ -87,19 +87,20 @@ class SearchController extends Controller
         return $this->render('Search/search_term.html.twig', array(
                     'message' => " category <i>" . $cat->getName() . "</i>",
                     'stats_for' => "category",
+                    'corpus_id' => $corpus_id,
                     'parameter_to_controller' => $category_id,
                 ));        
     }
     
     /**
-     * @Route("/search/category_intern/{category_id}", name="search_category_intern")
+     * @Route("/search/category_intern/{corpus_id}/{category_id}", name="search_category_intern")
      */
-    public function searchCategoryInternAction($category_id) {
+    public function searchCategoryInternAction($corpus_id, $category_id) {
         $statistics = array();
         $results = array();
         $em = $this->getDoctrine()->getManager();
         
-        $tokens = $this->retrieveTokensWithCondition(null, null);
+        $tokens = $this->getTokensFromCorpus($corpus_id);
         
         set_time_limit(0);
         
@@ -155,18 +156,7 @@ class SearchController extends Controller
     public function statisticsByCategoryInternAction($corpus_id) {
         $statistics = array();
         
-        $corpus = $this->getDoctrine()
-                      ->getRepository('\AppBundle\Entity\Corpus')
-                      ->find($corpus_id);
-        
-        $list_texts = "";
-        foreach($corpus->getTexts() as $text) {
-            $list_texts .= ("," . $text->getId());
-        }
-        $list_texts = substr($list_texts, 1);       
-        
-        $tokens = $this->retrieveTokensWithCondition(
-                't.document IN (:param)', $list_texts);
+        $tokens = $this->getTokensFromCorpus($corpus_id);
 
         $em = $this->getDoctrine()->getManager();
         
@@ -217,11 +207,7 @@ class SearchController extends Controller
                 'uncertain' => $annotation->getUncertain(),
                 ));
     }
-    
-    /**
-     * @Route("/search/
-     */
-    
+        
     /***********************************************************************
      * 
      * Private methods from here
@@ -377,4 +363,27 @@ class SearchController extends Controller
             $a_sense["   "] += 1;                
         }
     }
+    
+    /**
+     * Return all the tokens only from texts in a corpus
+     * @param int $corpus_id the id of the corpus
+     * @return iterator return an iterator which contains the tokens
+     */
+    private function getTokensFromCorpus($corpus_id) {
+        $corpus = $this->getDoctrine()
+                  ->getRepository('\AppBundle\Entity\Corpus')
+                  ->find($corpus_id);
+        
+        $list_texts = "";
+        foreach($corpus->getTexts() as $text) {
+            $list_texts .= ("," . $text->getId());
+        }
+        $list_texts = substr($list_texts, 1);       
+        
+        $tokens = $this->retrieveTokensWithCondition(
+                't.document IN (:param)', $list_texts);
+        
+        return $tokens;
+    }        
+    
 }

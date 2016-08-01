@@ -30,8 +30,11 @@
             
             <div class="voffset3 text-center">
                 {% if stats_for == "category" %}
-                    {{ render_hinclude(controller('AppBundle:Search:searchCategoryIntern', {'category_id': parameter_to_controller}), 
-                            {'default': 'misc/wait.html.twig'}) }}
+                    {{ render_hinclude(controller(
+                            'AppBundle:Search:searchCategoryIntern', 
+                            {'corpus_id': corpus_id, 'category_id': parameter_to_controller}), 
+                            {'default': 'misc/wait.html.twig'}) 
+                    }}
                 {% endif %}
                 
                 {% if stats_for == "term" %}
