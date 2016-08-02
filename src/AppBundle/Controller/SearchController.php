@@ -63,10 +63,10 @@ class SearchController extends Controller
         
         if($corpus_id === "none") {
             $tokens = $this->retrieveTokensWithCondition(
-                    'upper(t.content) = upper(:param)', trim($term));
+                    'trim(upper(t.content)) = trim(upper(:param))', trim($term));
         } else {
             $tokens = $this->retrieveTokensWithCondition(
-                        'upper(t.content) = upper(:param)', trim($term),
+                        'trim(upper(t.content)) = trim(upper(:param))', trim($term),
                         't.document IN (:param2)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
         }
         
@@ -78,7 +78,6 @@ class SearchController extends Controller
             $c1++;
             
             $annotations = $this->getAnnotationsForToken($token->getId());
-            $m .= ("=" . $token->getId());
             
             foreach($annotations as $annotation) {
                 $c2++;
