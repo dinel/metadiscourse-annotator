@@ -61,10 +61,12 @@ class SearchController extends Controller
         if($corpus_id === "none") {
             $tokens = $this->retrieveTokensWithCondition(
                     'trim(upper(t.content)) = trim(upper(:param))', trim($term));
+            $search_scope = "<strong>all the texts</strong> available";
         } else {
             $tokens = $this->retrieveTokensWithCondition(
                         'trim(upper(t.content)) = trim(upper(:param))', trim($term),
                         't.document IN (:param2)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
+            $search_scope = "the <strong>" . $this->getCorpusById($corpus_id)->getName() . "</strong> corpus";
         }
                 
         while (($row = $tokens->next()) !== false) {
@@ -99,6 +101,7 @@ class SearchController extends Controller
                     'search_results' => $results,
                     'stats' => $statistics,
                     'styles' => $styles,
+                    'search_scope' => $search_scope,
                 ));        
     }
     
@@ -156,12 +159,15 @@ class SearchController extends Controller
             
             $em->detach($token);
             $em->clear();
-        }        
+        }
+
+        $search_scope = "the <strong>" . $this->getCorpusById($corpus_id)->getName() . "</strong> corpus";
         
         return $this->render('Search/search_term_intern.html.twig', array(        
                     'search_results' => $results,
                     'stats' => $statistics,
                     'styles' => $styles,
+                    'search_scope' => $search_scope,
                 ));        
     }
        
@@ -429,7 +435,7 @@ class SearchController extends Controller
      * @param int $corpus_id the ID of the corpus
      * @return the corpus
      */
-    private function getCorpusById(int $corpus_id) {
+    private function getCorpusById($corpus_id) {
         return $this->getDoctrine()
                     ->getRepository('\AppBundle\Entity\Corpus')
                     ->find($corpus_id);
