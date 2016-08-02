@@ -60,6 +60,7 @@ class SearchController extends Controller
         $statistics = array();
         $results = array();
         $em = $this->getDoctrine()->getManager();
+        $styles = array();
         
         if($corpus_id === "none") {
             $tokens = $this->retrieveTokensWithCondition(
@@ -82,6 +83,13 @@ class SearchController extends Controller
                             $annotation->getSense()->getId() :
                             "Not a marker";
                 $r[] = $this->getSentence($token->getId(), $token->getContent());
+                
+                if($annotation->getSense()) {
+                    $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
+                } else {
+                    $styles["Not marker"] = "";
+                }
+                
                 $results[] = $r;
                 
                 $this->updateStatisticsForSenses($statistics, $annotation);
@@ -94,6 +102,7 @@ class SearchController extends Controller
         return $this->render('Search/search_term_intern.html.twig', array(
                     'search_results' => $results,
                     'stats' => $statistics,
+                    'styles' => $styles,
                 ));        
     }
     
@@ -120,6 +129,7 @@ class SearchController extends Controller
         $statistics = array();
         $results = array();
         $em = $this->getDoctrine()->getManager();
+        $styles = array();
         
         $tokens = $this->getTokensFromCorpus($corpus_id);
         
@@ -137,11 +147,11 @@ class SearchController extends Controller
                    ($category->getParent() && $category->getParent()->getId() == $category_id))) {
                     $r = array();
                     $r[] = $annotation->getId();
-                    $r[] = $annotation->getSense() ? 
-                                $annotation->getSense()->getId() :
-                                "Not a marker";
+                    $r[] = $annotation->getSense()->getId();
                     $r[] = $this->getSentence($token->getId(), $token->getContent());
                     $results[] = $r;
+                    
+                    $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
 
                     $this->updateStatisticsForSenses($statistics, $annotation);
                 }
@@ -155,6 +165,7 @@ class SearchController extends Controller
         return $this->render('Search/search_term_intern.html.twig', array(        
                     'search_results' => $results,
                     'stats' => $statistics,
+                    'styles' => $styles,
                 ));        
     }
        
