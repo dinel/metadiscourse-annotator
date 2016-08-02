@@ -71,12 +71,14 @@ class SearchController extends Controller
         }
         
         $c1 = $c2 = 0;
+        $m = "";
         
         while (($row = $tokens->next()) !== false) {
             $token = $row[0];
             $c1++;
             
             $annotations = $this->getAnnotationsForToken($token->getId());
+            $m .= ("=" . $token->getId());
             
             foreach($annotations as $annotation) {
                 $c2++;
@@ -94,7 +96,7 @@ class SearchController extends Controller
             $em->detach($token);
         }
         $em->clear();
-        $results[] = array(0,0, array($c1, "====", $c2));
+        $results[] = array(0,0, array($c1, $m, $c2));
         
         return $this->render('Search/search_term_intern.html.twig', array(
                     'search_results' => $results,
