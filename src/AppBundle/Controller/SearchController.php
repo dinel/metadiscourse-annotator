@@ -69,18 +69,13 @@ class SearchController extends Controller
                         'trim(upper(t.content)) = trim(upper(:param))', trim($term),
                         't.document IN (:param2)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
         }
-        
-        $c1 = $c2 = 0;
-        $m = "";
-        
+                
         while (($row = $tokens->next()) !== false) {
             $token = $row[0];
-            $c1++;
             
             $annotations = $this->getAnnotationsForToken($token->getId());
             
             foreach($annotations as $annotation) {
-                $c2++;
                 $r = array();
                 $r[] = $annotation->getId();
                 $r[] = $annotation->getSense() ? 
@@ -95,7 +90,6 @@ class SearchController extends Controller
             $em->detach($token);
         }
         $em->clear();
-        $results[] = array(0,0, array($c1, $m, $c2));
         
         return $this->render('Search/search_term_intern.html.twig', array(
                     'search_results' => $results,
