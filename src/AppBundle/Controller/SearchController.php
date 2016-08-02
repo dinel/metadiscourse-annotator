@@ -31,13 +31,9 @@ class SearchController extends Controller
      * @Route("/search/enter_term/{corpus_id}", name="enter_term")
      */
     public function enterTermAction($corpus_id) {
-        $corpus = $this->getDoctrine()
-                  ->getRepository('\AppBundle\Entity\Corpus')
-                  ->find($corpus_id);
-        
         return $this->render("Search/enter_term.html.twig", array(
                     'corpus_id' => $corpus_id,
-                    'corpus_name' => $corpus->getName(),
+                    'corpus_name' => $this->getCorpusById($corpus_id)->getName(),
         ));
     }
 
@@ -173,12 +169,8 @@ class SearchController extends Controller
      * @Route("/statistics/by-category/{corpus_id}", name="statistics_by_category") 
      */
     public function statisticsByCategoryAction($corpus_id) {
-        $corpus = $this->getDoctrine()
-                      ->getRepository('\AppBundle\Entity\Corpus')
-                      ->find($corpus_id);                
-        
         return $this->render('Search/statistics_by_category.html.twig', array(
-                    'corpus' => $corpus,
+                    'corpus' => $this->getCorpusById($corpus_id),
                 ));        
     }
     
@@ -213,9 +205,7 @@ class SearchController extends Controller
                      ->getRepository('AppBundle:Category')
                      ->findAll();
         
-        $corpus = $this->getDoctrine()
-                  ->getRepository('\AppBundle\Entity\Corpus')
-                  ->find($corpus_id);
+        $corpus = $this->getCorpusById($corpus_id);
         
         $em->clear();
         
@@ -424,9 +414,7 @@ class SearchController extends Controller
      * @return string a string which contains the IDs of texts separated by comma
      */
     private function getListIdTextFromCorpus($corpus_id) {
-        $corpus = $this->getDoctrine()
-                  ->getRepository('\AppBundle\Entity\Corpus')
-                  ->find($corpus_id);
+        $corpus = $this->getCorpusById($corpus_id);
         
         $list_texts = "";
         foreach($corpus->getTexts() as $text) {
@@ -434,6 +422,17 @@ class SearchController extends Controller
         }
         
         return substr($list_texts, 1);
+    }
+    
+    /**
+     * Retrives the corpus based on the ID
+     * @param int $corpus_id the ID of the corpus
+     * @return the corpus
+     */
+    private function getCorpusById(int $corpus_id) {
+        return $this->getDoctrine()
+                    ->getRepository('\AppBundle\Entity\Corpus')
+                    ->find($corpus_id);
     }
     
 }
