@@ -186,6 +186,8 @@ class SearchController extends Controller
     public function statisticsByCategoryInternAction($corpus_id) {
         $statistics = array();
         
+        set_time_limit(0);
+        
         $tokens = $this->getTokensFromCorpus($corpus_id);
 
         $em = $this->getDoctrine()->getManager();
@@ -237,7 +239,7 @@ class SearchController extends Controller
                 'category' => $annotation->getCategoryName(),
                 'polarity' => $annotation->getPolarity(),
                 'uncertain' => $annotation->getUncertain(),
-                'source' => $annotation->getToken()->getDocument()->getTitle(),
+                'source' => $annotation->getToken()->getDocument()->getTitle() . "(" . $annotation->getToken()->getDocument()->getId() . ")",
                 ));
     }
         
@@ -416,7 +418,7 @@ class SearchController extends Controller
      */
     private function getTokensFromCorpus($corpus_id) {        
         $tokens = $this->retrieveTokensWithCondition(
-                't.document IN (:param)', $this->getListIdTextFromCorpus($corpus_id));
+                't.document IN (:param)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));                
         
         return $tokens;
     }        
