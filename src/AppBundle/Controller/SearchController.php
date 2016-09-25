@@ -384,11 +384,18 @@ class SearchController extends Controller
                 $a_markable[$annotation->getSense()->getDefinition()] = array();
             }
             $a_sense =& $a_markable[$annotation->getSense()->getDefinition()];
-
-            if(!array_key_exists($annotation->getCategory()->getName(), $a_sense)) {
-                $a_sense[$annotation->getCategory()->getName()] = 0;
+            
+            if(! $annotation->getCategory()) {
+                if(!array_key_exists("No category", $a_sense)) {
+                    $a_sense["No category"] = 0;
+                }
+                $a_sense["No category"] += 1;
+            } else {
+                if(!array_key_exists($annotation->getCategory()->getName(), $a_sense)) {
+                    $a_sense[$annotation->getCategory()->getName()] = 0;
+                }
+                $a_sense[$annotation->getCategory()->getName()] += 1;                
             }
-            $a_sense[$annotation->getCategory()->getName()] += 1;                
         } else {
             if(!array_key_exists("Not marker", $a_markable)) {
                 $a_markable["Not marker"] = array();
