@@ -85,8 +85,17 @@ class SearchController extends Controller
                 if($annotation->getSense()) {
                     $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
                 } else {
-                    $styles["Not marker"] = "";
+                    $styles["Not a marker"] = "";
                 }
+                
+                $label = str_replace(" ", "-", $annotation->getUserName());
+                $label .= '-';
+                $label .= str_replace(" ", "-", $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
+                if($annotation->getSense()) {
+                    $label .= '-';
+                    $label .= str_replace(" ", "-", $annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
+                }
+                $r[] = $label;
                 
                 $results[] = $r;
                 
@@ -399,10 +408,10 @@ class SearchController extends Controller
                 $a_sense[$annotation->getCategory()->getName()] += 1;                
             }
         } else {
-            if(!array_key_exists("Not marker", $a_markable)) {
-                $a_markable["Not marker"] = array();
+            if(!array_key_exists("Not a marker", $a_markable)) {
+                $a_markable["Not a marker"] = array();
             }
-            $a_sense =& $a_markable["Not marker"];
+            $a_sense =& $a_markable["Not a marker"];
 
             if(!array_key_exists("   ", $a_sense)) {
                 $a_sense["   "] = 0;

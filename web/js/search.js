@@ -53,6 +53,25 @@ $( document ).ready(function() {
         node.parent().show();
     });
     
+    /** Shows/hides concordances no the basis of their class */
+    $("#results").on('change', ':checkbox', function() {
+       if(this.checked) {
+           $('.row-' + $(this).attr('class')).show();
+       } else {
+           $('.row-' + $(this).attr('class')).hide();
+       }
+    });
+    
+    /** Shows/hides all concordances */
+    $('#results').on('click', '#all', function() {
+       if(this.checked) {
+           $('.instance :checkbox').prop("checked", true);
+           $('[class^="row-"]').show();
+       } else {
+           $('.instance :checkbox').prop("checked", false);
+           $('[class^="row-"]').hide();
+       }
+    });
 });
 
 /*

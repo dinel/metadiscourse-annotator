@@ -17,6 +17,7 @@
                     <h4>Statistics</h4>
                     <table class="table table-hover">
                         <tr>
+                            <td>Show</td>
                             <td>User</td>
                             <td>Marker</td>
                             <td>Sense</td>
@@ -27,7 +28,12 @@
                             {% for mark, m_stats in u_stats %}
                                 {% for sense, s_stats in m_stats %}
                                     {% for cat, val in s_stats %}
-                                        <tr>
+                                        <tr class="instance">
+                                            {% if sense == "Not a marker" %}
+                                                <td><input type="checkbox" class="{{ user|replace({" ":"-"}) }}-{{ sense|replace({" ":"-"}) }}" checked="true" /></td>
+                                            {% else %}
+                                                <td><input type="checkbox" class="{{ user|replace({" ":"-"}) }}-{{ sense|replace({" ":"-"}) }}-{{ cat|replace({" ":"-"}) }}" checked="true" /></td>
+                                            {% endif %}
                                             <td>{{ user }}</td>
                                             <td><span class="sense{{ styles[sense] }}">{{ mark }}</span></td>
                                             <td>{{ sense }}</td>
@@ -38,7 +44,8 @@
                                 {% endfor %}
                             {% endfor %}
                         {% endfor %}
-                    </table>
+                        <tr><td><input type="checkbox" id="all" checked="true"></td></tr>
+                    </table>                    
                 </div>
                 <br/>
                     
@@ -47,7 +54,7 @@
                 <table id="concordances" class="table-hover">
                 {% set counter = 1 %}
                 {% for result in search_results %}
-                    <tr>
+                    <tr class="row-{{ result[3] }}">
                         <td style="padding-right:5px;">{{ counter }}.</td>
                         <td style="max-width: 335px; text-align: right; padding-right: 5px;">
                             <span class="concordance-left">{{ result[2][0] }}</span>
@@ -58,7 +65,7 @@
                         </td>
                         <td style="padding-left:25px;"><a id="{{ result[0] }}" class="concordance"> +</a></td>
                     </tr>
-                    <tr class="more-info"><td class="more-info-block" colspan="4"></td></tr>
+                    <tr class="row-{{ result[3] }} more-info"><td class="more-info-block" colspan="4"></td></tr>
                     {% set counter = counter + 1 %}
                 {% endfor %}
                 </table>
