@@ -30,9 +30,9 @@
                                     {% for cat, val in s_stats %}
                                         <tr class="instance">
                                             {% if sense == "Not a marker" %}
-                                                <td><input type="checkbox" class="{{ user|replace({" ":"-"}) }}-{{ sense|replace({" ":"-"}) }}" checked="true" /></td>
+                                                <td><input type="checkbox" class="{{ user|markHash }}-{{ sense|markHash }}" checked="true" /></td>
                                             {% else %}
-                                                <td><input type="checkbox" class="{{ user|replace({" ":"-"}) }}-{{ sense|replace({" ":"-"}) }}-{{ cat|replace({" ":"-"}) }}" checked="true" /></td>
+                                                <td><input type="checkbox" class="{{ user|markHash }}-{{ sense|markHash }}-{{ cat|markHash }}" checked="true" /></td>
                                             {% endif %}
                                             <td>{{ user }}</td>
                                             <td><span class="sense{{ styles[sense] }}">{{ mark }}</span></td>

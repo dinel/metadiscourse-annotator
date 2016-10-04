@@ -20,3 +20,9 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Corpus Characteristic  }
             
+    app.twig_extension:
+        class: AppBundle\Twig\AppExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+            

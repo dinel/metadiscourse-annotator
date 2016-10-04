@@ -88,12 +88,12 @@ class SearchController extends Controller
                     $styles["Not a marker"] = "";
                 }
                 
-                $label = str_replace(" ", "-", $annotation->getUserName());
+                $label = $this->markableHashFilter($annotation->getUserName());
                 $label .= '-';
-                $label .= str_replace(" ", "-", $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
+                $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
                 if($annotation->getSense()) {
                     $label .= '-';
-                    $label .= str_replace(" ", "-", $annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
+                    $label .= $this->markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
                 }
                 $r[] = $label;
                 
@@ -157,6 +157,16 @@ class SearchController extends Controller
                     $r[] = $annotation->getId();
                     $r[] = $annotation->getSense()->getId();
                     $r[] = $this->getSentence($token->getId(), $token->getContent());
+                    
+                    $label = $this->markableHashFilter($annotation->getUserName());
+                    $label .= '-';
+                    $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
+                    if($annotation->getSense()) {
+                        $label .= '-';
+                        $label .= $this->markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
+                    }
+                    $r[] = $label;
+                    
                     $results[] = $r;
                     
                     $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
@@ -256,8 +266,8 @@ class SearchController extends Controller
      * 
      * Private methods from here
      * 
-     ***********************************************************************/    
-    
+     ***********************************************************************/      
+
     /**
      * Helper function that retrieves the left or right context for a term
      * @param string $str_query the query that needs to be run to retrieve the 
@@ -457,6 +467,23 @@ class SearchController extends Controller
         return $this->getDoctrine()
                     ->getRepository('\AppBundle\Entity\Corpus')
                     ->find($corpus_id);
+    }
+    
+    
+    private function markableHashFilter($string) {
+        $pos = strpos($string, "/");
+        if($pos !== false) {
+            $string = substr($string , $pos + 1);
+        }
+        $md5str = md5($string);
+        $ret = "";
+        for($i = 0; $i < strlen($md5str); $i++) {
+            if(ctype_alpha($md5str[$i])) {
+                $ret .= $md5str[$i];
+            }
+        }
+        
+        return $ret;
     }
     
 }
