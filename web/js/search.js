@@ -61,16 +61,15 @@ $( document ).ready(function() {
            $('.row-' + $(this).attr('class')).hide();
        }
     });
+        
+    $('#results').on('click', '#display-all', function() {
+        $('.instance :checkbox').prop("checked", true);
+        $('[class^="row-"]').show();
+    });
     
-    /** Shows/hides all concordances */
-    $('#results').on('click', '#all', function() {
-       if(this.checked) {
-           $('.instance :checkbox').prop("checked", true);
-           $('[class^="row-"]').show();
-       } else {
-           $('.instance :checkbox').prop("checked", false);
-           $('[class^="row-"]').hide();
-       }
+    $('#results').on('click', '#display-none', function() {
+        $('.instance :checkbox').prop("checked", false);
+        $('[class^="row-"]').hide();
     });
 });
 
