@@ -40,6 +40,9 @@ $( document ).ready(function() {
                 display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Polarity: </strong> " + data.polarity;
                 display += "<br/><strong>Notes: </strong>" + data.comments;
                 display += "<br/><strong>Source: </strong>" + data.source;
+                display += "<span style='margin-left: 5em'><a target='_blank' " 
+                        + " href='/document/" + data.id_document + "/" + data.id_token + "'"
+                        + ">Go to annotation</a></span>";
                 
                 if(data.uncertain === true) {
                     display += "<br/><strong style='text-color: red'>The annotator was uncertain about this annotation!!</strong>";

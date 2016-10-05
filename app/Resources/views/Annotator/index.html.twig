@@ -10,6 +10,12 @@
     
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+    <script type="text/javascript">
+        var callFunction = null;
+        {% if token is not null %}
+            callFunction = {{ token }};
+        {% endif %}
+    </script>
 {% endblock stylesheets %}
 
 {% block body %}    

@@ -25,23 +25,21 @@ use AppBundle\Entity\Sense;
 class WebAnnotatorController extends Controller
 {
     /**
-     * @Route("/document/{id}", name="document_show")
+     * @Route("/document/{id}/{id_token}", name="document_show", 
+     *          requirements={"id": "\d+", "id_token": "\d+"})
      */
-    public function indexAction($id) {
+    public function indexAction($id, $id_token = null) {
         $doc = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
                 ->find($id);
         
-        if($doc) {
-            //$tokens = $doc->getTokens();
-            
+        if($doc) {            
             $tokens = $this->getDoctrine()
                        ->getRepository('\AppBundle\Entity\Token')
                        ->createQueryBuilder('t')
                        ->where('t.document = :id')
                        ->setParameter('id', $id)
                        ->getQuery()
-                       //->execute();
                        ->iterate();
             
             $tokens_style = array();
@@ -64,11 +62,19 @@ class WebAnnotatorController extends Controller
                 $em->detach($token);
             }
             $em->clear();
+            
+            $token = null;
+            if($id_token) {
+                $token = $this->getDoctrine()
+                              ->getRepository('AppBundle:Token')
+                              ->find($id_token);
+            }
                         
             return $this->render('Annotator/index.html.twig', array(
                     'title' => $doc->getTitle(),
                     'tokens_style' => $tokens_style,
                     'id_text' => $id,
+                    'token' => $token->getId(),
                 ));
         }
     }

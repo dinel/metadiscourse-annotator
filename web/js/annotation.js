@@ -11,6 +11,19 @@ $( document ).ready(function() {
     $('#tag-attributes').hide();
     $('#reprocess').hide();
     
+    /* Call display token ? */
+    if(callFunction) {
+        $('#tag-attributes').show(); 
+        $.ajax({
+            type: 'POST',
+            url: '/document/marker/' + callFunction,
+            dataType: 'json',
+            success: function(data) {
+                updateAnnotationPanel(data);
+            }
+        });        
+    }
+    
     /*
      * Called when the user clicks to close the annotation area
      */
