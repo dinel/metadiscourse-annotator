@@ -90,6 +90,8 @@ class SearchController extends Controller
                 
                 $label = $this->markableHashFilter($annotation->getUserName());
                 $label .= '-';
+                $label .= $this->markableHashFilter($annotation->getToken()->getContent());
+                $label .= '-';
                 $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
                 if($annotation->getSense()) {
                     $label .= '-';
@@ -159,6 +161,8 @@ class SearchController extends Controller
                     $r[] = $this->getSentence($token->getId(), $token->getContent());
                     
                     $label = $this->markableHashFilter($annotation->getUserName());
+                    $label .= '-';
+                    $label .= $this->markableHashFilter($annotation->getToken()->getContent());
                     $label .= '-';
                     $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
                     if($annotation->getSense()) {
