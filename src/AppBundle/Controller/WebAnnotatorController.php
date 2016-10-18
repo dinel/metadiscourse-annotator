@@ -74,7 +74,7 @@ class WebAnnotatorController extends Controller
                     'title' => $doc->getTitle(),
                     'tokens_style' => $tokens_style,
                     'id_text' => $id,
-                    'token' => $token->getId(),
+                    'token' => $token ? $token->getId() : null,
                 ));
         }
     }
