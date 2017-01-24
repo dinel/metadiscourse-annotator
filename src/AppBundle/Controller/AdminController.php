@@ -837,7 +837,11 @@ class AdminController extends Controller
         
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
         foreach($marks_array as $mark) {
-            $a_text = $tokenizer->tokenize($mark->getText());
+            if(strtolower($mark->getText()) === strtolower("you know")) {
+                $a_text = array("you know");
+            } else {
+                $a_text = $tokenizer->tokenize($mark->getText());
+            }
             $match = True;
             for($i = 0; $i < count($a_text); $i++) {
                 if(($pos + $i >= count($tokens)) ||
