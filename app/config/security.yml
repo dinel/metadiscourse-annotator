@@ -26,7 +26,9 @@ security:
             pattern: ^/
             form_login:
                 provider: fos_userbundle
-                csrf_provider: security.csrf.token_manager # Use form.csrf_provider instead for Symfony <2.4
+                #csrf_provider: security.csrf.token_manager # Use form.csrf_provider instead for Symfony <2.4
+                csrf_token_generator: security.csrf.token_manager
+                
             logout:       true
             anonymous:    true
             # activate different ways to authenticate
