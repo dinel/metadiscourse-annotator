@@ -239,7 +239,7 @@ class AdminController extends Controller
         
         $form->handleRequest($request);
         
-        if($form->isValid()) {
+        if($form->isValid()) {            
             if($form["upload_text"]->isValid()) {
                 $tmpfname = tempnam("/tmp", "INP");
                 $form["upload_text"]->getData()->move(dirname($tmpfname), basename($tmpfname));
@@ -287,6 +287,100 @@ class AdminController extends Controller
                 'form' => $form->createView(),
         ));  
     }
+    
+    /** 
+     * @Route("/admin/text/add_parallel", name="admin_parallel_text_add")
+     */
+    public function newParallelTextAction(\Symfony\Component\HttpFoundation\Request $request) {
+        $text = new \AppBundle\Entity\Text();
+        
+        $form = $this->createFormBuilder($text)
+                ->add('title', 'text')
+                ->add('description', 'text')
+                ->add('button', 'choice', array(
+                        'label' => "Method",
+                        'mapped' => False,
+                        'placeholder' => 'Choose an option',
+                        'choices' => array(                            
+                            'Upload a text file' => 1,
+                            'Upload parallel text' => 4,
+                        ),                        
+                        'choices_as_values' => true,
+                    ))
+                ->add('upload_text', 'file', array(
+                        'label' => false,
+                        'mapped' => false,      
+                        'required' => false,
+                    ))
+                ->add('upload_translation', 'file', array(
+                        'label' => false,
+                        'mapped' => false,      
+                        'required' => false,
+                ))
+                ->add('save', 'submit', array('label' => 'Add parallel texts'))
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {            
+            if($form["upload_text"]->isValid() && $form["upload_translation"]->isValid()) {
+                $tmpfsource = tempnam("/tmp", "INP");
+                $form["upload_text"]->getData()->move(dirname($tmpfsource), basename($tmpfsource));
+                $handle_src = fopen($tmpfsource, "r");
+                
+                $tmpftarget = tempnam("/tmp", "PAR");
+                $form["upload_translation"]->getData()->move(dirname($tmpftarget), basename($tmpftarget));
+                $handle_trg = fopen($tmpftarget, "r");
+                
+                if ($handle_src && $handle_trg) {
+                    $input_text_src = "";
+                    $input_text_trg = "";
+                    while(TRUE) {
+                        if((($line_src = fgets($handle_src)) !== false) &&
+                           (($line_trg = fgets($handle_trg)) !== false)) {                            
+                            $input_text_src .= $line_src . "\n";
+                            $input_text_trg .= $line_trg . "\n";
+                        } else {
+                            break;
+                        }
+                    }
+                    $text->setTheText($input_text_src);
+                }
+                fclose($handle_src);
+                fclose($handle_trg);
+                
+                unlink($tmpfsource);
+                unlink($tmpftarget);
+            }
+            
+            $session = $request->getSession();
+            if(null != $session->get('corpus')) {
+                $corpus_id = $session->get('corpus');
+                $corpus = $this->getDoctrine()
+                    ->getRepository('AppBundle:Corpus')
+                    ->find($corpus_id);                
+                $text->addCorpora($corpus);
+            }
+            
+            $em = $this->getDoctrine()->getManager();
+            $this->processText($text, $em, $input_text_trg);
+            $em->persist($text);
+            $em->flush();
+            $em->clear();
+            
+            if(isset($corpus_id)) {
+                $request->getSession()->remove('corpus');
+                return $this->redirectToRoute('edit_corpus', array('id' => $corpus_id));
+            } else {
+                return $this->redirectToRoute("admin_page");
+            }
+        }
+        
+        return $this->render('Admin/new_text.html.twig', array(
+                'form' => $form->createView(),
+        ));  
+    }
+    
     
     /**
      * Action which adds a new marker to the database
@@ -783,9 +877,12 @@ class AdminController extends Controller
         else return null;
     }
 
-    private function processText(\AppBundle\Entity\Text $text, $em) {
+    private function processText(\AppBundle\Entity\Text $text, $em, $target = null) {
         // get the tokens in the text
         $lines = explode("\n", $text->getTheText());
+        if($target) {
+            $lines_target = explode("\n", $target);
+        }
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
         
         // load all the markers
@@ -797,9 +894,22 @@ class AdminController extends Controller
             $marks_array[$mark->getText()] = $mark;
         }
         
+        $segment_counter = 0;
         foreach($lines as $line) {
             $tokens = $tokenizer->tokenize($line);
             $first = true;
+            
+            if($target) {
+                $segment_src = new \AppBundle\Entity\Segment();
+                $segment_src->setSegment($line);                
+
+                $segment_trg = new \AppBundle\Entity\Segment();
+                $segment_trg->setSegment($lines_target[$segment_counter++]);
+                $segment_src->setAlignment($segment_trg);
+                
+                $em->persist($segment_src);
+                $em->persist($segment_trg);
+            }
             
             $pos = 0;
             while($pos < count($tokens)) {                
@@ -819,6 +929,10 @@ class AdminController extends Controller
                 $first = false;
                 $em->persist($t);
                 $text->addToken($t);
+                
+                if($target) {
+                    $segment_src->addToken($t);
+                }
             }
         }
     }

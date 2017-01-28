@@ -255,6 +255,12 @@ class SearchController extends Controller
                            ->getRepository('AppBundle:Annotation')
                            ->find($id);
         
+        $target = "";
+        if($annotation->getToken()->getSegment()) {
+            $source = $annotation->getToken()->getSegment()->getSegment();
+            $target = $annotation->getToken()->getSegment()->getAlignment()->getSegment();
+        }
+        
         return new JsonResponse(array(
                 'annotator' => $annotation->getUserName(),
                 'sense' => $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker",
@@ -265,6 +271,8 @@ class SearchController extends Controller
                 'source' => $annotation->getToken()->getDocument()->getTitle() . "(" . $annotation->getToken()->getDocument()->getId() . ")",
                 'id_token' => $annotation->getToken()->getId(),
                 'id_document' => $annotation->getToken()->getDocument()->getId(),
+                'source' => $source,
+                'target' => $target,
                 ));
     }
         

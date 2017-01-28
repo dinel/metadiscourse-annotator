@@ -9,12 +9,14 @@ $( document ).ready(function() {
   $('#form_the_text').hide();
   $('#form_upload_xml').hide();
   $('#form_upload_text').hide();
+  $('#form_upload_translation').hide();
   
   $('#form_button').change(function() {      
     if($('#form_button').val() === "1") {
         $('#form_upload_text').show();
         $('#form_the_text').hide();
         $('#form_upload_xml').hide();
+        $('#form_upload_translation').hide();
     }
     
     if($('#form_button').val() === "2") {
@@ -27,6 +29,13 @@ $( document ).ready(function() {
         $('#form_upload_text').hide();
         $('#form_the_text').hide();
         $('#form_upload_xml').show();
+    }
+    
+    if($('#form_button').val() === "4") {
+        $('#form_upload_text').show();
+        $('#form_upload_translation').show();
+        $('#form_the_text').hide();
+        $('#form_upload_xml').hide();
     }
   });
 });

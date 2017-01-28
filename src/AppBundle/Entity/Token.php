@@ -40,6 +40,12 @@ class Token {
     protected $document;
     
     /**
+     * @ORM\ManyToOne(targetEntity="Segment", inversedBy="tokens")
+     * @ORM\JoinColumn(name="segment_id", referencedColumnName="id")
+     */
+    protected $segment;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Markable")
      * @ORM\JoinColumn(name="markable_id", referencedColumnName="id")
      **/
@@ -181,5 +187,29 @@ class Token {
     public function getNewLineBefore()
     {
         return $this->newLineBefore;
+    }
+
+    /**
+     * Set segment
+     *
+     * @param \AppBundle\Entity\Segment $segment
+     *
+     * @return Token
+     */
+    public function setSegment(\AppBundle\Entity\Segment $segment = null)
+    {
+        $this->segment = $segment;
+
+        return $this;
+    }
+
+    /**
+     * Get segment
+     *
+     * @return \AppBundle\Entity\Segment
+     */
+    public function getSegment()
+    {
+        return $this->segment;
     }
 }
