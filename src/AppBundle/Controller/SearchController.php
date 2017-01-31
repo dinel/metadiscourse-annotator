@@ -256,6 +256,7 @@ class SearchController extends Controller
                            ->find($id);
         
         $target = "";
+        $source = "";
         if($annotation->getToken()->getSegment()) {
             $source = $annotation->getToken()->getSegment()->getSegment();
             $target = $annotation->getToken()->getSegment()->getAlignment()->getSegment();
