@@ -58,7 +58,7 @@ class Markable
     /**
      * The constructor
      */
-    public function _construct() {
+    public function __construct() {
         $this->senses = new \Doctrine\Common\Collections\ArrayCollection();
         $this->domains = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -141,13 +141,6 @@ class Markable
     public function getText()
     {
         return $this->text;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->senses = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
