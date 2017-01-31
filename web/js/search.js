@@ -43,8 +43,10 @@ $( document ).ready(function() {
                 display += "<span style='margin-left: 5em'><a target='_blank' " 
                         + " href='/document/" + data.id_document + "/" + data.id_token + "'"
                         + ">Go to annotation</a></span>";
-                display += "<br/><strong>Source: </strong>" + data.source;
-                display += "<br/><strong>Target: </strong>" + data.target;
+                if(data.source) {
+                    display += "<br/><strong>Source segment: </strong>" + data.source;
+                    display += "<br/><strong>Target segment: </strong>" + data.target;
+                }
                 
                 if(data.uncertain === true) {
                     display += "<br/><strong style='text-color: red'>The annotator was uncertain about this annotation!!</strong>";
