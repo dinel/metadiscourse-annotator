@@ -40,6 +40,17 @@
                     <a class="btn btn-default" role="button" href="{{ path('reannotate', {'id': id_text } ) }}">reprocess</a>
                     the document after you finished adding all the missing markables.
                 </div>
+                    
+                <div id="selectors">
+                    Show markers
+                    
+                    {% for marker in markers %}
+                        <div>
+                            <input class="mk-filter" id="mk-{{ marker.text|replace({' ':'-'})|lower}}" type="checkbox" checked="true">
+                            {{ marker.text }}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         <div id="tag-attributes" class="navbar navbar-fixed-bottom">

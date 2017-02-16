@@ -24,6 +24,16 @@ $( document ).ready(function() {
         });        
     }
     
+    /* Fiter what is displayed */
+    $('#selectors').on('change', ':checkbox', function() {
+        var type = $(this).attr('id').substring(3);
+        if(! this.checked)  {
+            $(".dsp-" + type).addClass('plain');
+        } else {
+            $(".dsp-" + type).removeClass('plain');
+        }
+    });
+    
     /*
      * Called when the user clicks to close the annotation area
      */

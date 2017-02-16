@@ -1,9 +1,19 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015 - 2017 dinel.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /**
@@ -43,22 +53,31 @@ class WebAnnotatorController extends Controller
                        ->iterate();
             
             $tokens_style = array();
+            $markers = array();
+            
             $em = $this->getDoctrine()->getManager();
 
             while (($row = $tokens->next()) !== false) {
                 $token = $row[0];
                 $ann = $this->getAnnotation($token);
+                $style = " dsp-" . str_replace(" ", "-", strtolower($token->getContent()));
                 if($ann) {
                     if($ann[0]->getSense()) {
-                        $tokens_style[] = array($token, "meta-marker sense" . $ann[0]->getSense()->getId());
+                        $style .= " meta-marker sense" . $ann[0]->getSense()->getId();
                     } else {
-                        $tokens_style[] = array($token, "meta-marker false-pos");
+                        $style .= " meta-marker false-pos";
                     }
                 } elseif ($token->getMarkable()) {
-                    $tokens_style[] = array($token, "meta-marker meta-marker-todo");
+                    $style .= " meta-marker meta-marker-todo";
                 } else {
-                    $tokens_style[] = array($token, "normal");
+                    $style = "normal";
                 }
+                $tokens_style[] = array($token, $style);
+                
+                if($token->getMarkable() && array_search($token->getMarkable(), $markers) === false) {
+                    $markers[] = $token->getMarkable();
+                }
+                
                 $em->detach($token);
             }
             $em->clear();
@@ -75,6 +94,7 @@ class WebAnnotatorController extends Controller
                     'tokens_style' => $tokens_style,
                     'id_text' => $id,
                     'token' => $token ? $token->getId() : null,
+                    'markers' => $markers,
                 ));
         }
     }

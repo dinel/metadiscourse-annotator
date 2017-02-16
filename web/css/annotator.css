@@ -91,3 +91,9 @@ textarea { vertical-align: top; }
     height: 25px;
     text-align: left;
 }
+
+.plain {
+    background: white !important;
+    color: black !important;
+    border: none !important;
+}
