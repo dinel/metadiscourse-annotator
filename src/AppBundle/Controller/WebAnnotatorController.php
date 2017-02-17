@@ -62,20 +62,27 @@ class WebAnnotatorController extends Controller
                 $ann = $this->getAnnotation($token);
                 $style = " dsp-" . str_replace(" ", "-", strtolower($token->getContent()));
                 if($ann) {
+                    $flag = 1;
                     if($ann[0]->getSense()) {
                         $style .= " meta-marker sense" . $ann[0]->getSense()->getId();
                     } else {
                         $style .= " meta-marker false-pos";
                     }
                 } elseif ($token->getMarkable()) {
+                    $flag = 0;
                     $style .= " meta-marker meta-marker-todo";
                 } else {
                     $style = "normal";
                 }
                 $tokens_style[] = array($token, $style);
                 
-                if($token->getMarkable() && array_search($token->getMarkable(), $markers) === false) {
-                    $markers[] = $token->getMarkable();
+                if($token->getMarkable()) {
+                    if(array_key_exists($token->getMarkable()->getId(), $markers) === false) {
+                        $markers[$token->getMarkable()->getId()] = array($token->getMarkable(), 1, $flag);
+                    } else {
+                        $markers[$token->getMarkable()->getId()][1]++;
+                        $markers[$token->getMarkable()->getId()][2] += $flag;
+                    }                    
                 }
                 
                 $em->detach($token);
@@ -90,9 +97,8 @@ class WebAnnotatorController extends Controller
             }
                         
             return $this->render('Annotator/index.html.twig', array(
-                    'title' => $doc->getTitle(),
+                    'text' => $doc,
                     'tokens_style' => $tokens_style,
-                    'id_text' => $id,
                     'token' => $token ? $token->getId() : null,
                     'markers' => $markers,
                 ));

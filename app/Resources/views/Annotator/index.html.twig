@@ -23,7 +23,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <h2>{{ title }}</h2>
+                <h2>{{ text.title }}</h2>
                 <div id="maindoc">
                     {% for token_style in tokens_style %}
                         {% if token_style[0].getnewlinebefore %}
@@ -37,13 +37,13 @@
             <div style="padding-left: 4em;" class="col-md-4 voffset5">
                 <div class = "panel-body">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#display-tab">Display</a></li>
-                        <li><a data-toggle="tab" href="#text-tab">Text</a></li>
+                        <li class="active"><a data-toggle="tab" href="#text-tab">Text</a></li>
+                        <li><a data-toggle="tab" href="#display-tab">Display</a></li>                        
                         <li><a data-toggle="tab" href="#operations-tab">Operations</a></li>
                     </ul>
 
                     <div class="tab-content">
-                        <div id="display-tab" class="tab-pane fade in active voffset2">                    
+                        <div id="display-tab" class="tab-pane fade voffset2">                    
                             <div id="selectors" class="voffset3">
                                 <div id="filter-by-senses">
                                     <input type="checkbox" 
@@ -55,23 +55,23 @@
                                 <div  class="voffset2"><strong>Select which markers to highlight</strong></div>
 
                                 <ul>
-                                {% for marker in markers %}
+                                {% for key,marker in markers %}
                                     <li class="mk-group voffset2">
-                                        <input class="mk-filter" id="mk-{{ marker.text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
+                                        <input class="mk-filter" id="mk-{{ marker[0].text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
                                                data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
                                                data-width="80" data-size="small">
-                                        <span>{{ marker.text }}</span>
+                                        <span>{{ marker[0].text }}</span>
                                         <ul class="sense-group">
-                                            {% for sense in marker.senses %}
+                                            {% for sense in marker[0].senses %}
                                             <li class="voffset1">
                                                 <input class="sn-filter" id="sn-{{ sense.id}}" type="checkbox" checked="true" 
                                                        data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
                                                        data-width="80" data-size="mini">
-                                                <span class="sense{{ sense.id }}">{{ marker.text }}</span>
+                                                <span class="sense{{ sense.id }}">{{ marker[0].text }}</span>
                                             </li>
                                             {% endfor %}
                                             <li class="voffset1">
-                                                <input class="sn-filter" id="an-{{ marker.text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
+                                                <input class="sn-filter" id="an-{{ marker[0].text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
                                                        data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
                                                        data-width="80" data-size="mini">
                                                 <span>Not annotated</span>
@@ -83,15 +83,26 @@
                             </div>                            
                         </div>                    
 
-                        <div id="text-tab" class="tab-pane fade voffset2">
-                            Nothing here, yet!
+                        <div id="text-tab" class="tab-pane fade in active voffset2">
+                            <div class="voffset1"><strong>Title:</strong> {{ text.title }}</div>
+                            <div class="voffset1">
+                                <strong>Description:</strong><br/>
+                                <em>{{ text.description }}</em>
+                            </div>
+                            <div class="voffset1">
+                                <strong>Statistics:</strong><br/>
+                                <ul>
+                                {% for key,marker in markers %}
+                                    <li>{{ marker[0].text }}: {{marker[1]}} {{marker[2]}}</li>
+                                {% endfor %}
+                                </ul>
                         </div>
 
                         <div id="operations-tab" class="tab-pane fade voffset2">
                             <a id="add-markable" class="btn btn-default" role="button">Add markable</a>
                             <div id="reprocess" class="voffset4">
                                 Do not forget to 
-                                <a class="btn btn-default" role="button" href="{{ path('reannotate', {'id': id_text } ) }}">reprocess</a>
+                                <a class="btn btn-default" role="button" href="{{ path('reannotate', {'id': text.id } ) }}">reprocess</a>
                                 the document after you finished adding all the missing markables.
                             </div>
                         </div>
