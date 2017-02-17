@@ -6,6 +6,7 @@
 
 var explanations = [];
 var currentToken = 0;
+var discardTaggleEvent = false;
 
 $( document ).ready(function() {
     $('#tag-attributes').hide();
@@ -26,11 +27,31 @@ $( document ).ready(function() {
     
     /* Fiter what is displayed */
     $('#selectors').on('change', ':checkbox', function() {
-        var type = $(this).attr('id').substring(3);
+        if(discardTaggleEvent) {
+            discardTaggleEvent = false;
+            return;
+        }
+        
+        var type = $(this).attr('id').substring(0,2);
+        var target = $(this).attr('id').substring(3);
         if(! this.checked)  {
-            $(".dsp-" + type).addClass('plain');
+            if(type == "mk") {
+                $(".dsp-" + target).addClass('plain');
+                $(this).parent().parent().find(".sn-filter").each(function(index) {                    
+                    discardTaggleEvent = true;
+                    $(this).bootstrapToggle('off')
+                });
+            }
+            else $(".sense" + target).addClass('plain');
         } else {
-            $(".dsp-" + type).removeClass('plain');
+            if(type == "mk") {
+                $(".dsp-" + target).removeClass('plain');
+                $(this).parent().parent().find(".sn-filter").each(function(index) {
+                    discardTaggleEvent = true;
+                    $(this).bootstrapToggle('on')
+                });
+            }
+            else $(".sense" + target).removeClass('plain');
         }
     });
     

@@ -97,3 +97,12 @@ textarea { vertical-align: top; }
     color: black !important;
     border: none !important;
 }
+
+#selectors {
+    height: 300px;
+    overflow-y: auto;
+}
+
+#selectors li {
+    list-style: none;
+}
