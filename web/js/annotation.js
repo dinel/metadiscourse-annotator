@@ -11,6 +11,7 @@ var discardTaggleEvent = false;
 $( document ).ready(function() {
     $('#tag-attributes').hide();
     $('#reprocess').hide();
+    $('.sense-group').hide();
     
     /* Call display token ? */
     if(callFunction) {
@@ -58,6 +59,14 @@ $( document ).ready(function() {
                 $("#maindoc .sense" + target).removeClass('plain');
                 checkAllOn($(this).parents(".sense-group"));
             }
+        }
+    });
+    
+    $('#filter-by-senses').on('change', ':checkbox', function() {
+        if(this.checked) {
+            $('.sense-group').show();
+        } else {
+            $('.sense-group').hide();
         }
     });
     
