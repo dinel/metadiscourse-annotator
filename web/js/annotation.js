@@ -42,8 +42,10 @@ $( document ).ready(function() {
                     discardTaggleEvent = true;
                     $(this).bootstrapToggle('off');
                 });
-            }
-            else {
+            } else if(type == "an") {
+                $("#maindoc .meta-marker-todo.dsp-" + target).addClass('plain');
+                checkAllOff($(this).parents(".sense-group"));
+            } else {
                 $("#maindoc .sense" + target).addClass('plain');
                 checkAllOff($(this).parents(".sense-group"));
             }
@@ -54,6 +56,9 @@ $( document ).ready(function() {
                     discardTaggleEvent = true;
                     $(this).bootstrapToggle('on');
                 });
+            } else if(type == "an") {
+                $("#maindoc .meta-marker-todo.dsp-" + target).removeClass('plain');
+                checkAllOn($(this).parents(".sense-group"));
             }
             else {
                 $("#maindoc .sense" + target).removeClass('plain');
@@ -64,7 +69,7 @@ $( document ).ready(function() {
     
     $('#filter-by-senses').on('change', ':checkbox', function() {
         if(this.checked) {
-            $('.sense-group').show();
+            $('.sense-group').fadeIn();
         } else {
             $('.sense-group').hide();
         }

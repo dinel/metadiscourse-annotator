@@ -50,19 +50,25 @@
                                 <ul>
                                 {% for marker in markers %}
                                     <li class="mk-group voffset2">
-                                        <input class="mk-filter" id="mk-{{ marker.text|replace({' ':'-'})|lower}}" type="checkbox" checked="true" 
+                                        <input class="mk-filter" id="mk-{{ marker.text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
                                                data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
                                                data-width="80" data-size="small">
-                                        <span style="padding-left:2em;">{{ marker.text }}</span>
+                                        <span>{{ marker.text }}</span>
                                         <ul class="sense-group">
                                             {% for sense in marker.senses %}
                                             <li class="voffset1">
                                                 <input class="sn-filter" id="sn-{{ sense.id}}" type="checkbox" checked="true" 
                                                        data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
                                                        data-width="80" data-size="mini">
-                                                <span class="sense{{ sense.id }}" style="padding-left:2em;">{{ marker.text }}</span>
+                                                <span class="sense{{ sense.id }}">{{ marker.text }}</span>
                                             </li>
                                             {% endfor %}
+                                            <li class="voffset1">
+                                                <input class="sn-filter" id="an-{{ marker.text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
+                                                       data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
+                                                       data-width="80" data-size="mini">
+                                                <span>Not annotated</span>
+                                            </li>
                                         </ul>
                                     </li>
                                 {% endfor %}

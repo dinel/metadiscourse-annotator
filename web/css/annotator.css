@@ -106,3 +106,7 @@ textarea { vertical-align: top; }
 #selectors li {
     list-style: none;
 }
+
+#selectors span {
+    margin-left: 1.5em;
+}
