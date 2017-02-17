@@ -49,12 +49,12 @@
 
                                 <ul>
                                 {% for marker in markers %}
-                                    <li class="voffset2">
+                                    <li class="mk-group voffset2">
                                         <input class="mk-filter" id="mk-{{ marker.text|replace({' ':'-'})|lower}}" type="checkbox" checked="true" 
                                                data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
                                                data-width="80" data-size="small">
                                         <span style="padding-left:2em;">{{ marker.text }}</span>
-                                        <ul>
+                                        <ul class="sense-group">
                                             {% for sense in marker.senses %}
                                             <li class="voffset1">
                                                 <input class="sn-filter" id="sn-{{ sense.id}}" type="checkbox" checked="true" 

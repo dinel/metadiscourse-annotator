@@ -42,16 +42,22 @@ $( document ).ready(function() {
                     $(this).bootstrapToggle('off');
                 });
             }
-            else $(".sense" + target).addClass('plain');
+            else {
+                $("#maindoc .sense" + target).addClass('plain');
+                checkAllOff($(this).parents(".sense-group"));
+            }
         } else {
             if(type == "mk") {
-                $(".dsp-" + target).removeClass('plain');
+                $("#maindoc .dsp-" + target).removeClass('plain');
                 $(this).parent().parent().find(".sn-filter").each(function(index) {
                     discardTaggleEvent = true;
-                    $(this).bootstrapToggle('on')
+                    $(this).bootstrapToggle('on');
                 });
             }
-            else $(".sense" + target).removeClass('plain');
+            else {
+                $("#maindoc .sense" + target).removeClass('plain');
+                checkAllOn($(this).parents(".sense-group"));
+            }
         }
     });
     
@@ -314,4 +320,30 @@ function getSelectionText() {
         text = document.selection.createRange().text;
     }
     return text;
+}
+
+function checkAllOff(node) {    
+    var states = node.find(".sn-filter").toArray();    
+        
+    var flag = states.reduce(function(state, item) {
+        return state && !item.checked;
+    }, true);
+ 
+    if(flag) {
+        discardTaggleEvent = true;
+        node.parent(".mk-group").find(".mk-filter").bootstrapToggle('off')
+    }
+}
+
+function checkAllOn(node) {    
+    var states = node.find(".sn-filter").toArray();    
+        
+    var flag = states.reduce(function(state, item) {
+        return state && item.checked;
+    }, true);
+ 
+    if(flag) {
+        discardTaggleEvent = true;
+        node.parent(".mk-group").find(".mk-filter").bootstrapToggle('on')
+    }
 }
