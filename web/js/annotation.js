@@ -36,10 +36,10 @@ $( document ).ready(function() {
         var target = $(this).attr('id').substring(3);
         if(! this.checked)  {
             if(type == "mk") {
-                $(".dsp-" + target).addClass('plain');
+                $("#maindoc .dsp-" + target).addClass('plain');
                 $(this).parent().parent().find(".sn-filter").each(function(index) {                    
                     discardTaggleEvent = true;
-                    $(this).bootstrapToggle('off')
+                    $(this).bootstrapToggle('off');
                 });
             }
             else $(".sense" + target).addClass('plain');
