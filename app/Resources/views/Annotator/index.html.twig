@@ -45,7 +45,14 @@
                     <div class="tab-content">
                         <div id="display-tab" class="tab-pane fade in active voffset2">                    
                             <div id="selectors" class="voffset3">
-                                <strong>Select which markers to highlight</strong>
+                                <div id="filter-by-senses">
+                                    <input type="checkbox" 
+                                           data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger"
+                                           data-width="80" data-size="small">
+                                    <span style="padding-left:2em;">Filtering by senses</span>
+                                </div>
+                                
+                                <div  class="voffset2"><strong>Select which markers to highlight</strong></div>
 
                                 <ul>
                                 {% for marker in markers %}
@@ -73,13 +80,7 @@
                                     </li>
                                 {% endfor %}
                                 </ul>
-                            </div>
-                            <div id="filter-by-senses">
-                                <input type="checkbox" 
-                                               data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger"
-                                               data-width="80" data-size="small">
-                                <span style="padding-left:2em;">Filtering by senses</span>
-                            </div>
+                            </div>                            
                         </div>                    
 
                         <div id="text-tab" class="tab-pane fade voffset2">
