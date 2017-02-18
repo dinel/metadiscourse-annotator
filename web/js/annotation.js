@@ -54,9 +54,10 @@ $( document ).ready(function() {
         } else {
             if(type == "mk") {
                 $("#maindoc .dsp-" + target).removeClass('plain');
+                $(this).next().children('.toggle-on').html("All");
                 $(this).parent().parent().find(".sn-filter").each(function(index) {
                     discardTaggleEvent = true;
-                    $(this).bootstrapToggle('on');
+                    $(this).bootstrapToggle('on');                    
                 });
             } else if(type == "an") {
                 $("#maindoc .meta-marker-todo.dsp-" + target).removeClass('plain');
