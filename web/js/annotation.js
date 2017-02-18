@@ -348,6 +348,8 @@ function checkAllOff(node) {
     if(flag) {
         discardTaggleEvent = true;
         node.parent(".mk-group").find(".mk-filter").bootstrapToggle('off')
+    } else {
+        node.parent(".mk-group").find(".mk-filter").next().children('.toggle-on').html("Some");
     }
 }
 
@@ -361,5 +363,10 @@ function checkAllOn(node) {
     if(flag) {
         discardTaggleEvent = true;
         node.parent(".mk-group").find(".mk-filter").bootstrapToggle('on')
+        node.parent(".mk-group").find(".mk-filter").next().children('.toggle-on').html("All");
+    } else {
+        discardTaggleEvent = true;
+        node.parent(".mk-group").find(".mk-filter").bootstrapToggle('on');
+        node.parent(".mk-group").find(".mk-filter").next().children('.toggle-on').html("Some");
     }
 }

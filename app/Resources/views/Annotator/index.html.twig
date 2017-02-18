@@ -58,7 +58,7 @@
                                 {% for key,marker in markers %}
                                     <li class="mk-group voffset2">
                                         <input class="mk-filter" id="mk-{{ marker[0].text|replace({' ':'-'})|lower }}" type="checkbox" checked="true" 
-                                               data-toggle="toggle" data-on="Display" data-off="Hide" data-onstyle="success" data-offstyle="danger"
+                                               data-toggle="toggle" data-on="All" data-off="None" data-onstyle="success" data-offstyle="danger"
                                                data-width="80" data-size="small">
                                         <span>{{ marker[0].text }}</span>
                                         <ul class="sense-group">
