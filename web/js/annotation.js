@@ -33,6 +33,8 @@ $( document ).ready(function() {
             return;
         }
         
+        if(! $(this).attr('id')) return;
+        
         var type = $(this).attr('id').substring(0,2);
         var target = $(this).attr('id').substring(3);
         if(! this.checked)  {
