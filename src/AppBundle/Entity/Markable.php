@@ -56,6 +56,12 @@ class Markable
     protected $domains;
     
     /**
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="markables")
+     * @ORM\JoinTable(name="markers_categories")
+     */
+    protected $categories;
+    
+    /**
      * The constructor
      */
     public function __construct() {
@@ -210,5 +216,39 @@ class Markable
     public function getDomains()
     {
         return $this->domains;
+    }
+
+    /**
+     * Add category
+     *
+     * @param \AppBundle\Entity\Categories $category
+     *
+     * @return Markable
+     */
+    public function addCategory(\AppBundle\Entity\Categories $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \AppBundle\Entity\Categories $category
+     */
+    public function removeCategory(\AppBundle\Entity\Categories $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }

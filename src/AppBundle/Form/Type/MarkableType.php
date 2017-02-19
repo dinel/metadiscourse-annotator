@@ -32,17 +32,17 @@ class MarkableType extends AbstractType {
                 'disabled' => $this->in_edit_mode,
             ))
             ->add('description', 'text')
-            /*
-            ->add('domains', 'entity', array(
-                    'class'     => 'AppBundle:Domain',
-                    'choice_label' => 'Domains',
+            
+            ->add('categories', 'entity', array(
+                    'class'     => 'AppBundle:Category',
+                    'choice_label' => 'Categories',
                     'expanded'  => true,
                     'multiple'  => true,
-                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                    /*'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
                             return $er->createQueryBuilder('d')
-                                      ->where('d.disabled = 0');
-                    },
-                ))*/
+                                      ->where('d.parent != 0');
+                    },*/
+                ))
             ->add('save', 'submit', array(
                 'label' => $this->in_edit_mode ? 'Edit marker' : 'Add marker')
             );

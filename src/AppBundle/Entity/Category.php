@@ -44,10 +44,16 @@ class Category
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
-    private $parent;
+    private $parent;        
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Markable")
+     */
+    private $markables;
     
     public function __construct() {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->markables = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -82,6 +88,10 @@ class Category
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function getCategories() {
+        return $this->getName();
     }
 
     /**
@@ -140,5 +150,39 @@ class Category
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * Add markable
+     *
+     * @param \AppBundle\Entity\Markable $markable
+     *
+     * @return Category
+     */
+    public function addMarkable(\AppBundle\Entity\Markable $markable)
+    {
+        $this->markables[] = $markable;
+
+        return $this;
+    }
+
+    /**
+     * Remove markable
+     *
+     * @param \AppBundle\Entity\Markable $markable
+     */
+    public function removeMarkable(\AppBundle\Entity\Markable $markable)
+    {
+        $this->markables->removeElement($markable);
+    }
+
+    /**
+     * Get markables
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMarkables()
+    {
+        return $this->markables;
     }
 }
