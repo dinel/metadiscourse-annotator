@@ -38,10 +38,10 @@ class MarkableType extends AbstractType {
                     'choice_label' => 'Categories',
                     'expanded'  => true,
                     'multiple'  => true,
-                    /*'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
                             return $er->createQueryBuilder('d')
-                                      ->where('d.parent != 0');
-                    },*/
+                                      ->where('d.parent IS NOT NULL');
+                    },
                 ))
             ->add('save', 'submit', array(
                 'label' => $this->in_edit_mode ? 'Edit marker' : 'Add marker')
