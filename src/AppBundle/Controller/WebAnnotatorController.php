@@ -144,7 +144,7 @@ class WebAnnotatorController extends Controller
         $session = $this->get('session');
         $session->set("filter-mark-id", $id_mark);
         
-        return $this->forward("AppBundle:WebAnnotator:index", 
+        return $this->redirectToRoute("document_show",
                 array("id" => $id_doc,
         ));
     }
