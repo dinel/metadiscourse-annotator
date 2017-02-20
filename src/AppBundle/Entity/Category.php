@@ -47,7 +47,7 @@ class Category
     private $parent;        
     
     /**
-     * @ORM\ManyToMany(targetEntity="Markable")
+     * @ORM\ManyToMany(targetEntity="Markable", mappedBy="categories")
      */
     private $markables;
     

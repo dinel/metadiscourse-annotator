@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/general.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('font-awesome/font-awesome.min.css') }}">
+{% endblock stylesheets %}
+
+{% block body %}
+    
+<h3>Categories</h3>
+<ul>
+{% for category in categories %}
+    <li>
+        {{ category[0].name }}
+        {% if category | length > 1 %}
+            <ul>
+                {% for element in category[1:] %}
+                    <li>{{ element.name }}:
+                        {% for mark in element.markables %}
+                             <a href="{{ path("set_mark", {'id_doc' : id, 'id_mark': mark.id} ) }}">{{ mark.text }}</a>, 
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endfor %} 
+</ul>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/admin.js') }}"></script>
+{% endblock %}

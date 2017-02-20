@@ -223,6 +223,9 @@ class CorpusAdminController extends Controller
      * @Route("/corpus/annotate/{id}", name="corpus_annotate")
      */
     public function corpusAnnotateAction(Request $request, $id) {
+        $session = $this->get('session');
+        $session->remove("filter-mark-id");
+        
         $corpus = $this->getCorpus($id);
         
         return $this->render('Annotator/annotate_corpus.html.twig', array(

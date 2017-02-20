@@ -29,6 +29,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 use AppBundle\Entity\Sense;
 
@@ -56,19 +57,22 @@ class WebAnnotatorController extends Controller
             $markers = array();
             
             $em = $this->getDoctrine()->getManager();
+            
+            $session = $this->get('session');
+            $id_mark = $session->get('filter-mark-id');
 
             while (($row = $tokens->next()) !== false) {
                 $token = $row[0];
                 $ann = $this->getAnnotation($token);
                 $style = " dsp-" . str_replace(" ", "-", strtolower($token->getContent()));
-                if($ann) {
+                if($ann && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {                    
                     $flag = 1;
                     if($ann[0]->getSense()) {
                         $style .= " meta-marker sense" . $ann[0]->getSense()->getId();
                     } else {
                         $style .= " meta-marker false-pos";
                     }
-                } elseif ($token->getMarkable()) {
+                } elseif ($token->getMarkable() && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {
                     $flag = 0;
                     $style .= " meta-marker meta-marker-todo";
                 } else {
@@ -76,7 +80,7 @@ class WebAnnotatorController extends Controller
                 }
                 $tokens_style[] = array($token, $style);
                 
-                if($token->getMarkable()) {
+                if($token->getMarkable() && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {
                     if(array_key_exists($token->getMarkable()->getId(), $markers) === false) {
                         $markers[$token->getMarkable()->getId()] = array($token->getMarkable(), 1, $flag);
                     } else {
@@ -106,9 +110,52 @@ class WebAnnotatorController extends Controller
     }
     
     /**
+     * @Route("/document/select-category/{id}", name="select_mark")
+     */
+    public function selectMarkAction($id) {
+        $categories = $this->getDoctrine()
+                           ->getRepository("AppBundle:Category")
+                           ->findAll();
+        $cat_tree = array();
+        
+        foreach($categories as $category) {
+            if($category->getName() == "No parent category") {
+                continue;
+            }
+            
+            if($category->getParent()) {
+                $cat_tree[$category->getParent()->getName()][] = $category;                
+            } else {
+                $cat_tree[$category->getName()] = array();
+                $cat_tree[$category->getName()][] = $category;                
+            }
+        }
+        
+        return $this->render('Annotator/select.html.twig', array(
+                'categories' => $cat_tree,
+                'id' => $id,
+            ));        
+    }
+    
+    /**
+     * @Route("/document/set-mark-id/{id_doc}/{id_mark}", name="set_mark")
+     */
+    public function setMarkIDAction($id_doc, $id_mark) {        
+        $session = $this->get('session');
+        $session->set("filter-mark-id", $id_mark);
+        
+        return $this->forward("AppBundle:WebAnnotator:index", 
+                array("id" => $id_doc,
+        ));
+    }
+
+    /**
      * @Route("/document/next/{id_token}")
      */
     public function nextAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
+        $session = $this->get('session');
+        $id_mark = $session->get('filter-mark-id');
+            
         $token = $this->getDoctrine()
                       ->getRepository('AppBundle:Token')
                       ->find($id_token);
@@ -116,7 +163,7 @@ class WebAnnotatorController extends Controller
         $pos = $toks->indexOf($token) + 1;
         while($pos < $toks->count()) {
             $tok = $toks->get($pos);
-            if($tok->getMarkable()) {
+            if($tok->getMarkable() && ($id_mark == null || $id_mark == $tok->getMarkable()->getId())) {
                 $id_token = $tok->getId();
                 break;
             }
@@ -130,6 +177,9 @@ class WebAnnotatorController extends Controller
      * @Route("/document/prev/{id_token}")
      */
     public function prevAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
+        $session = $this->get('session');
+        $id_mark = $session->get('filter-mark-id');
+        
         $token = $this->getDoctrine()
                       ->getRepository('AppBundle:Token')
                       ->find($id_token);
@@ -137,7 +187,7 @@ class WebAnnotatorController extends Controller
         $pos = $toks->indexOf($token) - 1;
         while($pos >= 0) {
             $tok = $toks->get($pos);
-            if($tok->getMarkable()) {
+            if($tok->getMarkable() && ($id_mark == null || $id_mark == $tok->getMarkable()->getId())) {
                 $id_token = $tok->getId();
                 break;
             }

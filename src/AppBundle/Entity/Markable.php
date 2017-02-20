@@ -221,13 +221,14 @@ class Markable
     /**
      * Add category
      *
-     * @param \AppBundle\Entity\Categories $category
+     * @param \AppBundle\Entity\Category $category
      *
      * @return Markable
      */
-    public function addCategory(\AppBundle\Entity\Categories $category)
+    public function addCategory(\AppBundle\Entity\Category $category)
     {
         $this->categories[] = $category;
+        $category->addMarkable($this);
 
         return $this;
     }
@@ -235,11 +236,12 @@ class Markable
     /**
      * Remove category
      *
-     * @param \AppBundle\Entity\Categories $category
+     * @param \AppBundle\Entity\Category $category
      */
-    public function removeCategory(\AppBundle\Entity\Categories $category)
+    public function removeCategory(\AppBundle\Entity\Category $category)
     {
         $this->categories->removeElement($category);
+        $category->removeMarkable($this);
     }
 
     /**
