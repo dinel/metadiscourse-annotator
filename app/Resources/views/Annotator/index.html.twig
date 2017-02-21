@@ -93,9 +93,10 @@
                                 <strong>Statistics:</strong><br/>
                                 <ul>
                                 {% for key,marker in markers %}
-                                    <li>{{ marker[0].text }}: {{marker[1]}} {{marker[2]}}</li>
+                                    <li>{{ marker[0].text }}: {{marker[2]}}/{{marker[1]}}</li>
                                 {% endfor %}
                                 </ul>
+                            </div>
                         </div>
 
                         <div id="operations-tab" class="tab-pane fade voffset2">
