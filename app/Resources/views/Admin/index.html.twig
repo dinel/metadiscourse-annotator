@@ -39,9 +39,11 @@
                         <div id="markers-tab" class="tab-pane fade voffset2">
                             {% for initial, markers in groupped_markers %}
                                 <h4>{{ initial }}</h4>
+                                <div style="margin-left:4em;">
                                 {% for marker in markers %}
-                                    <span style="margin-left:4em;"><a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a></span>
+                                    <a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a>{% if not loop.last %},{% endif %}
                                 {% endfor %}
+                                </div>
                             {% endfor %}
                             <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></div>
                         </div>
