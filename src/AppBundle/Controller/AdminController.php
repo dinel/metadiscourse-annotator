@@ -1,13 +1,23 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015 - 2017 dinel.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /**
- * Description of ListManagerController
+ * Description of AdminController
  *
  * @author dinel
  */
@@ -34,15 +44,18 @@ class AdminController extends Controller
     /**
      * @Route("/admin", name="admin_page")
      */
-    public function indexAction() {
-        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Domain");
-        $domains = $repository->findAll();
-        
+    public function indexAction() {                
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Text");
         $texts = $repository->findAll();
         
-        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
-        $marks = $repository->findAll();
+        $marks = $this->getDoctrine()
+                      ->getRepository("AppBundle:Markable")
+                      ->findAll();
+        
+        $groupped_marks = array();
+        foreach($marks as $mark) {
+            $groupped_marks[strtoupper($mark->getText()[0])][] = $mark;
+        }
         
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
         $categories = $repository->findAll();
@@ -57,13 +70,15 @@ class AdminController extends Controller
                 $cat_tree[$category->getName()] = array();
                 $cat_tree[$category->getName()][] = $category;                
             }
-        }        
+        }
+        
+        ksort($groupped_marks);
         
         return $this->render('Admin/index.html.twig', array(
-                'domains' => $domains,
                 'texts' => $texts,
-                'markers' => $marks,
+                'groupped_markers' => $groupped_marks,
                 'categories' => $cat_tree,
+                'domains' => array(),
             ));
     }
     

@@ -72,9 +72,11 @@
             
             <div class="col-md-4">
                 <h2>Markers</h2>
-                
-                {% for marker in markers %}
-                    <div><a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a></div>
+                {% for initial, markers in groupped_markers %}
+                    <h2>{{ initial }}</h2>
+                    {% for marker in markers %}
+                        <div><a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a></div>
+                    {% endfor %}
                 {% endfor %}
                 <p><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></p>
             </div>
