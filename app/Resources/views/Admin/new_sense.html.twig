@@ -60,7 +60,8 @@
                         {% if sense.definition %}
                             <li class="sense"><span style="color:{{ sense.fgcolor}};background-color:{{ sense.bgcolor}};">
                                     <a href="{{ path('admin_sense_edit', {'id_marker': mark.id, 'id_sense': sense.id}) }}">{{ sense.definition }}</a>
-                                </span>: {{ sense.explanation }} (Default score: {{ sense.score }})
+                                </span>: {{ sense.explanation }} (Default score: {{ sense.score }}
+                                )
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -100,6 +101,7 @@
     <script src="{{ asset('js/spectrum.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
+        $("#sense_bgColor").val('{{ initial_sense.bgcolor }}');
         $("#sense_bgColor").spectrum({
             color: "{{ initial_sense.bgcolor }}",
             preferredFormat: 'hex',
@@ -109,6 +111,7 @@
             }
         });
                 
+        $("#sense_fgColor").val('{{ initial_sense.fgcolor }}');
         $("#sense_fgColor").spectrum({
             color: "{{ initial_sense.fgcolor }}",
             preferredFormat: 'hex',
