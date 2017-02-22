@@ -9,9 +9,54 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-8">                
+                <div class = "panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#categories-tab">Categories</a></li>
+                        <li><a data-toggle="tab" href="#markers-tab">Markers</a></li>                        
+                        <li><a data-toggle="tab" href="#operations-tab">Various</a></li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div id="categories-tab" class="tab-pane fade in active voffset2">
+                            <ul>
+                            {% for category in categories %}
+                                <li>
+                                    {{ category[0].name }}
+                                    {% if category | length > 1 %}
+                                        <ul>
+                                            {% for element in category[1:] %}
+                                                <li>{{ element.name }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endfor %} 
+                            </ul>
+                            <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_category_add') }}" role="button">Add new category &raquo;</a></div>
+                        </div>
+                        
+                        <div id="markers-tab" class="tab-pane fade voffset2">
+                            {% for initial, markers in groupped_markers %}
+                                <h4>{{ initial }}</h4>
+                                {% for marker in markers %}
+                                    <span style="margin-left:4em;"><a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a></span>
+                                {% endfor %}
+                            {% endfor %}
+                            <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></div>
+                        </div>
+                   
+                        <div id="operations-tab" class="tab-pane fade voffset2">
+                            <a href="/admin_new">Define the characteristics of the corpus</a><br/>
+                            <a href="/">Back to front page</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
                 
-                <!--
+                {#
                 <h3>Domains</h3>
                 
                 <ul class="edit-list">
@@ -41,24 +86,9 @@
                     <input type="reset" value="Cancel" id="import-domains-cancel">
                 </form>
                 
-                -->
                 
-                <h3>Categories</h3>
-                <ul>
-                {% for category in categories %}
-                    <li>
-                        {{ category[0].name }}
-                        {% if category | length > 1 %}
-                            <ul>
-                                {% for element in category[1:] %}
-                                    <li>{{ element.name }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </li>
-                {% endfor %} 
-                </ul>
-                <p><a class="btn btn-default" href="{{ path('admin_category_add') }}" role="button">Add new category &raquo;</a></p>
+                
+                
             </div>
             
             <div class="col-md-4">
@@ -69,25 +99,7 @@
                 {% endfor %}
                 <p><a class="btn btn-default" href="{{ path('admin_text_add') }}" role="button">Add text &raquo;</a></p>
             </div>
-            
-            <div class="col-md-4">
-                <h2>Markers</h2>
-                {% for initial, markers in groupped_markers %}
-                    <h2>{{ initial }}</h2>
-                    {% for marker in markers %}
-                        <div><a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a></div>
-                    {% endfor %}
-                {% endfor %}
-                <p><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <a href="/admin_new">More options ...</a>
-            </div>
-        </div>
-    </div>
-    
+                        #}                
 {% endblock %}
 
 {% block javascripts %}
