@@ -54,7 +54,11 @@ class AdminController extends Controller
         
         $groupped_marks = array();
         foreach($marks as $mark) {
-            $groupped_marks[strtoupper($mark->getText()[0])][] = $mark;
+            if(ctype_alpha($mark->getText()[0])) {
+                $groupped_marks[strtoupper($mark->getText()[0])][] = $mark;
+            } else {
+                $groupped_marks[" Punctuation"][] = $mark;
+            }
         }
         
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
