@@ -585,7 +585,23 @@ class AdminController extends Controller
      */
     public function newCategoryAction(\Symfony\Component\HttpFoundation\Request $request) {
         $category = new \AppBundle\Entity\Category();
-        $form = $this->createForm(new CategoryType(), $category);
+        
+        return $this->editCategory_intern($request, $category, new CategoryType());
+    }    
+    
+    /**
+     * @Route("/admin/category/{id_category}", name="admin_category_edit")
+     */
+    public function editCategoryAction(\Symfony\Component\HttpFoundation\Request $request, $id_category) {
+        $category = $this->getDoctrine()
+                          ->getRepository('AppBundle:Category')
+                          ->find($id_category);
+        
+        return $this->editCategory_intern($request, $category, new CategoryType(true));        
+    }  
+    
+    private function editCategory_intern($request, $category, $categoryType) {
+        $form = $this->createForm($categoryType, $category);
         
         $form->handleRequest($request);
         
@@ -604,7 +620,7 @@ class AdminController extends Controller
         return $this->render('Admin/new_category.html.twig', array(
                 'form' => $form->createView(),
         ));
-    }    
+    }
     
     /**
      * @Route("/admin/corpus/edit/{id}", name="edit_corpus")

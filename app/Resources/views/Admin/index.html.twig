@@ -41,11 +41,13 @@
                             <ul class="voffset3">
                             {% for category in categories %}
                                 <li>
-                                    {{ category[0].name }}
+                                    <a href="{{ path('admin_category_edit', {'id_category': category[0].id}) }}">{{ category[0].name }}</a>
                                     {% if category | length > 1 %}
                                         <ul>
                                             {% for element in category[1:] %}
-                                                <li>{{ element.name }}</li>
+                                                <li>
+                                                    <a href="{{ path('admin_category_edit', {'id_category': element.id}) }}">{{ element.name }}</a>
+                                                </li>
                                             {% endfor %}
                                         </ul>
                                     {% endif %}
