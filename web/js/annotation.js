@@ -166,6 +166,39 @@ $( document ).ready(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
         $('#sense-id').val(this.value);
+        
+        $.ajax({
+            type: 'POST',
+            url: '/utils/data-by-sense/' + this.value,
+            dataType: 'json',
+            success: function(data) {
+                $("#polarity").val(data.polarity);
+                $("#slider").slider("value", data.polarity);
+                
+                if(data.sub_categories.length > 0) {
+                    var secondary_cat_html = "<option value='null'>...</option>";
+                    for(var i = 0; i < data.sub_categories.length; i++) {
+                        secondary_cat_html += "<option value='" + data.sub_categories[i][0] + "'>" + data.sub_categories[i][1] + "</option>";
+                    }
+                    
+                    $('#secondary-category').html(secondary_cat_html);
+                    $('#subcategory-div').show();
+                } else {
+                    $('#subcategory-div').hide();
+                    $('#secondary-category').html("");
+                }
+                
+                if(data.selected_leaf !== -1) {
+                    $('#secondary-category option[value="' + data.selected_leaf + '"]').prop('selected', true);
+                }
+                
+                if(data.selected_parent !== -1) {
+                    $('#primary-category option[value="' + data.selected_parent + '"]').prop('selected', true);
+                } else {
+                    $('#primary-category option[value="0"]').prop('selected', true);
+                }
+            }
+        });
     });
     
     /*
