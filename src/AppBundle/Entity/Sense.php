@@ -65,6 +65,12 @@ class Sense
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      */
     protected $defCategory;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="senses")
+     * @ORM\JoinTable(name="senses_categories")
+     */
+    protected $categories;
 
     /**
      * Get id
@@ -218,5 +224,46 @@ class Sense
     public function getExplanation()
     {
         return $this->explanation;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add category
+     *
+     * @param \AppBundle\Entity\Category $category
+     *
+     * @return Sense
+     */
+    public function addCategory(\AppBundle\Entity\Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \AppBundle\Entity\Category $category
+     */
+    public function removeCategory(\AppBundle\Entity\Category $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }

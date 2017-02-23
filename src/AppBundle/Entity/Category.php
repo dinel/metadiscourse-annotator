@@ -51,6 +51,11 @@ class Category
      */
     private $markables;
     
+    /**
+     * @ORM\ManyToMany(targetEntity="Sense", mappedBy="categories")
+     */
+    private $senses;
+    
     public function __construct() {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->markables = new \Doctrine\Common\Collections\ArrayCollection();
@@ -184,5 +189,39 @@ class Category
     public function getMarkables()
     {
         return $this->markables;
+    }
+
+    /**
+     * Add sense
+     *
+     * @param \AppBundle\Entity\Sense $sense
+     *
+     * @return Category
+     */
+    public function addSense(\AppBundle\Entity\Sense $sense)
+    {
+        $this->senses[] = $sense;
+
+        return $this;
+    }
+
+    /**
+     * Remove sense
+     *
+     * @param \AppBundle\Entity\Sense $sense
+     */
+    public function removeSense(\AppBundle\Entity\Sense $sense)
+    {
+        $this->senses->removeElement($sense);
+    }
+
+    /**
+     * Get senses
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSenses()
+    {
+        return $this->senses;
     }
 }
