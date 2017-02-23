@@ -12,14 +12,33 @@
             <div class="col-md-8">                
                 <div class = "panel-body">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#categories-tab">Categories</a></li>
-                        <li><a data-toggle="tab" href="#markers-tab">Markers</a></li>                        
+                        <li class="active"><a data-toggle="tab" href="#markers-tab">Markers</a></li>
+                        <li><a data-toggle="tab" href="#categories-tab">Categories</a></li>                                                
                         <li><a data-toggle="tab" href="#operations-tab">Various</a></li>
                     </ul>
                     
-                    <div class="tab-content">
-                        <div id="categories-tab" class="tab-pane fade in active voffset2">
-                            <ul>
+                    <div class="tab-content">                        
+                        <div id="markers-tab" class="tab-pane fade fade in active voffset2">
+                            <div class="voffset3">
+                                <a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add new marker &raquo;</a>
+                            </div>
+                            <div class="voffset3">
+                                {% for initial, markers in groupped_markers %}
+                                    <h4>{{ initial }}</h4>
+                                    <div style="margin-left:4em;">
+                                    {% for marker in markers %}
+                                        <a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a>{% if not loop.last %},{% endif %}
+                                    {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div id="categories-tab" class="tab-pane fade voffset2">
+                            <div class="voffset3">
+                                <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_category_add') }}" role="button">Add new category &raquo;</a></div>
+                            </div>
+                            <ul class="voffset3">
                             {% for category in categories %}
                                 <li>
                                     {{ category[0].name }}
@@ -32,20 +51,7 @@
                                     {% endif %}
                                 </li>
                             {% endfor %} 
-                            </ul>
-                            <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_category_add') }}" role="button">Add new category &raquo;</a></div>
-                        </div>
-                        
-                        <div id="markers-tab" class="tab-pane fade voffset2">
-                            {% for initial, markers in groupped_markers %}
-                                <h4>{{ initial }}</h4>
-                                <div style="margin-left:4em;">
-                                {% for marker in markers %}
-                                    <a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a>{% if not loop.last %},{% endif %}
-                                {% endfor %}
-                                </div>
-                            {% endfor %}
-                            <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add marker &raquo;</a></div>
+                            </ul>                            
                         </div>
                    
                         <div id="operations-tab" class="tab-pane fade voffset2">
