@@ -23,8 +23,12 @@
         </div>
                 
         <div class="row voffset5">
-            <div class="col-md-3 col-md-offset-2">
+            <div class="col-md-3 col-md-offset-2">                
+                {% if is_granted('ROLE_ADMIN')  %}
                 <div class="options upload"><a href="/admin/corpora/">Manage corpora</a></div>
+                {% else %}
+                <div class="options upload">Manage corpora</div>
+                {% endif %}
             </div>            
             <div class="col-md-3 col-md-offset-2">
                 <div class="options annotate"><a href="/admin/corpora/">Annotate corpus</a></div>
@@ -37,7 +41,11 @@
             </div>
             
             <div class="col-md-3 col-md-offset-2">
+                {% if is_granted('ROLE_ADMIN')  %}
                 <div class="options configure-system"><a href="/admin">Configure settings</a></div>
+                {% else %}
+                <div class="options configure-system">Configure settings</div>
+                {% endif %}                
             </div>
         </div>
                 
