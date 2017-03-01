@@ -26,3 +26,12 @@ services:
         tags:
             - { name: twig.extension }
             
+    your.log.handler:
+        class: %monolog.handler.stream.class%
+        arguments: [ %kernel.logs_dir%/%kernel.environment%.yourFileName.log ]
+        
+    your.logger:
+        class: %monolog.logger.class%
+        arguments: [ nameOfLoggingChannel ]
+        calls: [ [pushHandler, [@your.log.handler]] ]
+            
