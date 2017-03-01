@@ -30,12 +30,12 @@ class CharacteristicValuePairs {
     protected $id;
     
     /**
-     * @ORM\ManyToOne(targetEntity="CorpusCharacteristicValue")
+     * @ORM\ManyToOne(targetEntity="CorpusCharacteristicValue", inversedBy="pairs")
      */
     protected $value;    
     
     /**
-     * @ORM\ManyToOne(targetEntity="Corpus")
+     * @ORM\ManyToOne(targetEntity="Corpus", inversedBy="pairs")
      */
     protected $corpus;
 
