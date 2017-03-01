@@ -18,7 +18,7 @@
                 {% for element in category[1:] %}
                     <li>{{ element.name }}:
                         {% for mark in element.markables %}
-                             <a href="{{ path("set_mark", {'id_doc' : id, 'id_mark': mark.id} ) }}">{{ mark.text }}</a>, 
+                             <a href="{{ path("context_marker_show", {'id_doc' : id, 'id_marker': mark.id} ) }}">{{ mark.text }}</a>, 
                         {% endfor %}
                     </li>
                 {% endfor %}

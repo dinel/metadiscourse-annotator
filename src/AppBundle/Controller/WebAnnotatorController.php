@@ -110,6 +110,121 @@ class WebAnnotatorController extends Controller
     }
     
     /**
+     * @Route("/document_contexts/{id_doc}/{id_marker}", name="context_marker_show")
+     */
+    public function annotationPerMarkerAction($id_doc, $id_marker) {
+        $doc = $this->getDoctrine()
+                ->getRepository('AppBundle:Text')
+                ->find($id_doc);
+        
+        if($doc) {            
+            $tokens = $this->getDoctrine()
+                       ->getRepository('\AppBundle\Entity\Token')
+                       ->createQueryBuilder('t')
+                       ->where('t.document = :id AND t.markable = :id_mark')
+                       ->setParameters(array('id' => $id_doc, 'id_mark' => $id_marker))
+                       ->getQuery()
+                       ->getResult();
+            
+            $tokens_style_wrapper = array();            
+            $markers = array();
+            
+            $em = $this->getDoctrine()->getManager();
+            
+            //$session = $this->get('session');
+            //$id_mark = $session->get('filter-mark-id');
+            $id_mark = $id_marker;
+            $logger = $this->get('your.logger');
+            
+            $pos = 0;
+            while($pos < count($tokens)) {
+            //foreach($tokens as $token_mark) {
+                $token_mark = $tokens[$pos++];
+                
+                $tokens_style = array();
+                
+                $flag_loop = TRUE;
+                $right_only = FALSE;
+                
+                while($flag_loop) {
+                    $flag_loop = FALSE;
+                    //$logger->info('Processing token ' . $token_mark->getId() . " and pos is" . $pos . " out of " . count($tokens));
+
+                    
+                    $context_tokens = $this->getDoctrine()
+                           ->getRepository('\AppBundle\Entity\Token')
+                           ->createQueryBuilder('t')
+                           ->where('t.document = :id AND t.id > :id_start')
+                           ->setParameter('id', $id_doc)
+                           ->setParameter('id_start', $right_only ? $token_mark->getId() : $token_mark->getId() - 50)
+                           ->setMaxResults($right_only ? 50 : 101)
+                           ->getQuery()
+                           ->iterate();                       
+
+                    while (($row = $context_tokens->next()) !== false) {
+                        $token = $row[0];
+                        $ann = $this->getAnnotation($token);
+                        $style = " dsp-" . str_replace(" ", "-", strtolower($token->getContent()));
+                        if($ann && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {                    
+                            $flag = 1;
+                            if($ann[0]->getSense()) {
+                                $style .= " meta-marker sense" . $ann[0]->getSense()->getId();
+                            } else {
+                                $style .= " meta-marker false-pos";
+                            }
+                        } elseif ($token->getMarkable() && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {
+                            $flag = 0;
+                            $style .= " meta-marker meta-marker-todo";
+                        } else {
+                            $style = "normal";
+                        }
+                        $tokens_style[] = array($token, $style);
+
+                        if($token->getMarkable() && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {
+                            if(array_key_exists($token->getMarkable()->getId(), $markers) === false) {
+                                $markers[$token->getMarkable()->getId()] = array($token->getMarkable(), 1, $flag);
+                            } else {
+                                $markers[$token->getMarkable()->getId()][1]++;
+                                $markers[$token->getMarkable()->getId()][2] += $flag;
+                            }                    
+                        }
+                        
+                        if($pos < count($tokens) && $token->getId() === $tokens[$pos]->getId()) {
+                            $flag_loop = TRUE;
+                            $right_only = TRUE;
+                            $token_mark = $tokens[$pos++];
+                            $em->detach($token);
+                            //$logger->info('Processing break');
+                            break;
+                        } else {
+                            $em->detach($token);
+                        }
+                    }
+                }
+                
+                $tokens_style_wrapper[] = $tokens_style;
+            }
+            
+            $em->clear();
+            
+            $token = null;
+            /*
+            if($id_token) {
+                $token = $this->getDoctrine()
+                              ->getRepository('AppBundle:Token')
+                              ->find($id_token);
+            }*/
+                        
+            return $this->render('Annotator/index_context.html.twig', array(
+                    'text' => $doc,
+                    'tokens_style_wrapper' => $tokens_style_wrapper,
+                    'token' => $token ? $token->getId() : null,
+                    'markers' => $markers,
+                ));
+        }
+    }
+    
+    /**
      * @Route("/document/select-category/{id}", name="select_mark")
      */
     public function selectMarkAction($id) {
