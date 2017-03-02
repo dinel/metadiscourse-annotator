@@ -112,9 +112,19 @@ $( document ).ready(function() {
     
     $('#next').click(function() {
         $('#tag-attributes').show();
+        
+        var nextToken = currentToken;
+        var metaMarkers = $('.meta-marker').toArray();
+        for(var i = 0; i < metaMarkers.length; i++) {
+            if(metaMarkers[i].id == currentToken && i < metaMarkers.length) {
+                nextToken = metaMarkers[i+1].id;
+                break;                
+            }
+        }
+                
         $.ajax({
             type: 'POST',
-            url: '/document/next/' + currentToken,
+            url: '/document/next/' + nextToken,
             dataType: 'json',
             success: function(data) {
                 updateAnnotationPanel(data);
@@ -124,9 +134,19 @@ $( document ).ready(function() {
     
     $('#previous').click(function() {
         $('#tag-attributes').show();
+        
+        var prevToken = currentToken;
+        var metaMarkers = $('.meta-marker').toArray();
+        for(var i = 0; i < metaMarkers.length; i++) {
+            if(metaMarkers[i].id == currentToken && i > 0) {
+                prevToken = metaMarkers[i-1].id;
+                break;                
+            }
+        }
+        
         $.ajax({
             type: 'POST',
-            url: '/document/prev/' + currentToken,
+            url: '/document/prev/' + prevToken,
             dataType: 'json',
             success: function(data) {
                 updateAnnotationPanel(data);
