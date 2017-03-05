@@ -268,7 +268,7 @@ class WebAnnotatorController extends Controller
      * @Route("/document/next/{id_token}")
      */
     public function nextAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
-        $session = $this->get('session');
+        /*$session = $this->get('session');
         $id_mark = $session->get('filter-mark-id');
             
         $token = $this->getDoctrine()
@@ -283,7 +283,7 @@ class WebAnnotatorController extends Controller
                 break;
             }
             $pos++;
-        }
+        }*/
         
         return $this->createAction($id_token, $request);
     }
@@ -292,6 +292,7 @@ class WebAnnotatorController extends Controller
      * @Route("/document/prev/{id_token}")
      */
     public function prevAction($id_token, \Symfony\Component\HttpFoundation\Request $request) {
+        /*
         $session = $this->get('session');
         $id_mark = $session->get('filter-mark-id');
         
@@ -307,7 +308,7 @@ class WebAnnotatorController extends Controller
                 break;
             }
             $pos--;
-        }
+        }*/
         
         return $this->createAction($id_token, $request);
     }
