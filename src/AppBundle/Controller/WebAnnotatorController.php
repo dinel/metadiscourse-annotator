@@ -29,7 +29,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 use AppBundle\Entity\Sense;
 
@@ -40,6 +39,7 @@ class WebAnnotatorController extends Controller
      *          requirements={"id": "\d+", "id_token": "\d+"})
      */
     public function indexAction($id, $id_token = null) {
+        $annotationPreferences = $this->getAnnotationPreferences();
         $doc = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
                 ->find($id);
@@ -105,6 +105,7 @@ class WebAnnotatorController extends Controller
                     'tokens_style' => $tokens_style,
                     'token' => $token ? $token->getId() : null,
                     'markers' => $markers,
+                    'prefs' => $annotationPreferences,
                 ));
         }
     }
@@ -113,6 +114,7 @@ class WebAnnotatorController extends Controller
      * @Route("/document_contexts/{id_doc}/{id_marker}", name="context_marker_show")
      */
     public function annotationPerMarkerAction($id_doc, $id_marker) {
+        $annotationPreferences = $this->getAnnotationPreferences();
         $doc = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
                 ->find($id_doc);
@@ -220,6 +222,7 @@ class WebAnnotatorController extends Controller
                     'tokens_style_wrapper' => $tokens_style_wrapper,
                     'token' => $token ? $token->getId() : null,
                     'markers' => $markers,
+                    'prefs' => $annotationPreferences,
                 ));
         }
     }
@@ -498,4 +501,21 @@ class WebAnnotatorController extends Controller
                     ->findBy(array('token' => $token, 
                                    'userName' => $this->getUser()->getUserName()));
     }
+
+    private function getAnnotationPreferences() {
+        $prefs = $this->getDoctrine()
+                      ->getRepository('AppBundle:AnnotationPreference')
+                      ->findAll();
+        
+        foreach($prefs as $pref) {
+            return $pref;
+        }
+        
+        $pref = new \AppBundle\Entity\AnnotationPreference();
+        $pref->setNotMarkableLabel("Not Metadiscourse marker");
+        $pref->setShowPolarity(1);
+        $pref->setShowCategories(1);
+        return $pref;
+    }
+
 }

@@ -45,6 +45,21 @@ class AnnotationPreference {
     private $categories;
     
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $notMarkableLabel;                     
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $showPolarity;  
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $showCategories;  
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -142,5 +157,77 @@ class AnnotationPreference {
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Set notMarkableLabel
+     *
+     * @param string $notMarkableLabel
+     *
+     * @return AnnotationPreference
+     */
+    public function setNotMarkableLabel($notMarkableLabel)
+    {
+        $this->notMarkableLabel = $notMarkableLabel;
+
+        return $this;
+    }
+
+    /**
+     * Get notMarkableLabel
+     *
+     * @return string
+     */
+    public function getNotMarkableLabel()
+    {
+        return $this->notMarkableLabel;
+    }
+
+    /**
+     * Set showPolarity
+     *
+     * @param \int $showPolarity
+     *
+     * @return AnnotationPreference
+     */
+    public function setShowPolarity($showPolarity)
+    {
+        $this->showPolarity = $showPolarity;
+
+        return $this;
+    }
+
+    /**
+     * Get showPolarity
+     *
+     * @return \int
+     */
+    public function getShowPolarity()
+    {
+        return $this->showPolarity;
+    }
+
+    /**
+     * Set showCategories
+     *
+     * @param integer $showCategories
+     *
+     * @return AnnotationPreference
+     */
+    public function setShowCategories($showCategories)
+    {
+        $this->showCategories = $showCategories;
+
+        return $this;
+    }
+
+    /**
+     * Get showCategories
+     *
+     * @return integer
+     */
+    public function getShowCategories()
+    {
+        return $this->showCategories;
     }
 }
