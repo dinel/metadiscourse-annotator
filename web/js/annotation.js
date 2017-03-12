@@ -7,15 +7,60 @@
 var explanations = [];
 var currentToken = 0;
 var discardTaggleEvent = false;
+var ctrlIsDown = false;
+var annotationAreaOn = false;
 
 $( document ).ready(function() {
     $('#tag-attributes').hide();
     $('#reprocess').hide();
     $('.sense-group').hide();
     
+    $('document').keyup(function(e) {
+        if(e.which === 17) {
+            ctrlIsDown = false;
+        }
+    });
+    
+    $(document).keydown(function(e) {
+        if(e.which === 17) {
+            ctrlIsDown = true; 
+        }
+        
+        if(ctrlIsDown && annotationAreaOn) { 
+            console.log(e.which);
+        }
+        
+        if(ctrlIsDown && annotationAreaOn && e.which === 48) { 
+            $('#not-marker').trigger('click');
+            return false;
+        } 
+        
+        if(ctrlIsDown && annotationAreaOn && e.which > 48 && e.which < 58) { 
+            $('#list-senses option').eq(e.which - 49).prop('selected', true);
+            $('#list-senses').trigger('change');
+            return false;
+        }
+        
+        if(ctrlIsDown && e.which === 83) {
+            $('#update-annotation').trigger('click');
+            return false;
+        }
+        
+        if(ctrlIsDown && e.which === 190) {
+            $('#next').trigger('click');
+            return false;
+        }
+                
+        if(ctrlIsDown && e.which === 188) {
+            $('#previous').trigger('click');
+            return false;
+        }
+    });
+    
     /* Call display token ? */
     if(callFunction) {
         $('#tag-attributes').show(); 
+        annotationAreaOn = true;
         $.ajax({
             type: 'POST',
             url: '/document/marker/' + callFunction,
@@ -82,6 +127,7 @@ $( document ).ready(function() {
      * Called when the user clicks to close the annotation area
      */
     $('#close-annotation-area').click(function() {
+        annotationAreaOn = false;
         $('#tag-attributes').hide();        
     });
     
@@ -99,6 +145,7 @@ $( document ).ready(function() {
      * Opens the annotation dialogue
      */
     $('.meta-marker').click(function() {
+        annotationAreaOn = true;
         $('#tag-attributes').show(); 
         $.ajax({
             type: 'POST',
@@ -111,6 +158,7 @@ $( document ).ready(function() {
     });
     
     $('#next').click(function() {
+        annotationAreaOn = true;
         $('#tag-attributes').show();
         
         var nextToken = currentToken;
@@ -133,6 +181,7 @@ $( document ).ready(function() {
     });
     
     $('#previous').click(function() {
+        annotationAreaOn = true;
         $('#tag-attributes').show();
         
         var prevToken = currentToken;
