@@ -15,7 +15,7 @@ $( document ).ready(function() {
     $('#reprocess').hide();
     $('.sense-group').hide();
     
-    $('document').keyup(function(e) {
+    $(document).keyup(function(e) {
         if(e.which === 17) {
             ctrlIsDown = false;
         }
@@ -25,11 +25,7 @@ $( document ).ready(function() {
         if(e.which === 17) {
             ctrlIsDown = true; 
         }
-        
-        if(ctrlIsDown && annotationAreaOn) { 
-            console.log(e.which);
-        }
-        
+               
         if(ctrlIsDown && annotationAreaOn && e.which === 48) { 
             $('#not-marker').trigger('click');
             return false;
