@@ -10,6 +10,8 @@ var discardTaggleEvent = false;
 var ctrlIsDown = false;
 var annotationAreaOn = false;
 
+var nextMarkerQueue = [];
+
 $( document ).ready(function() {
     $('#tag-attributes').hide();
     $('#reprocess').hide();
@@ -142,13 +144,15 @@ $( document ).ready(function() {
      */
     $('.meta-marker').click(function() {
         annotationAreaOn = true;
+        var currentTag = $(this).attr("id");
         $('#tag-attributes').show(); 
         $.ajax({
             type: 'POST',
-            url: '/document/marker/' + $(this).attr("id"),
+            url: '/document/marker/' + currentTag,
             dataType: 'json',
             success: function(data) {
                 updateAnnotationPanel(data);
+                preFetch(currentTag);
             }
         });
     });
@@ -157,28 +161,29 @@ $( document ).ready(function() {
         annotationAreaOn = true;
         $('#tag-attributes').show();
         
-        var nextToken = currentToken;
-        var metaMarkers = $('.meta-marker').toArray();
-        for(var i = 0; i < metaMarkers.length; i++) {
-            if(metaMarkers[i].id == currentToken && i < metaMarkers.length) {
-                nextToken = metaMarkers[i+1].id;
-                break;                
-            }
+        if(nextMarkerQueue.length > 0) {
+            data = nextMarkerQueue.shift();
+            updateAnnotationPanel(data);
+            preFetch(currentToken);
+        } else {
+            var nextToken = getNextToken(currentToken);
+
+            $.ajax({
+                type: 'POST',
+                url: '/document/next/' + nextToken,
+                dataType: 'json',
+                success: function(data) {
+                    updateAnnotationPanel(data);
+                    preFetch(nextToken);
+                }
+            });
         }
-                
-        $.ajax({
-            type: 'POST',
-            url: '/document/next/' + nextToken,
-            dataType: 'json',
-            success: function(data) {
-                updateAnnotationPanel(data);
-            }
-        });
     });
     
     $('#previous').click(function() {
         annotationAreaOn = true;
         $('#tag-attributes').show();
+        nextMarkerQueue = [];
         
         var prevToken = currentToken;
         var metaMarkers = $('.meta-marker').toArray();
@@ -194,7 +199,7 @@ $( document ).ready(function() {
             url: '/document/prev/' + prevToken,
             dataType: 'json',
             success: function(data) {
-                updateAnnotationPanel(data);
+                updateAnnotationPanel(data);                
             }
         });
     });
@@ -468,4 +473,67 @@ function checkAllOn(node) {
         node.parent(".mk-group").find(".mk-filter").bootstrapToggle('on');
         node.parent(".mk-group").find(".mk-filter").next().children('.toggle-on').html("Some");
     }
+}
+
+/**
+ * Function which does the prefetching of next elements to speed up the
+ * user interaction with the platform
+ * @param start the element from which the fetching to start
+ */
+function preFetch(start) {
+    if(nextMarkerQueue.length > 0) {
+        start = nextMarkerQueue[nextMarkerQueue.length - 1].tok_id;
+    } 
+    
+    var nextToken = getNextToken(start);
+
+    $.ajax({
+        type: 'POST',
+        url: '/document/next/' + nextToken,
+        dataType: 'json',
+        success: function(data) {
+            if(! checkAlreadyInQueue(data.tok_id)) {
+                nextMarkerQueue.push(data);
+            }
+            
+            if(nextMarkerQueue.length < 5) {
+                preFetch(nextToken);
+            }
+        }
+    });
+}
+
+/**
+ * Function which checks whether there is already an element with idElement 
+ * in the queue
+ * @param idElement
+ * @returns {Boolean} True if the element exists, False otherwise
+ */
+function checkAlreadyInQueue(idElement) {
+    for(var i = 0; i < nextMarkerQueue.length; i++) {
+        if(idElement === nextMarkerQueue[i].tok_id) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Returns the ID of the token that is next marker
+ * @param {int} start the position after which the token should apper
+ * @returns {int} the id of the token
+ */
+function getNextToken(start) {
+    var nextToken = start;
+    
+    var metaMarkers = $('.meta-marker').toArray();
+    for(var i = 0; i < metaMarkers.length; i++) {
+        if(metaMarkers[i].id === start && i < metaMarkers.length) {
+            nextToken = metaMarkers[i+1].id;
+            break;                
+        }
+    }
+    
+    return nextToken;
 }
