@@ -145,6 +145,7 @@ $( document ).ready(function() {
     $('.meta-marker').click(function() {
         annotationAreaOn = true;
         var currentTag = $(this).attr("id");
+        nextMarkerQueue = [];
         $('#tag-attributes').show(); 
         $.ajax({
             type: 'POST',
@@ -496,7 +497,7 @@ function preFetch(start) {
                 nextMarkerQueue.push(data);
             }
             
-            if(nextMarkerQueue.length < 5) {
+            if(nextMarkerQueue.length < 2) {
                 preFetch(nextToken);
             }
         }
