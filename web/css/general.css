@@ -74,3 +74,7 @@ ul.edit-list a.faded:hover {
     font-size: 80%;
     font-style: italic;
 }
+
+.left-margin-1em {
+    margin-left: 1em;
+}
