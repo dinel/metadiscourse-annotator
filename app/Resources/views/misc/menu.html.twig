@@ -1,0 +1,11 @@
+<div class="row header">
+    <div class="col-md-8 col-md-offset-2 highlighted">
+        <p class="text-right">
+            {% if app.user %}
+                Hello {{ app.user }}! <span class="left-margin-1em glyphicon glyphicon-cog"></span>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
+        </p>
+    </div>
+</div>
