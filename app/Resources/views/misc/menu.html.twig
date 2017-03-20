@@ -1,11 +1,24 @@
-<div class="row header">
-    <div class="col-md-8 col-md-offset-2 highlighted">
-        <p class="text-right">
-            {% if app.user %}
-                Hello {{ app.user }}! <span class="left-margin-1em glyphicon glyphicon-cog"></span>
-            {% else %}
-                <a href="/login">Login</a>
-            {% endif %}
-        </p>
+{# {# app/Resources/views/misc/menu.html.twig #} #}
+
+<div class="row header">            
+    <div class="col-md-8 highlighted">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if link == "home" %}
+                    <a href="{{ path('homepage') }}"><span class="glyphicon glyphicon-chevron-left"></span><strong>Back to main screen</strong></a>
+                    {% endif %}
+                </div>
+                <div class="col-md-2">
+                    <span class="pull-right">
+                    {% if app.user %}
+                        Hello {{ app.user }}! <span class="left-margin-1em glyphicon glyphicon-cog"></span>
+                    {% else %}
+                        <a href="/login">Login</a>
+                    {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>        
     </div>
 </div>
