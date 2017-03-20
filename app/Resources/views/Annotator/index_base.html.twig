@@ -19,6 +19,8 @@
 
 {% block body %}    
     <div class="container">
+        {% include 'misc/menu.html.twig' with {'link': 'home'} %}
+        
         <div class="row">
             <div class="col-md-8">
                 <h2>{{ text.title }}</h2>
