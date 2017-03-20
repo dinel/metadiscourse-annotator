@@ -10,9 +10,9 @@
 
 {% block body %}
     <div class="container">
+        {% include 'misc/menu.html.twig' with {'link': 'home'} %}
+                
         <div class="row">
-            {% include 'misc/menu.html.twig' with {'link': 'home'} %}
-            
             <div class="col-md-8">                
                 <div class = "panel-body">
                     <ul class="nav nav-tabs">
