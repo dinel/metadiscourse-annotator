@@ -999,7 +999,17 @@ class AdminController extends Controller
             }
         }
         
-        // TODO: check the token does not exist ... better delete everything
+        // delete all the records related to this caching from database
+        $this->getDoctrine()
+             ->getRepository('AppBundle:Cache')
+             ->createQueryBuilder('c')
+             ->delete()
+             ->where('c.link = :id AND c.type = :type')
+             ->setParameter('id', $doc)
+             ->setParameter('type', Cache::COUNT_MARK)
+             ->getQuery()
+             ->getResult();
+        
         $em = $this->getDoctrine()->getManager();
         foreach($stats as $key => $value) {
             $store = new Cache();
