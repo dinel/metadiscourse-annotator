@@ -18,7 +18,9 @@
                 {% for element in category[1:] %}
                     <li>{{ element.name }}:
                         {% for mark in element.markables %}
-                             <a href="{{ path("context_marker_show", {'id_doc' : id, 'id_marker': mark.id} ) }}">{{ mark.text }}</a>, 
+                             <a href="{{ path("context_marker_show", {'id_doc' : id, 'id_marker': mark.id} ) }}">{{ mark.text }}</a>
+                             ({% if stats[ mark.text ] is defined %}{{ stats[ mark.text ] }}{% else %}?{% endif %})
+                             {% if not loop.last %},{% endif %}
                         {% endfor %}
                     </li>
                 {% endfor %}

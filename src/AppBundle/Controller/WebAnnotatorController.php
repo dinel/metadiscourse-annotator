@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use AppBundle\Entity\Cache;
 use AppBundle\Entity\Sense;
 
 class WebAnnotatorController extends Controller
@@ -249,8 +250,25 @@ class WebAnnotatorController extends Controller
             }
         }
         
+        $stats = array();
+        $pairs = $this->getDoctrine()
+                       ->getRepository('AppBundle:Cache')
+                       ->createQueryBuilder('t')
+                       ->where('t.link = :id AND t.type = :type')
+                       ->setParameter('id', $id)
+                       ->setParameter('type', Cache::COUNT_MARK)
+                       ->getQuery()
+                       ->iterate();
+        
+        while (($row = $pairs->next()) !== false) {          
+            $pair = $row[0];
+            $stats[$pair->getKey()] = $pair->getValue();
+        }
+        
+        
         return $this->render('Annotator/select.html.twig', array(
                 'categories' => $cat_tree,
+                'stats' => $stats,
                 'id' => $id,
             ));        
     }

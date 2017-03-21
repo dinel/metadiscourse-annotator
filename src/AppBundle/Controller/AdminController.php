@@ -38,6 +38,7 @@ use AppBundle\Form\Type\CategoryType;
 
 use AppBundle\Entity\Sense;
 use AppBundle\Entity\Domain;
+use AppBundle\Entity\Cache;
 
 class AdminController extends Controller 
 {
@@ -973,6 +974,45 @@ class AdminController extends Controller
     }
     
     /**
+     * Function which stores the frequency of different markers for each 
+     * document in cache for fast retrieval
+     * @param integer $doc the id of the document for which statistics are stored
+     */
+    private function updateMarkersCache($doc) {
+        $stats = array();
+        $tokens = $this->getDoctrine()
+                       ->getRepository('AppBundle:Token')
+                       ->createQueryBuilder('t')
+                       ->where('t.document = :id')
+                       ->setParameter('id', $doc)
+                       ->getQuery()
+                       ->iterate();
+            
+        while (($row = $tokens->next()) !== false) {          
+            $token = $row[0];
+            if($token->getMarkable()) {
+                if(array_key_exists($token->getContent(), $stats)) {
+                    $stats[$token->getContent()]++;
+                } else {
+                    $stats[$token->getContent()] = 1;
+                }
+            }
+        }
+        
+        // TODO: check the token does not exist ... better delete everything
+        $em = $this->getDoctrine()->getManager();
+        foreach($stats as $key => $value) {
+            $store = new Cache();
+            $store->setType(Cache::COUNT_MARK);
+            $store->setLink($doc);
+            $store->setKey($key);
+            $store->setValue(strval($value));
+            $em->persist($store);
+        }
+        $em->flush();                       
+    }
+
+    /**
      * Finds markables in an array of tokens
      * @param array $tokens the array of tokens
      * @param int $pos the position from which the search starts
@@ -1077,6 +1117,8 @@ class AdminController extends Controller
             }
         }
         $em->flush();
+        
+        $this->updateMarkersCache($text->getId());
     }
     
     /**
