@@ -999,6 +999,22 @@ class AdminController extends Controller
             }
         }
         
+        if(count($stats) > 0) {
+            $categories = $this->getDoctrine()
+                               ->getRepository("AppBundle:Category")
+                               ->findAll();
+            foreach($categories as $category) {
+                if($category->getName() == "No parent category") {
+                    continue;
+                }
+                
+                foreach($category->getMarkables() as $markable) {
+                    if(! array_key_exists($markable->getText(), $stats))
+                            $stats[$markable->getText()] = 0;
+                }
+            }            
+        }
+        
         // delete all the records related to this caching from database
         $this->getDoctrine()
              ->getRepository('AppBundle:Cache')
