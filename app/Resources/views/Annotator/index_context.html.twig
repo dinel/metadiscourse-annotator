@@ -4,12 +4,20 @@
 
 {% block mainblock %}                
     <div id="maindoc">
+        {% set previous_nl = false %}
         {% for tokens_style in tokens_style_wrapper %}
             <div style="border: thin black dotted; margin: 1em;">
             {% for token_style in tokens_style %}
                 {% if token_style[0].getnewlinebefore %}
-                    <br/><br/>
-                {% endif %}
+                    {% if previous_nl == true %}
+                        <br/>
+                        {% set previous_nl = false %}
+                    {% else %}
+                        {% set previous_nl = true %}
+                    {% endif %}                    
+                {% else %}
+                    {% set previous_nl = false %}
+                {% endif %}                
                 <span id="{{ token_style[0].id }}" class="{{ token_style[1] }}">{{ token_style[0] }}</span>
             {% endfor %}
             </div>
