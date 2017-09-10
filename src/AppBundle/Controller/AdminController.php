@@ -991,10 +991,10 @@ class AdminController extends Controller
         while (($row = $tokens->next()) !== false) {          
             $token = $row[0];
             if($token->getMarkable()) {
-                if(array_key_exists($token->getContent(), $stats)) {
-                    $stats[$token->getContent()]++;
+                if(array_key_exists(strtolower($token->getContent()), $stats)) {
+                    $stats[strtolower($token->getContent())]++;
                 } else {
-                    $stats[$token->getContent()] = 1;
+                    $stats[strtolower($token->getContent())] = 1;
                 }
             }
         }
@@ -1009,8 +1009,8 @@ class AdminController extends Controller
                 }
                 
                 foreach($category->getMarkables() as $markable) {
-                    if(! array_key_exists($markable->getText(), $stats))
-                            $stats[$markable->getText()] = 0;
+                    if(! array_key_exists(strtolower($markable->getText()), $stats))
+                            $stats[strtolower($markable->getText())] = 0;
                 }
             }            
         }
