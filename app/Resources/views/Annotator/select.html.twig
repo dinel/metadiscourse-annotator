@@ -21,7 +21,7 @@
                     {% for element in category[1:] %}
                         <li>{{ element.name }}:
                             {% for mark in element.markables %}
-                                 <a href="{{ path("context_marker_show", {'id_doc' : id, 'id_marker': mark.id} ) }}">{{ mark.text }}</a>
+                                 <a class="select-mark" href="{{ path("set_mark_to_annotate", {'id_doc' : id, 'id_mark': mark.id} ) }}">{{ mark.text }}</a>
                                  ({% if stats[ mark.text ] is defined %}{{ stats[ mark.text ] }}{% else %}?{% endif %})
                                  {% if not loop.last %},{% endif %}
                             {% endfor %}
@@ -34,9 +34,4 @@
     </ul>
 </div>
 
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('js/admin.js') }}"></script>
 {% endblock %}

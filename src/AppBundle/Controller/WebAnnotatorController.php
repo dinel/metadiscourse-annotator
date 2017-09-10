@@ -112,20 +112,23 @@ class WebAnnotatorController extends Controller
     }
     
     /**
-     * @Route("/document_contexts/{id_doc}/{id_marker}", name="context_marker_show")
+     * @Route("/document_contexts/{id_doc}", name="context_marker_show")
      */
-    public function annotationPerMarkerAction($id_doc, $id_marker) {
+    public function annotationPerMarkerAction($id_doc) {
         $annotationPreferences = $this->getAnnotationPreferences();
         $doc = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
                 ->find($id_doc);
         
+        $session = $this->get('session');
+        $id_mark = $session->get('filter-mark-ids');
+        
         if($doc) {            
             $tokens = $this->getDoctrine()
                        ->getRepository('\AppBundle\Entity\Token')
                        ->createQueryBuilder('t')
-                       ->where('t.document = :id AND t.markable = :id_mark')
-                       ->setParameters(array('id' => $id_doc, 'id_mark' => $id_marker))
+                       ->where('t.document = :id AND t.markable IN (:id_mark)')
+                       ->setParameters(array('id' => $id_doc, 'id_mark' => $id_mark))
                        ->getQuery()
                        ->getResult();
             
@@ -136,14 +139,14 @@ class WebAnnotatorController extends Controller
             
             //$session = $this->get('session');
             //$id_mark = $session->get('filter-mark-id');
-            $id_mark = $id_marker;
+            //$id_mark = $id_marker;
+            //$id_mark = array($id_marker, 259);
             $logger = $this->get('your.logger');
             
             $pos = 0;
             while($pos < count($tokens)) {
             //foreach($tokens as $token_mark) {
-                $token_mark = $tokens[$pos++];
-                
+                $token_mark = $tokens[$pos++];                
                 $tokens_style = array();
                 
                 $flag_loop = TRUE;
@@ -151,8 +154,6 @@ class WebAnnotatorController extends Controller
                 
                 while($flag_loop) {
                     $flag_loop = FALSE;
-                    //$logger->info('Processing token ' . $token_mark->getId() . " and pos is" . $pos . " out of " . count($tokens));
-
                     
                     $context_tokens = $this->getDoctrine()
                            ->getRepository('\AppBundle\Entity\Token')
@@ -168,14 +169,14 @@ class WebAnnotatorController extends Controller
                         $token = $row[0];
                         $ann = $this->getAnnotation($token);
                         $style = " dsp-" . str_replace(" ", "-", strtolower($token->getContent()));
-                        if($ann && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {                    
+                        if($ann && in_array($token->getMarkable()->getId(), $id_mark)) {                    
                             $flag = 1;
                             if($ann[0]->getSense()) {
                                 $style .= " meta-marker sense" . $ann[0]->getSense()->getId();
                             } else {
                                 $style .= " meta-marker false-pos";
                             }
-                        } elseif ($token->getMarkable() && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {
+                        } elseif ($token->getMarkable() && in_array($token->getMarkable()->getId(), $id_mark)) {
                             $flag = 0;
                             $style .= " meta-marker meta-marker-todo";
                         } else {
@@ -183,7 +184,7 @@ class WebAnnotatorController extends Controller
                         }
                         $tokens_style[] = array($token, $style);
 
-                        if($token->getMarkable() && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {
+                        if($token->getMarkable() && in_array($token->getMarkable()->getId(), $id_mark)) {
                             if(array_key_exists($token->getMarkable()->getId(), $markers) === false) {
                                 $markers[$token->getMarkable()->getId()] = array($token->getMarkable(), 1, $flag);
                             } else {
@@ -210,18 +211,10 @@ class WebAnnotatorController extends Controller
             
             $em->clear();
             
-            $token = null;
-            /*
-            if($id_token) {
-                $token = $this->getDoctrine()
-                              ->getRepository('AppBundle:Token')
-                              ->find($id_token);
-            }*/
-                        
             return $this->render('Annotator/index_context.html.twig', array(
                     'text' => $doc,
                     'tokens_style_wrapper' => $tokens_style_wrapper,
-                    'token' => $token ? $token->getId() : null,
+                    'token' => null,
                     'markers' => $markers,
                     'prefs' => $annotationPreferences,
                 ));
@@ -271,6 +264,18 @@ class WebAnnotatorController extends Controller
                 'stats' => $stats,
                 'id' => $id,
             ));        
+    }
+    
+    /**
+     * @Route("/document/set-to-annotate/{id_doc}/{id_mark}", name="set_mark_to_annotate")
+     */
+    public function setMarkIDsAction($id_doc, $id_mark) {        
+        $session = $this->get('session');
+        $session->set("filter-mark-ids", array($id_mark));
+        
+        return $this->redirectToRoute("context_marker_show", array(
+                "id_doc" => $id_doc,                    
+        ));
     }
     
     /**
