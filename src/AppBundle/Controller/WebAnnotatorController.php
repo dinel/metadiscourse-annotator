@@ -222,7 +222,7 @@ class WebAnnotatorController extends Controller
     }
     
     /**
-     * @Route("/document/select-category/{id}", name="select_mark")
+     * @Route("/document/select-mark/{id}", name="select_mark")
      */
     public function selectMarkAction($id) {
         $categories = $this->getDoctrine()
@@ -259,7 +259,7 @@ class WebAnnotatorController extends Controller
         }
         
         
-        return $this->render('Annotator/select.html.twig', array(
+        return $this->render('Annotator/select_mark.html.twig', array(
                 'categories' => $cat_tree,
                 'stats' => $stats,
                 'id' => $id,
@@ -267,11 +267,83 @@ class WebAnnotatorController extends Controller
     }
     
     /**
-     * @Route("/document/set-to-annotate/{id_doc}/{id_mark}", name="set_mark_to_annotate")
+     * @Route("/document/select-category/{id}", name="select_category")
+     */
+    public function selectCategoryAction($id) {
+        $categories = $this->getDoctrine()
+                           ->getRepository("AppBundle:Category")
+                           ->findAll();
+        $cat_tree = array();
+        
+        foreach($categories as $category) {
+            if($category->getName() == "No parent category") {
+                continue;
+            }
+            
+            if($category->getParent()) {
+                $cat_tree[$category->getParent()->getName()][] = $category;                
+            } else {
+                $cat_tree[$category->getName()] = array();
+                $cat_tree[$category->getName()][] = $category;                
+            }
+        }
+        
+        $stats = array();
+        $pairs = $this->getDoctrine()
+                       ->getRepository('AppBundle:Cache')
+                       ->createQueryBuilder('t')
+                       ->where('t.link = :id AND t.type = :type')
+                       ->setParameter('id', $id)
+                       ->setParameter('type', Cache::COUNT_MARK)
+                       ->getQuery()
+                       ->iterate();
+        
+        while (($row = $pairs->next()) !== false) {          
+            $pair = $row[0];
+            $stats[$pair->getKey()] = $pair->getValue();
+        }
+        
+        
+        return $this->render('Annotator/select_category.html.twig', array(
+                'categories' => $cat_tree,
+                'stats' => $stats,
+                'id' => $id,
+            ));        
+    }
+    
+    /**
+     * @Route("/document/mark-to-annotate/{id_doc}/{id_mark}", name="set_mark_to_annotate")
      */
     public function setMarkIDsAction($id_doc, $id_mark) {        
         $session = $this->get('session');
         $session->set("filter-mark-ids", array($id_mark));
+        
+        return $this->redirectToRoute("context_marker_show", array(
+                "id_doc" => $id_doc,                    
+        ));
+    }
+    
+    /**
+     * @Route("/document/cat-to-annotate/{id_doc}/{id_cat}", name="set_cat_to_annotate")
+     */
+    public function setCatIDsAction($id_doc, $id_cat) {        
+        $session = $this->get('session');
+        $marks = array();
+        
+        $category = $this->getDoctrine()
+                           ->getRepository("AppBundle:Category")
+                           ->find($id_cat);
+        if($category) {
+            if($category->getChildren()->isEmpty()) {
+                $marks = array_merge($marks, $this->getMarksIDByCategory($category));
+            } else {
+                foreach($category->getChildren() as $childCat) {
+                    $marks = array_merge($marks, $this->getMarksIDByCategory($childCat));
+                }
+            }
+        }
+        
+        $session->set("filter-mark-ids", $marks);
         
         return $this->redirectToRoute("context_marker_show", array(
                 "id_doc" => $id_doc,                    
@@ -539,6 +611,16 @@ class WebAnnotatorController extends Controller
         $pref->setShowPolarity(1);
         $pref->setShowCategories(1);
         return $pref;
+    }
+    
+    private function getMarksIDByCategory($cat) {
+        $ret = array();
+        
+        foreach($cat->getMarkables() as $mark) {
+            $ret[] = $mark->getId();
+        }
+        
+        return $ret;
     }
 
 }
