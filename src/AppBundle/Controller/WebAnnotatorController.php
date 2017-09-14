@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use AppBundle\Entity\Cache;
 use AppBundle\Entity\Sense;
 
 class WebAnnotatorController extends Controller
@@ -220,97 +219,7 @@ class WebAnnotatorController extends Controller
                 ));
         }
     }
-    
-    /**
-     * @Route("/document/select-mark/{id}", name="select_mark")
-     */
-    public function selectMarkAction($id) {
-        $categories = $this->getDoctrine()
-                           ->getRepository("AppBundle:Category")
-                           ->findAll();
-        $cat_tree = array();
         
-        foreach($categories as $category) {
-            if($category->getName() == "No parent category") {
-                continue;
-            }
-            
-            if($category->getParent()) {
-                $cat_tree[$category->getParent()->getName()][] = $category;                
-            } else {
-                $cat_tree[$category->getName()] = array();
-                $cat_tree[$category->getName()][] = $category;                
-            }
-        }
-        
-        $stats = array();
-        $pairs = $this->getDoctrine()
-                       ->getRepository('AppBundle:Cache')
-                       ->createQueryBuilder('t')
-                       ->where('t.link = :id AND t.type = :type')
-                       ->setParameter('id', $id)
-                       ->setParameter('type', Cache::COUNT_MARK)
-                       ->getQuery()
-                       ->iterate();
-        
-        while (($row = $pairs->next()) !== false) {          
-            $pair = $row[0];
-            $stats[$pair->getKey()] = $pair->getValue();
-        }
-        
-        
-        return $this->render('Annotator/select_mark.html.twig', array(
-                'categories' => $cat_tree,
-                'stats' => $stats,
-                'id' => $id,
-            ));        
-    }
-    
-    /**
-     * @Route("/document/select-category/{id}", name="select_category")
-     */
-    public function selectCategoryAction($id) {
-        $categories = $this->getDoctrine()
-                           ->getRepository("AppBundle:Category")
-                           ->findAll();
-        $cat_tree = array();
-        
-        foreach($categories as $category) {
-            if($category->getName() == "No parent category") {
-                continue;
-            }
-            
-            if($category->getParent()) {
-                $cat_tree[$category->getParent()->getName()][] = $category;                
-            } else {
-                $cat_tree[$category->getName()] = array();
-                $cat_tree[$category->getName()][] = $category;                
-            }
-        }
-        
-        $stats = array();
-        $pairs = $this->getDoctrine()
-                       ->getRepository('AppBundle:Cache')
-                       ->createQueryBuilder('t')
-                       ->where('t.link = :id AND t.type = :type')
-                       ->setParameter('id', $id)
-                       ->setParameter('type', Cache::COUNT_MARK)
-                       ->getQuery()
-                       ->iterate();
-        
-        while (($row = $pairs->next()) !== false) {          
-            $pair = $row[0];
-            $stats[$pair->getKey()] = $pair->getValue();
-        }
-        
-        
-        return $this->render('Annotator/select_category.html.twig', array(
-                'categories' => $cat_tree,
-                'stats' => $stats,
-                'id' => $id,
-            ));        
-    }
-    
     /**
      * @Route("/document/mark-to-annotate/{id_doc}/{id_mark}", name="set_mark_to_annotate")
      */
