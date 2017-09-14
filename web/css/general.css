@@ -78,3 +78,9 @@ ul.edit-list a.faded:hover {
 .left-margin-1em {
     margin-left: 1em;
 }
+
+.in-a-box {
+    border: thin dotted black;
+    padding: 1em;
+    margin: 0.5em;
+}

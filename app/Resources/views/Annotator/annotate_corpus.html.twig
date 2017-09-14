@@ -4,7 +4,6 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link href="{{ asset('css/annotator.css') }}" rel="stylesheet">
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
     
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -14,15 +13,21 @@
 {% block body %}    
     
     <div class="container">
-        <div class="row">
+        <div class="row voffset3">
             <div class="col-md-8">
+            <h3>Select the text you want to annotate</h3>
             {% for text in texts %}
-                <div>
-                    {{ text.title }}
-                    <a href="{{ path('document_show', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate</a>
-                    <a href="{{ path('select_mark', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate by marker</a>
-                    <a href="{{ path('select_category', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate by category</a>
-                    <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-default" role="button">Re-process</a>
+                <div class="in-a-box">
+                    Title of text: <em>{{ text.title }}</em><br/>
+                    {% if text.description %}
+                        Description: <em>{{ text.description }}</em>
+                    {% endif %}
+                    <div class="voffset2">
+                        <a href="{{ path('document_show', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate</a>
+                        <a href="{{ path('select_mark', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate by marker</a>
+                        <a href="{{ path('select_category', {'id': text.id } ) }}" class="btn btn-default" role="button">Annotate by category</a>
+                        <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-default pull-right" role="button">Re-process</a>
+                    </div>
                 </div>
             {% endfor %}
             </div>
