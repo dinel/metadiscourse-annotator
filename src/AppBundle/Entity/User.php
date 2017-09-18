@@ -31,6 +31,11 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+    
+    /**
+     * @ORM\Column(type="string", length=256)
+     */
+    protected $full_name;
 
     public function __construct()
     {
@@ -39,5 +44,15 @@ class User extends BaseUser
     
     public function isAdmin() {
         return $this->hasRole('ROLE_ADMIN');
+    }
+    
+    public function setFullName($full_name) {
+        $this->full_name = $full_name;
+        
+        return $this->full_name;
+    }
+    
+    public function getFullName() {
+        return $this->full_name;
     }
 }

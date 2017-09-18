@@ -38,7 +38,7 @@ class UserType extends AbstractType {
             ->add('username', 'text', array(
                     'label' => 'Login name',
             ))
-            ->add('usernameCanonical', 'text', array(
+            ->add('full_name', 'text', array(
                     'label' => 'Name of user',
             ))
             ->add('email')
