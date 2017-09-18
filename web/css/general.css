@@ -84,3 +84,11 @@ ul.edit-list a.faded:hover {
     padding: 1em;
     margin: 0.5em;
 }
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}

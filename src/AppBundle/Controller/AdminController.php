@@ -66,6 +66,9 @@ class AdminController extends Controller
         $categories = $repository->findAll();
         $cat_tree = array();
         
+        $userManager = $this->get('fos_user.user_manager');
+        $users = $userManager->findUsers();
+        
         foreach($categories as $category) {
             if($category->getName() == "No parent category") continue;
             
@@ -84,6 +87,7 @@ class AdminController extends Controller
                 'groupped_markers' => $groupped_marks,
                 'categories' => $cat_tree,
                 'domains' => array(),
+                'users' => $users,
             ));
     }
     

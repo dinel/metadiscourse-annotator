@@ -17,7 +17,8 @@
                 <div class = "panel-body">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#markers-tab">Markers</a></li>
-                        <li><a data-toggle="tab" href="#categories-tab">Categories</a></li>                                                
+                        <li><a data-toggle="tab" href="#categories-tab">Categories</a></li>
+                        <li><a data-toggle="tab" href="#users-tab">Users</a></li>
                         <li><a data-toggle="tab" href="#operations-tab">Various</a></li>
                     </ul>
                     
@@ -59,6 +60,36 @@
                             {% endfor %} 
                             </ul>                            
                         </div>
+                            
+                        <div id="users-tab" class="tab-pane fade voffset2">
+                            <h2>Current users</h2>
+                            <table class="table table-hover">
+                            <thead>
+                            <td><b>Name</b></td>
+                            <td><b>Login</b></td>
+                            <td><b>Last login</b></td>
+                            <td><b>Administrator</b></td>
+                            <td><b>Actions</b></td>
+                            </thead>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.usernamecanonical }}</td><td>{{ user.username }}</td>
+                                <td>{{ user.lastlogin|date("d-m-Y") }}</td>
+                                {% if user.admin == 1 %}
+                                    <td><span class="glyphicon glyphicon-ok green"></span></td>                                    
+                                {% endif %}                            
+                                <td>
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </table>
+                            <div class="voffset3">
+                                <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_user_add') }}" role="button">Add new user &raquo;</a></div>
+                            </div>
+                        </div>
+                                
                    
                         <div id="operations-tab" class="tab-pane fade voffset2">
                             <a href="/admin_new">Define the characteristics of the corpus</a><br/>

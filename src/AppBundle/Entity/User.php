@@ -36,4 +36,8 @@ class User extends BaseUser
     {
         parent::__construct();
     }
+    
+    public function isAdmin() {
+        return $this->hasRole('ROLE_ADMIN');
+    }
 }
