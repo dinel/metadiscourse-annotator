@@ -81,7 +81,7 @@
                                     <td></td>
                                 {% endif %}                            
                                 <td>
-                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    <a href="{{ path("admin_user_edit", {'username' : user.username}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
                                     {% if user.username != app.user.username %}
                                         <a onclick="return confirm('Are you sure you want to delete the user?')" 
                                            href="{{ path("admin_user_delete", {'username' : user.username}) }}"><span class="glyphicon glyphicon-remove left-margin-1em"></span>

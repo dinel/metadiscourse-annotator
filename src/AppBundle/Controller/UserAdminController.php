@@ -69,4 +69,44 @@ class UserAdminController extends Controller {
         
         return $this->redirectToRoute("admin_page");
     }
+    
+    /**
+     * @Route("/admin/user/edit/{username}", name="admin_user_edit")
+     */
+    public function editUserAction(Request $request, $username) {
+        $userManager = $this->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+        if($user) {
+            $editing_current_user = $this->get('security.context')->getToken()->getUser()->getUsername() == $username;
+            $form = $this->createForm(new UserType(
+                            true, 
+                            $editing_current_user,
+                            $user->isAdmin()),
+                        $user);
+            $form->handleRequest($request);
+        
+            if($form->isValid()) {
+                if($form->get("plain_password")->getData() !== "") {
+                    $user->setPlainPassword($form->get("plain_password")->getData());
+                }
+                
+                if($form->get("is_administrator")->getData() == true || $editing_current_user) {
+                    $user->addRole("ROLE_ADMIN");
+                } else {
+                    $user->removeRole("ROLE_ADMIN");
+                }
+                $user->setEnabled(true);
+                $userManager->updateUser($user, true);
+
+                return $this->redirectToRoute("admin_page");
+            }
+
+            return $this->render('Admin/edit_user.html.twig', array(
+                    'form' => $form->createView(),
+                    'in_edit_mode' => 1, 
+            ));
+        }
+        
+        return $this->redirectToRoute("admin_page");
+    }
 }

@@ -28,15 +28,20 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class UserType extends AbstractType {
     private $in_edit_mode = false;
+    private $current_user = false;
+    private $is_admin = false;
 
-    public function __construct($in_edit_mode = false) {
+    public function __construct($in_edit_mode = false, $current_user = false, $is_admin = false) {
         $this->in_edit_mode = $in_edit_mode;
+        $this->current_user = $current_user;
+        $this->is_admin = $is_admin;
     }
     
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('username', 'text', array(
                     'label' => 'Login name',
+                    'disabled' => $this->in_edit_mode,
             ))
             ->add('full_name', 'text', array(
                     'label' => 'Name of user',
@@ -45,15 +50,19 @@ class UserType extends AbstractType {
             ->add('plain_password', 'password', array(
                     'label' => 'Password',
                     'mapped' => false,
+                    'required' => $this->in_edit_mode ? false : true,
             ))
             ->add('repeat_plain_password', 'password', array(
                     'label' => 'Repeat password',
                     'mapped' => false,
+                    'required' => $this->in_edit_mode ? false : true,
             ))
             ->add('is_administrator', 'checkbox', array(
                     'label' => 'Is administrator?',
                     'mapped' => false,
                     'required' => false,
+                    'disabled' => $this->current_user,
+                    'attr' => $this->is_admin ? array( 'checked' => 'checked') : array(),
             ))
             ->add('save', 'submit', array(
                 'label' => $this->in_edit_mode ? 'Edit user' : 'Add user'));
