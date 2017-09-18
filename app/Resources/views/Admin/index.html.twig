@@ -76,11 +76,13 @@
                                 <td>{{ user.usernamecanonical }}</td><td>{{ user.username }}</td>
                                 <td>{{ user.lastlogin|date("d-m-Y") }}</td>
                                 {% if user.admin == 1 %}
-                                    <td><span class="glyphicon glyphicon-ok green"></span></td>                                    
+                                    <td><span class="glyphicon glyphicon-ok green"></span></td>
+                                {% else %}
+                                    <td></td>
                                 {% endif %}                            
                                 <td>
                                     <span class="glyphicon glyphicon-pencil"></span>
-                                    <span class="glyphicon glyphicon-remove"></span>
+                                    <span class="glyphicon glyphicon-remove left-margin-1em"></span>
                                 </td>
                             </tr>
                             {% endfor %}
