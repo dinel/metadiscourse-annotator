@@ -48,13 +48,25 @@ class UserAdminController extends Controller {
             $user->setEnabled(true);
             $userManager->updateUser($user, true);
             
-            return $this->redirectToRoute("home");
+            return $this->redirectToRoute("admin_page");
         }
         
         return $this->render('Admin/edit_user.html.twig', array(
                 'form' => $form->createView(),
                 'in_edit_mode' => 0,               
-        ));
+        ));        
+    }
+    
+    /**
+     * @Route("/admin/user/delete/{username}", name="admin_user_delete")
+     */
+    public function deleteUserAction($username) {
+        $userManager = $this->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+        if($user) {
+            $userManager->deleteUser($user);
+        }
         
+        return $this->redirectToRoute("admin_page");
     }
 }

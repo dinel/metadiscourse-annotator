@@ -73,7 +73,7 @@
                             </thead>
                             {% for user in users %}
                             <tr>
-                                <td>{{ user.usernamecanonical }}</td><td>{{ user.username }}</td>
+                                <td>{{ user.fullname }}</td><td>{{ user.username }}</td>
                                 <td>{{ user.lastlogin|date("d-m-Y") }}</td>
                                 {% if user.admin == 1 %}
                                     <td><span class="glyphicon glyphicon-ok green"></span></td>
@@ -82,7 +82,11 @@
                                 {% endif %}                            
                                 <td>
                                     <span class="glyphicon glyphicon-pencil"></span>
-                                    <span class="glyphicon glyphicon-remove left-margin-1em"></span>
+                                    {% if user.username != app.user.username %}
+                                        <a onclick="return confirm('Are you sure you want to delete the user?')" 
+                                           href="{{ path("admin_user_delete", {'username' : user.username}) }}"><span class="glyphicon glyphicon-remove left-margin-1em"></span>
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
