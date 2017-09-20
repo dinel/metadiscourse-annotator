@@ -118,5 +118,4 @@ class CategoryAdminController extends Controller {
                 'form' => $form->createView(),
         ));
     }
-
 }
