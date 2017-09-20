@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Form\Type\UserType;
 
 /**
- * Description of UserAdminController
+ * Controller which implements User related actions
  *
  * @author dinel
  */
@@ -40,7 +40,7 @@ class UserAdminController extends Controller {
         return $this->render('Admin/users/list_users.html.twig', array(
                 'users' => $users,
                 'active' => array("", "", "active", ""),
-                'links' => array("admin_page", "admin_page", "admin_user_list", "admin_page"),
+                'links' => array("admin_page", "admin_cat_list", "admin_user_list", "admin_page"),
             ));
     }
 

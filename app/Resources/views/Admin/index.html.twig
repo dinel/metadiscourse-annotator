@@ -17,7 +17,7 @@
                 <div class = "panel-body">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#markers-tab">Markers</a></li>
-                        <li><a data-toggle="tab" href="#categories-tab">Categories</a></li>
+                        <li><a href="{{ path("admin_cat_list") }}">Categories</a></li>
                         <li><a href="{{ path('admin_user_list') }}" >Users</a></li>
                         <li><a data-toggle="tab" href="#operations-tab">Various</a></li>
                     </ul>
@@ -37,29 +37,7 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                        </div>
-                        
-                        <div id="categories-tab" class="tab-pane fade voffset2">
-                            <div class="voffset3">
-                                <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_category_add') }}" role="button">Add new category &raquo;</a></div>
-                            </div>
-                            <ul class="voffset3">
-                            {% for category in categories %}
-                                <li>
-                                    <a href="{{ path('admin_category_edit', {'id_category': category[0].id}) }}">{{ category[0].name }}</a>
-                                    {% if category | length > 1 %}
-                                        <ul>
-                                            {% for element in category[1:] %}
-                                                <li>
-                                                    <a href="{{ path('admin_category_edit', {'id_category': element.id}) }}">{{ element.name }}</a>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </li>
-                            {% endfor %} 
-                            </ul>                            
-                        </div>                                                           
+                        </div>                                                                       
                    
                         <div id="operations-tab" class="tab-pane fade voffset2">
                             <a href="/admin_new">Define the characteristics of the corpus</a><br/>

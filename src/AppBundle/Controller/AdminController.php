@@ -34,7 +34,6 @@ use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 use AppBundle\Form\Type\MarkableType;
 use AppBundle\Form\Type\SenseType;
-use AppBundle\Form\Type\CategoryType;
 
 use AppBundle\Entity\Sense;
 use AppBundle\Entity\Domain;
@@ -61,28 +60,12 @@ class AdminController extends Controller
                 $groupped_marks[" Punctuation"][] = $mark;
             }
         }
-        
-        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Category");
-        $categories = $repository->findAll();
-        $cat_tree = array();       
-        
-        foreach($categories as $category) {
-            if($category->getName() == "No parent category") continue;
-            
-            if($category->getParent()) {
-                $cat_tree[$category->getParent()->getName()][] = $category;                
-            } else {
-                $cat_tree[$category->getName()] = array();
-                $cat_tree[$category->getName()][] = $category;                
-            }
-        }
-        
+
         ksort($groupped_marks);
         
         return $this->render('Admin/index.html.twig', array(
                 'texts' => $texts,
                 'groupped_markers' => $groupped_marks,
-                'categories' => $cat_tree,
                 'domains' => array(),
             ));
     }
@@ -581,47 +564,6 @@ class AdminController extends Controller
         return $this->redirectToRoute("admin_page");
     }
     
-    /**
-     * @Route("/admin/category/add", name="admin_category_add")
-     */
-    public function newCategoryAction(\Symfony\Component\HttpFoundation\Request $request) {
-        $category = new \AppBundle\Entity\Category();
-        
-        return $this->editCategory_intern($request, $category, new CategoryType());
-    }    
-    
-    /**
-     * @Route("/admin/category/{id_category}", name="admin_category_edit")
-     */
-    public function editCategoryAction(\Symfony\Component\HttpFoundation\Request $request, $id_category) {
-        $category = $this->getDoctrine()
-                          ->getRepository('AppBundle:Category')
-                          ->find($id_category);
-        
-        return $this->editCategory_intern($request, $category, new CategoryType(true));        
-    }  
-    
-    private function editCategory_intern($request, $category, $categoryType) {
-        $form = $this->createForm($categoryType, $category);
-        
-        $form->handleRequest($request);
-        
-        if($form->isValid()) {
-            if($category->getParent()->getName() == "No parent category") {
-                $category->setParent(null);
-            }
-            
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($category);
-            $em->flush();
-            
-            return $this->redirectToRoute("admin_page");
-        }
-        
-        return $this->render('Admin/new_category.html.twig', array(
-                'form' => $form->createView(),
-        ));
-    }
     
     /**
      * @Route("/admin/corpus/edit/{id}", name="edit_corpus")
