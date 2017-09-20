@@ -1,0 +1,38 @@
+{# app/Resources/views/Admin/users/list_.html.twig #}
+
+{% extends 'Admin/admin_base.html.twig' %}
+
+{% block settings_div %}
+    <h2>Current users</h2>
+    <table class="table table-hover">
+    <thead>
+    <td><b>Name</b></td>
+    <td><b>Login</b></td>
+    <td><b>Last login</b></td>
+    <td><b>Administrator</b></td>
+    <td><b>Actions</b></td>
+    </thead>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.fullname }}</td><td>{{ user.username }}</td>
+        <td>{{ user.lastlogin|date("d-m-Y") }}</td>
+        {% if user.admin == 1 %}
+            <td><span class="glyphicon glyphicon-ok green"></span></td>
+        {% else %}
+            <td></td>
+        {% endif %}                            
+        <td>
+            <a href="{{ path("admin_user_edit", {'username' : user.username}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+            {% if user.username != app.user.username %}
+                <a onclick="return confirm('Are you sure you want to delete the user?')" 
+                   href="{{ path("admin_user_delete", {'username' : user.username}) }}"><span class="glyphicon glyphicon-remove left-margin-1em"></span>
+                </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+    <div class="voffset3">
+        <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_user_add') }}" role="button">Add new user &raquo;</a></div>
+    </div>
+{% endblock %}

@@ -31,6 +31,20 @@ use AppBundle\Form\Type\UserType;
  */
 class UserAdminController extends Controller {
     /**
+     * @Route("/admin/user/list", name="admin_user_list")
+     */
+    public function listUserAction() {
+        $userManager = $this->get('fos_user.user_manager');
+        $users = $userManager->findUsers();
+        
+        return $this->render('Admin/users/list_users.html.twig', array(
+                'users' => $users,
+                'active' => array("", "", "active", ""),
+                'links' => array("admin_page", "admin_page", "admin_user_list", "admin_page"),
+            ));
+    }
+
+        /**
      * @Route("/admin/user/add", name="admin_user_add")
      */
     public function addUserAction(Request $request) {
@@ -48,7 +62,7 @@ class UserAdminController extends Controller {
             $user->setEnabled(true);
             $userManager->updateUser($user, true);
             
-            return $this->redirectToRoute("admin_page");
+            return $this->redirectToRoute("admin_user_list");
         }
         
         return $this->render('Admin/edit_user.html.twig', array(
@@ -67,7 +81,7 @@ class UserAdminController extends Controller {
             $userManager->deleteUser($user);
         }
         
-        return $this->redirectToRoute("admin_page");
+        return $this->redirectToRoute("admin_user_list");
     }
     
     /**
@@ -98,7 +112,7 @@ class UserAdminController extends Controller {
                 $user->setEnabled(true);
                 $userManager->updateUser($user, true);
 
-                return $this->redirectToRoute("admin_page");
+                return $this->redirectToRoute("admin_user_list");
             }
 
             return $this->render('Admin/edit_user.html.twig', array(
@@ -107,6 +121,6 @@ class UserAdminController extends Controller {
             ));
         }
         
-        return $this->redirectToRoute("admin_page");
+        return $this->redirectToRoute("admin_user_list");
     }
 }
