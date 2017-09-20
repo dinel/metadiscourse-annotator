@@ -18,6 +18,12 @@
 
 namespace AppBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+use AppBundle\Entity\Domain;
+
 /**
  * Controller for administrating domains
  * @deprecated since summer 2017. It will be removed at some point.
@@ -27,7 +33,7 @@ class DomainAdminController {
     /**
      * @Route("/admin/domain/add", name="admin_domain_add")
      */
-    public function newDomainAction(\Symfony\Component\HttpFoundation\Request $request) {
+    public function newDomainAction(Request $request) {
         $domain = new \AppBundle\Entity\Domain();
         return $this->editDomainCommon($domain, $request);        
     }
@@ -35,7 +41,7 @@ class DomainAdminController {
     /**
      * @Route("/admin/domain/edit/{id}", name="admin_domain_edit")
      */
-    public function editDomainAction($id, \Symfony\Component\HttpFoundation\Request $request) {
+    public function editDomainAction($id, Request $request) {
         $domain = $this->getDoctrine()
                 ->getRepository('AppBundle:Domain')
                 ->find($id);
@@ -47,7 +53,7 @@ class DomainAdminController {
      * Exports the domains to a file
      * @Route("/admin/domain/export", name="admin_domain_export")
      */
-    public function exportDomainAction(\Symfony\Component\HttpFoundation\Request $request) {
+    public function exportDomainAction(Request $request) {
         $domains = $this->getDoctrine()
                 ->getRepository('AppBundle:Domain')
                 ->findAll();
@@ -69,7 +75,7 @@ class DomainAdminController {
      * Imports the domain from a file
      * @Route("/admin/domain/import", name="admin_domain_import")
      */
-    public function importDomainAction(\Symfony\Component\HttpFoundation\Request $request) {
+    public function importDomainAction(Request $request) {
         $file = $request->files->get('file');
         $handle = fopen($file, "r");
         if ($handle) {
