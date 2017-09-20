@@ -17,10 +17,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  * @author dinel
  */
 class CategoryType extends AbstractType {
-    public function __construct($in_edit_mode = false) {
-        $this->in_edit_mode = $in_edit_mode;
-    }
-    
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('name', 'text')
@@ -33,9 +29,7 @@ class CategoryType extends AbstractType {
                             return $er->createQueryBuilder('c')                                      
                                       ->where('c.parent is NULL');
                     },
-                ))
-            ->add('save', 'submit', array('label' => 
-                $this->in_edit_mode ? 'Edit category' : 'Add category'));
+                ));
     }
         
     public function getName() {

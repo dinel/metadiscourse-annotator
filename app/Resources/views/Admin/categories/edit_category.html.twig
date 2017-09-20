@@ -10,10 +10,13 @@
 {% block body %}
     <div class="container">
         <div class="row voffset5"> 
-            <div class="col-md-8">
-
+            <div class="col-md-8">             
+            <h2>{{ button_label }}</h2>
+            <div class="voffset4"></div>
             {{ form_start(form) }}
-            {{ form_widget(form) }}
+                {{ form_widget(form) }}
+                <a class="voffset4 btn btn-default pull-right left-margin-1em" href="{{ path('admin_cat_list') }}" role="button">Cancel</a>
+                <input type="submit" value="{{ button_label }}" class="voffset4 btn btn-default pull-right" />                
             {{ form_end(form) }}
 
             </div>

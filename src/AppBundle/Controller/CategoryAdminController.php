@@ -97,8 +97,7 @@ class CategoryAdminController extends Controller {
      * @return type
      */
     private function editCategory_intern($request, $category, $editing) {
-        $categoryType = new CategoryType($editing);
-        $form = $this->createForm($categoryType, $category);
+        $form = $this->createForm(new CategoryType(), $category);
         
         $form->handleRequest($request);
         
@@ -114,8 +113,9 @@ class CategoryAdminController extends Controller {
             return $this->redirectToRoute("admin_cat_list");
         }
         
-        return $this->render('Admin/new_category.html.twig', array(
+        return $this->render('Admin/categories/edit_category.html.twig', array(
                 'form' => $form->createView(),
+                'button_label' => $editing ? "Edit category" : "Create category",
         ));
     }
 }
