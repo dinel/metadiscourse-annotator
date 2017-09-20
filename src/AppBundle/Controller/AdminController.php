@@ -687,23 +687,6 @@ class AdminController extends Controller
         return $this->redirectToRoute("admin_page");
         
     }
-
-        /**
-     * 
-     * @param type $token
-     * @param type $marks_array
-     * @return \AppBundle\Entity\Token
-     */
-    private function checkToken($token, $marks_array) {
-        if(array_key_exists($token, $marks_array)) {
-            $t = new \AppBundle\Entity\Token($token);
-            $t->setMarkable($marks_array[$token]);
-            
-            return $t;
-        } else {
-            return null;
-        }
-    }
     
     /**
      * Finds markables in an array of tokens
