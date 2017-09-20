@@ -53,7 +53,7 @@ class DomainAdminController {
      * Exports the domains to a file
      * @Route("/admin/domain/export", name="admin_domain_export")
      */
-    public function exportDomainAction(Request $request) {
+    public function exportDomainAction() {
         $domains = $this->getDoctrine()
                 ->getRepository('AppBundle:Domain')
                 ->findAll();
