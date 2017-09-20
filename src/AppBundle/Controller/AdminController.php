@@ -43,9 +43,6 @@ class AdminController extends Controller
      * @Route("/admin", name="admin_page")
      */
     public function indexAction() {                
-        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Text");
-        $texts = $repository->findAll();
-        
         $marks = $this->getDoctrine()
                       ->getRepository("AppBundle:Markable")
                       ->findAll();
@@ -62,13 +59,10 @@ class AdminController extends Controller
         ksort($groupped_marks);
         
         return $this->render('Admin/index.html.twig', array(
-                'texts' => $texts,
                 'groupped_markers' => $groupped_marks,
                 'domains' => array(),
             ));
-    }
-    
-    
+    }        
 
     /**
      * @Route("/admin/text/add", name="admin_text_add")
