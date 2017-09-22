@@ -42,7 +42,8 @@ class SearchController extends Controller
      */
     public function searchTermAction($corpus_id, $term) {        
         return $this->render('Search/search_term.html.twig', array(
-                    'message' => " keyword <i>" . $term . "</i>",
+                    'prefix' => " category ", 
+                    'message' => $term,
                     'stats_for' => "term",
                     'corpus_id' => $corpus_id,
                     'parameter_to_controller' => $term,
@@ -61,12 +62,12 @@ class SearchController extends Controller
         if($corpus_id === "none") {
             $tokens = $this->retrieveTokensWithCondition(
                     'trim(upper(t.content)) = trim(upper(:param))', trim($term));
-            $search_scope = "<strong>all the texts</strong> available";
+            $search_scope = "all the texts available";
         } else {
             $tokens = $this->retrieveTokensWithCondition(
                         'trim(upper(t.content)) = trim(upper(:param))', trim($term),
                         't.document IN (:param2)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
-            $search_scope = "the <strong>" . $this->getCorpusById($corpus_id)->getName() . "</strong> corpus";
+            $search_scope = "the " . $this->getCorpusById($corpus_id)->getName() . " corpus";
         }
                 
         while (($row = $tokens->next()) !== false) {
@@ -125,7 +126,8 @@ class SearchController extends Controller
                     ->find($category_id);                               
         
         return $this->render('Search/search_term.html.twig', array(
-                    'message' => " category <i>" . $cat->getName() . "</i>",
+                    'prefix' => " category ", 
+                    'message' => $cat->getName(),
                     'stats_for' => "category",
                     'corpus_id' => $corpus_id,
                     'parameter_to_controller' => $category_id,
@@ -184,7 +186,7 @@ class SearchController extends Controller
             $em->clear();
         }
 
-        $search_scope = "the <strong>" . $this->getCorpusById($corpus_id)->getName() . "</strong> corpus";
+        $search_scope = "the " . $this->getCorpusById($corpus_id)->getName() . " corpus";
         
         return $this->render('Search/search_term_intern.html.twig', array(        
                     'search_results' => $results,

@@ -25,9 +25,7 @@
     
         <div id="results" class="row voffset3">
             <div class="col-md-8 col-md-offset-2">
-                {% autoescape 'html' %}
-                <h3>The search results for {{ message}}</h3>
-                {% endautoescape %}
+                <h3>The search results for {{ prefix }} <em>{{ message}}</em></h3>
             </div>
             
             <div class="voffset3 text-center">
