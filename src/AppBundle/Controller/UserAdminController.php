@@ -20,6 +20,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Form\Type\UserType;
@@ -46,7 +47,8 @@ class UserAdminController extends Controller {
     }
     
     /**     
-     * @Route("/user/check_change_password", name="admin_check_password_change")
+     * Check whether the user has to change their password
+     * @Route("/profile/check_change_password", name="admin_check_password_change")
      */
     public function checkForcePasswordChangeAction() {
         if(UserUtils::getCurrentUser($this)->getChangePassword() == 0) {
