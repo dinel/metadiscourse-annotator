@@ -6,11 +6,11 @@ span.sensedummy {
     font-size: 12px;
 }
 
-{% autoescape %}
+{% autoescape 'html' %}
     {% for sense in senses %}
         span.sense{{sense.id}} {
-          background-color: {{ sense.bgcolor | raw}};
-          color: {{ sense.fgcolor | raw}};
+          background-color: {{ sense.bgcolor }};
+          color: {{ sense.fgcolor }};
           border: dotted thin black;
           padding: 2px;
         }
