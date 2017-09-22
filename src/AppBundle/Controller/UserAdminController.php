@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Form\Type\UserType;
+use AppBundle\Utils\UserUtils;
 
 /**
  * Controller which implements User related actions
@@ -43,8 +44,31 @@ class UserAdminController extends Controller {
                 'links' => array("admin_page", "admin_cat_list", "admin_user_list", "admin_page"),
             ));
     }
+    
+    /**     
+     * @Route("/user/check_change_password", name="admin_check_password_change")
+     */
+    public function checkForcePasswordChangeAction() {
+        if(UserUtils::getCurrentUser($this)->getChangePassword() == 0) {
+            $key = '_security.main.target_path';
+            if ($this->container->get('session')->has($key)) {
+                $url = $this->container->get('session')->get($key);
+                $this->container->get('session')->remove($key);
+                return new RedirectResponse($url);
+            } else {
+                return $this->redirectToRoute("homepage");
+            }
+            
+        } else {
+            $userManager = $this->get('fos_user.user_manager');
+            $user = UserUtils::getCurrentUser($this);
+            $user->setChangePassword(0);
+            $userManager->updateUser($user, true);
+            return $this->redirectToRoute("fos_user_change_password");
+        }
+    }
 
-        /**
+    /**
      * @Route("/admin/user/add", name="admin_user_add")
      */
     public function addUserAction(Request $request) {
@@ -59,6 +83,7 @@ class UserAdminController extends Controller {
             if($form->get("is_administrator")->getData() == true) {
                 $user->addRole("ROLE_ADMIN");
             }
+            $user->setChangePassword(1);
             $user->setEnabled(true);
             $userManager->updateUser($user, true);
             
@@ -90,8 +115,8 @@ class UserAdminController extends Controller {
     public function editUserAction(Request $request, $username) {
         $userManager = $this->get('fos_user.user_manager');
         $user = $userManager->findUserByUsername($username);
-        if($user) {
-            $editing_current_user = $this->get('security.context')->getToken()->getUser()->getUsername() == $username;
+        if($user) {            
+            $editing_current_user = ($username === UserUtils::getCurrentUserName($this));
             $form = $this->createForm(new UserType(
                             true, 
                             $editing_current_user,
@@ -109,6 +134,7 @@ class UserAdminController extends Controller {
                 } else {
                     $user->removeRole("ROLE_ADMIN");
                 }
+                $user->addRole("ROLE_USER");
                 $user->setEnabled(true);
                 $userManager->updateUser($user, true);
 

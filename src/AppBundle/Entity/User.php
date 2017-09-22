@@ -36,6 +36,12 @@ class User extends BaseUser
      * @ORM\Column(type="string", length=256)
      */
     protected $full_name;
+    
+    /**
+     * Indicates that the user should change their password on the next login
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $change_password;
 
     public function __construct()
     {
@@ -54,5 +60,13 @@ class User extends BaseUser
     
     public function getFullName() {
         return $this->full_name;
+    }
+    
+    public function getChangePassword() {
+        return $this->change_password;
+    }
+    
+    public function setChangePassword($change) {
+        $this->change_password = $change;
     }
 }
