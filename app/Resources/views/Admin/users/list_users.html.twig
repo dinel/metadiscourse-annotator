@@ -15,12 +15,16 @@
     {% for user in users %}
     <tr>
         <td>{{ user.fullname }}</td><td>{{ user.username }}</td>
-        <td>{{ user.lastlogin|date("d-m-Y") }}</td>
+        {% if user.lastlogin %}
+            <td>{{ user.lastlogin|date("d-m-Y") }}</td>
+        {% else %}
+            <td><em>never</em></td>
+        {% endif %}                            
         {% if user.admin == 1 %}
             <td><span class="glyphicon glyphicon-ok green"></span></td>
         {% else %}
             <td></td>
-        {% endif %}                            
+        {% endif %}
         <td>
             <a href="{{ path("admin_user_edit", {'username' : user.username}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
             {% if user.username != app.user.username %}
