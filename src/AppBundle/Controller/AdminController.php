@@ -40,31 +40,6 @@ use AppBundle\Entity\Cache;
 class AdminController extends Controller 
 {
     /**
-     * @Route("/admin", name="admin_page")
-     */
-    public function indexAction() {                
-        $marks = $this->getDoctrine()
-                      ->getRepository("AppBundle:Markable")
-                      ->findAll();
-        
-        $groupped_marks = array();
-        foreach($marks as $mark) {
-            if(ctype_alpha($mark->getText()[0])) {
-                $groupped_marks[strtoupper($mark->getText()[0])][] = $mark;
-            } else {
-                $groupped_marks[" Punctuation"][] = $mark;
-            }
-        }
-
-        ksort($groupped_marks);
-        
-        return $this->render('Admin/index.html.twig', array(
-                'groupped_markers' => $groupped_marks,
-                'domains' => array(),
-            ));
-    }        
-
-    /**
      * @Route("/admin/text/add", name="admin_text_add")
      */
     public function newTextAction(\Symfony\Component\HttpFoundation\Request $request) {
@@ -345,7 +320,7 @@ class AdminController extends Controller
         return $this->redirectToRoute("admin_page");
     }
 
-        /**
+    /**
      * Action which adds a sense to a given marker
      * @Route("/admin/sense/add/{id_marker}", name="admin_sense_add")
      */

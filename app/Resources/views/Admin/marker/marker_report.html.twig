@@ -1,4 +1,4 @@
-{# app/Resources/views/Admin/index.html.twig #}
+{# app/Resources/views/Admin/marker/marker_report.html.twig #}
 
 {% extends 'base.html.twig' %}
 
@@ -25,15 +25,30 @@
                     <div class="tab-content">                        
                         <div id="markers-tab" class="tab-pane fade fade in active voffset2">
                             <div class="voffset3">
-                                <a class="btn btn-default" href="{{ path('admin_marker_add') }}" role="button">Add new marker &raquo;</a>
-                                <a class="btn btn-default pull-right" href="{{ path('admin_marker_summary') }}" role="button">Produce report &raquo;</a>
+                                <h3>Report for the current markers</h3>
                             </div>
                             <div class="voffset3">
                                 {% for initial, markers in groupped_markers %}
                                     <h4>{{ initial }}</h4>
                                     <div style="margin-left:4em;">
                                     {% for marker in markers %}
-                                        <a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a>{% if not loop.last %},{% endif %}
+                                        <div style="padding-bottom: 0.5em;">
+                                        <a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a>: {{ marker.description }}<br/>
+                                        <strong>Categories</strong>
+                                        {% for cat in marker.categories %}
+                                            {{ cat.name }}{% if not loop.last %},{% endif %}
+                                        {% endfor %}<br>
+                                        <strong>Senses</strong>
+                                        <ul>
+                                            {% for sense in marker.senses %}
+                                            <li>
+                                                <span style="color:{{ sense.fgcolor}};background-color:{{ sense.bgcolor}};">{{ sense.definition }}</span>:
+                                                {{ sense.explanation }} (Default score: {{ sense.score }}
+                                                {% if sense.categories | length > 0 %}, Default category: {{ sense.categories[0].name }}{% endif %})
+                                            </li>    
+                                            {% endfor %}
+                                        </ul>
+                                        </div>
                                     {% endfor %}
                                     </div>
                                 {% endfor %}
