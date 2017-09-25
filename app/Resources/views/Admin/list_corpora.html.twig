@@ -23,8 +23,17 @@
                         {{ corpus.description | truncate(200) }} ...<br/>
                         No of texts: {{ corpus.texts | length }} <br/>
                         {% if not path %}
-                            <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
-                            <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation" role="button">Delete</a>                        
+                            {% if is_granted('ROLE_ADMIN')  %}
+                                <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
+                            {% else %}
+                                <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default disabled" role="button">Edit</a>
+                            {% endif %}
+                            
+                            {% if is_granted('ROLE_ADMIN')  %}
+                                <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation" role="button">Delete</a>
+                            {% else %}
+                                <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation disabled" role="button">Delete</a>
+                            {% endif %}
                             <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default" role="button">Annotate</a>
                         {% endif %}
                         {% if path == "by-category" %}
