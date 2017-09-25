@@ -15,13 +15,17 @@
         <div class="row voffset5">
             <div class="col-md-3">                
                 {% if is_granted('ROLE_ADMIN')  %}
-                <div class="options upload"><a href="{{ path('select-corpus') }}">Manage corpora</a></div>
+                    <div class="options upload"><a href="{{ path('select-corpus') }}">Manage corpora</a></div>
                 {% else %}
-                <div class="options upload">Manage corpora</div>
+                    <div class="options upload">Manage corpora</div>
                 {% endif %}
             </div>            
             <div class="col-md-3 col-md-offset-2">
-                <div class="options annotate"><a href="{{ path('select-corpus') }}">Annotate corpus</a></div>
+                {% if is_granted('ROLE_USER')  %}
+                    <div class="options annotate"><a href="{{ path('select-corpus') }}">Annotate corpus</a></div>
+                {% else %}
+                    <div class="options annotate">Annotate corpus</div>
+                {% endif %}
             </div>
         </div>
                 
