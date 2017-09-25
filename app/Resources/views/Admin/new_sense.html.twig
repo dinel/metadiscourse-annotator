@@ -27,11 +27,7 @@
         .ui-slider-horizontal {
             height: 8px;
             width: 200px;
-        }
-        
-        li.sense a {
-            color: inherit;
-        }
+        }                
     </style>
 {% endblock stylesheets %}
 
@@ -54,21 +50,8 @@
         <div class="row voffset2">
             <div class="col-md-8">
                 {% if mark.senses[0].definition %}               
-                    <strong>Current senses:</strong> 
-                    <ol>
-                    {% for sense in mark.senses %}
-                        {% if sense.definition %}
-                            <li class="sense"><span style="color:{{ sense.fgcolor}};background-color:{{ sense.bgcolor}};">
-                                    <a href="{{ path('admin_sense_edit', {'id_marker': mark.id, 'id_sense': sense.id}) }}">{{ sense.definition }}</a>
-                                </span>: {{ sense.explanation }} (Default score: {{ sense.score }}
-                                {% if sense.categories | length > 0 %}
-                                    , Default category: {{ sense.categories[0].name }}
-                                {% endif %}
-                                )
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    </ol>
+                    <strong>Current senses:</strong>
+                    {% include 'Admin/sense/display_formatted_senses.html.twig' with {'senses': mark.senses, 'mark_id': mark.id} %}
                 {% else %}
                     <strong>There are no senses yet!</strong>
                 {% endif %}

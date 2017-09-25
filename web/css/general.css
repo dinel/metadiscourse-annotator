@@ -88,3 +88,7 @@ ul.edit-list a.faded:hover {
 .green {
     color: green;
 }
+
+li.sense a {
+    color: inherit;
+}
