@@ -62,7 +62,9 @@ class AdminMarkerController extends Controller {
     private function getGroupedMarks() {
         $marks = $this->getDoctrine()
                       ->getRepository("AppBundle:Markable")
-                      ->findAll();
+                      ->createQueryBuilder('m')
+                      ->orderBy('m.text')
+                      ->getQuery()->getResult();
         
         $grouped_marks = array();
         foreach($marks as $mark) {
