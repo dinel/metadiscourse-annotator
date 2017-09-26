@@ -128,6 +128,7 @@ class WebAnnotatorController extends Controller
                        ->createQueryBuilder('t')
                        ->where('t.document = :id AND t.markable IN (:id_mark)')
                        ->setParameters(array('id' => $id_doc, 'id_mark' => $id_mark))
+                       ->orderBy('t.id')
                        ->getQuery()
                        ->getResult();
             
