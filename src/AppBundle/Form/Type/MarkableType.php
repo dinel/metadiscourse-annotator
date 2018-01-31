@@ -18,8 +18,12 @@
 
 namespace AppBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of MarkableType
@@ -30,20 +34,22 @@ use Symfony\Component\Form\FormBuilderInterface;
 class MarkableType extends AbstractType {
     private $in_edit_mode = false;
 
-
-    public function __construct($in_edit_mode = false) {
-        $this->in_edit_mode = $in_edit_mode;
-    }
-
+    /**
+     * Build the form
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        $this->in_edit_mode = $options['in_edit_mode'];
+        
         $builder
-            ->add('text', 'text', array(
+            ->add('text', TextType::class, array(
                 'label' => 'Metadiscourse marker',
                 'disabled' => $this->in_edit_mode,
             ))
-            ->add('description', 'text')
+            ->add('description', TextType::class)
             
-            ->add('categories', 'entity', array(
+            ->add('categories', EntityType::class, array(
                     'class'     => 'AppBundle:Category',
                     'choice_label' => 'Categories',
                     'expanded'  => true,
@@ -54,14 +60,18 @@ class MarkableType extends AbstractType {
                                       ->orderBy('d.name');
                     },
                 ))
-            ->add('save', 'submit', array(
+            ->add('save', SubmitType::class, array(
                 'label' => $this->in_edit_mode ? 'Edit marker' : 'Add marker')
             );
     }
-
-    public function getName() {
-        return "markable";
+    
+    /**
+     * Sets the default options
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver) {
+        $resolver->setDefaults([
+                'in_edit_mode' => false,
+        ]);
     }
-
-//put your code here
 }

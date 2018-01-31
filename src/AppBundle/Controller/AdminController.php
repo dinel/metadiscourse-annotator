@@ -244,11 +244,11 @@ class AdminController extends Controller
      * Action which adds a new marker to the database
      * @Route("/admin/marker/add/{marker_text}", name="admin_marker_add")
      */
-    public function newMarkerAdd(\Symfony\Component\HttpFoundation\Request $request, $marker_text = "") {
+    public function addNewMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $marker_text = "") {
         $mark = new \AppBundle\Entity\Markable();
         $mark->setText($marker_text);
         
-        $form = $this->createForm(new MarkableType(), $mark);
+        $form = $this->createForm(MarkableType::class, $mark);
         $form->handleRequest($request);
         
         if($form->isValid()) {
@@ -271,12 +271,14 @@ class AdminController extends Controller
      * Action which edits an existing marker 
      * @Route("/admin/marker/edit/{id}", name="admin_marker_edit")
      */
-    public function newMarkerEdit(\Symfony\Component\HttpFoundation\Request $request, $id) {
+    public function editMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $id) {
         $mark = $this->getDoctrine()
                      ->getRepository('AppBundle:Markable')
-                     ->find($id);
+                     ->find($id);        
         
-        $form = $this->createForm(new MarkableType(true), $mark);
+        $form = $this->createForm(MarkableType::class, $mark, [
+            'in_edit_mode' => true,
+        ]);
         $form->handleRequest($request);
         
         if($form->isValid()) {
