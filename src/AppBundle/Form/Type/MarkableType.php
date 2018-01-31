@@ -50,7 +50,8 @@ class MarkableType extends AbstractType {
                     'multiple'  => true,
                     'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
                             return $er->createQueryBuilder('d')
-                                      ->where('d.parent IS NOT NULL');
+                                      ->where('d.parent IS NOT NULL')
+                                      ->orderBy('d.name');
                     },
                 ))
             ->add('save', 'submit', array(
