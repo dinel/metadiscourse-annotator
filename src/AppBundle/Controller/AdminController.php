@@ -238,65 +238,7 @@ class AdminController extends Controller
                 'form' => $form->createView(),
         ));  
     }
-    
-    
-    /**
-     * Action which adds a new marker to the database
-     * @Route("/admin/marker/add/{marker_text}", name="admin_marker_add")
-     */
-    public function addNewMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $marker_text = "") {
-        $mark = new \AppBundle\Entity\Markable();
-        $mark->setText($marker_text);
-        
-        $form = $this->createForm(MarkableType::class, $mark);
-        $form->handleRequest($request);
-        
-        if($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($mark);
-            $em->flush();
             
-            return $this->redirectToRoute("admin_sense_add", 
-                    array('id_marker' => $mark->getId()));
-        }
-        
-        return $this->render('Admin/new_mark.html.twig', array(
-                'form' => $form->createView(),
-                'in_edit_mode' => 0,
-                'mark_id' => $mark->getId(),
-        ));
-    }
-    
-    /**
-     * Action which edits an existing marker 
-     * @Route("/admin/marker/edit/{id}", name="admin_marker_edit")
-     */
-    public function editMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $id) {
-        $mark = $this->getDoctrine()
-                     ->getRepository('AppBundle:Markable')
-                     ->find($id);        
-        
-        $form = $this->createForm(MarkableType::class, $mark, [
-            'in_edit_mode' => true,
-        ]);
-        $form->handleRequest($request);
-        
-        if($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($mark);
-            $em->flush();
-            
-            return $this->redirectToRoute("admin_sense_add", 
-                    array('id_marker' => $mark->getId()));
-        }
-        
-        return $this->render('Admin/new_mark.html.twig', array(
-                'form' => $form->createView(),
-                'in_edit_mode' => 1,
-                'mark_id' => $mark->getId(),
-        ));
-    }
-    
     /**
      * 
      * @param Request $request
