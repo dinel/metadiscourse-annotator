@@ -74,6 +74,7 @@ class Markable
     public function __construct() {
         $this->senses = new \Doctrine\Common\Collections\ArrayCollection();
         $this->domains = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->alternatives = "";
     }
 
     /**
