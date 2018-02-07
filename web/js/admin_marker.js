@@ -26,7 +26,6 @@ $( document ).ready(function() {
             type: 'POST',
             url: '/admin/marker/add-alternative/' + id_marker + "/" + $('#txt-alternative').val(),
             success: function(msg) {
-                alert("success");
             }
         });
         $('#txt-alternative').val("");
