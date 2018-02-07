@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Form\Type\SenseType;
 use AppBundle\Entity\Sense;
+use AppBundle\Utils\SharedFunctions;
 
 /**
  * Description of AdminSenseController
@@ -40,6 +41,9 @@ class AdminSenseController extends Controller {
         $mark = $this->getDoctrine()
                      ->getRepository('AppBundle:Markable')
                      ->find($id_marker);
+        
+        $cat_tree = SharedFunctions::getCategoryTree($this->getDoctrine());
+        
         // TODO: what to do if the marker is not found. Assumes it works right now
         if($mark) {
             $sense = new Sense();
@@ -68,12 +72,13 @@ class AdminSenseController extends Controller {
                 'message' => 'Add a new sense',
                 'initial_sense' => $sense,
                 'delete_button' => 0,
+                'cat_tree' => $cat_tree,
             ));
         }
     }
         
     /**
-     * Action which adds a sense to a given marker
+     * Action which edits a sense to a given marker
      * @Route("/admin/sense/edit/{id_marker}/{id_sense}", name="admin_sense_edit")
      */
     public function editSenseAction($id_marker, $id_sense, Request $request) {
@@ -84,6 +89,9 @@ class AdminSenseController extends Controller {
         $sense = $this->getDoctrine()
                      ->getRepository('AppBundle:Sense')
                      ->find($id_sense);
+        
+        $cat_tree = SharedFunctions::getCategoryTree($this->getDoctrine());
+        
         // TODO: what to do if the marker is not found. Assumes it works right now
         if($mark && $sense) {
             $form = $this->createForm(SenseType::class, $sense, [
@@ -103,6 +111,7 @@ class AdminSenseController extends Controller {
                 'message' => 'Edit sense',
                 'initial_sense' => $sense,
                 'delete_button' => 1,
+                'cat_tree' => $cat_tree,
             ));
         }
     }

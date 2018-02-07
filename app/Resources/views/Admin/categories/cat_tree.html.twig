@@ -1,0 +1,19 @@
+<div id="cat-tree-container">
+    {% for cat in cat_tree %}
+        <div class="voffset2">
+            <strong>{{ cat[0].name }}</strong>
+            <div style="padding-left: 2em;" id="parent-cat-{{cat[0].id}}"></div>
+        </div>
+    {% endfor %}       
+</div>
+
+<script>
+    var cat_boxes = [];
+    var categoriesLabel = '{{ label_categories }}';
+    {% for cat in cat_tree %}
+        // {{cat[0].name}} len {{ cat|length }}
+        {% if cat | length > 1 %}
+            cat_boxes.push([{% for element in cat %}{{ element.id }}{% if not loop.last %},{% endif %}{% endfor %}]);
+        {% endif %}
+    {% endfor %}
+</script>

@@ -63,6 +63,7 @@ class AdminMarkerController extends Controller {
     public function addMarkerAction(Request $request, $marker_text = "") {
         $mark = new \AppBundle\Entity\Markable();
         $mark->setText($marker_text);
+        $cat_tree = SharedFunctions::getCategoryTree($this->getDoctrine());
         
         $form = $this->createForm(MarkableType::class, $mark);
         $form->handleRequest($request);
@@ -80,6 +81,7 @@ class AdminMarkerController extends Controller {
                 'form' => $form->createView(),
                 'in_edit_mode' => 0,
                 'mark_id' => $mark->getId(),
+                'cat_tree' => $cat_tree,
         ));
     }
     
