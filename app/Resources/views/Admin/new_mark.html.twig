@@ -12,7 +12,15 @@
         <div class="row voffset5">        
         {{ form_start(form) }}
         {{ form_row(form.text, { 'attr':{'placeholder':'Enter the metadiscourse marker'} }) }}
-        {{ form_row(form.description, { 'attr':{'placeholder':'Enter a description for the metadiscourse marker'} }) }}
+        {{ form_row(form.description, { 'attr':{'placeholder':'Enter a description for the metadiscourse marker'} }) }}        
+        <div id="cat-tree-container">
+            {% for cat in cat_tree %}
+                <div class="voffset2">
+                    <strong>{{ cat[0].name }}</strong>
+                    <div style="padding-left: 2em;" id="parent-cat-{{cat[0].id}}"></div>
+                </div>
+            {% endfor %}       
+        </div>
         {{ form_widget(form) }}
         {{ form_end(form) }}
         {% if in_edit_mode == 1 %}
@@ -29,5 +37,25 @@
         $('.confirmation').on('click', function () {
             return confirm('Are you sure you want to delete the marker? As a result you will also remove annotation that uses this marker. The operation is permanent.');
         });
-    </script>
+        
+        var cat_boxes = [];
+
+        {% for cat in cat_tree %}
+            // {{cat[0].name}} len {{ cat|length }}
+            {% if cat | length > 1 %}
+                cat_boxes.push([{% for element in cat %}{{ element.id }}{% if not loop.last %},{% endif %}{% endfor %}]);
+            {% endif %}
+        {% endfor %}
+            
+        function run() {
+            for(var i = 0; i < cat_boxes.length; i++) {
+                for(var j = 1; j < cat_boxes[i].length; j++) {                    
+                    $('#markable_categories_'+cat_boxes[i][j]).parent().parent().appendTo($('#parent-cat-'+cat_boxes[i][0]));
+                }
+            }
+            $('#cat-tree-container').appendTo($('#markable_categories'));
+        }
+        
+        setTimeout(run, 2000);
+    </script>    
 {% endblock %}

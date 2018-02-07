@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Form\Type\MarkableType;
+use AppBundle\Utils\SharedFunctions;
 
 /**
  * Controller which contains marker related actions
@@ -89,6 +90,7 @@ class AdminMarkerController extends Controller {
         $mark = $this->getDoctrine()
                      ->getRepository('AppBundle:Markable')
                      ->find($id);        
+        $cat_tree = SharedFunctions::getCategoryTree($this->getDoctrine());
         
         $form = $this->createForm(MarkableType::class, $mark, [
             'in_edit_mode' => true,
@@ -108,6 +110,7 @@ class AdminMarkerController extends Controller {
                 'form' => $form->createView(),
                 'in_edit_mode' => 1,
                 'mark_id' => $mark->getId(),
+                'cat_tree' => $cat_tree,
         ));
     }    
     
