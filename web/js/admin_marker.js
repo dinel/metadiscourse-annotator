@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-/* global id_marker */
+/* global id_marker, cat_boxes */
 
 $( document ).ready(function() {
+    reorderCategories();
+    
     $('#add-alternative-button').click(function() {
         $('#list-alternatives').append('<span class="alternative">' + $('#txt-alternative').val() + '</span>');        
         
@@ -31,3 +33,12 @@ $( document ).ready(function() {
 
     });
 });
+
+function reorderCategories() {
+    for(var i = 0; i < cat_boxes.length; i++) {
+        for(var j = 1; j < cat_boxes[i].length; j++) {                    
+            $('#markable_categories_'+cat_boxes[i][j]).parent().parent().appendTo($('#parent-cat-'+cat_boxes[i][0]));
+        }
+    }
+    $('#cat-tree-container').appendTo($('#markable_categories'));
+}

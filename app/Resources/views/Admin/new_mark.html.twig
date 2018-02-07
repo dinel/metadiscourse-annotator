@@ -39,23 +39,12 @@
         });
         
         var cat_boxes = [];
-
         {% for cat in cat_tree %}
             // {{cat[0].name}} len {{ cat|length }}
             {% if cat | length > 1 %}
                 cat_boxes.push([{% for element in cat %}{{ element.id }}{% if not loop.last %},{% endif %}{% endfor %}]);
             {% endif %}
         {% endfor %}
-            
-        function run() {
-            for(var i = 0; i < cat_boxes.length; i++) {
-                for(var j = 1; j < cat_boxes[i].length; j++) {                    
-                    $('#markable_categories_'+cat_boxes[i][j]).parent().parent().appendTo($('#parent-cat-'+cat_boxes[i][0]));
-                }
-            }
-            $('#cat-tree-container').appendTo($('#markable_categories'));
-        }
-        
-        setTimeout(run, 2000);
     </script>    
+    <script src="{{ asset('js/admin_marker.js') }}"></script>
 {% endblock %}
