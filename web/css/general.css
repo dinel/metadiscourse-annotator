@@ -92,3 +92,8 @@ ul.edit-list a.faded:hover {
 li.sense a {
     color: inherit;
 }
+
+.alternative {
+    margin-left: 6px;
+    margin-right: 6px;
+}

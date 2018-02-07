@@ -37,13 +37,13 @@
             <div class="col-md-8">
                 <strong>Metadiscourse marker:</strong> {{ mark.text }}<br/>
                 <strong>Description:</strong> {{ mark.description }} <br/>
-                <strong>Domains:</strong>
-                {% for domain in mark.domains %}
-                    {{ domain.name }}
-                    {% if not loop.last %}
-                        ,
-                    {% endif %}
-                {% endfor %}                
+                <strong>Alternative forms:</strong>
+                <span id="list-alternatives">
+                {% for alt in mark.alternatives|split('##') %}
+                    <span class="alternative">{{ alt }}</span>
+                {% endfor %}
+                </span><br/>
+                <input type="text" id="txt-alternative" size="20"> <a class="btn btn-default" id="add-alternative-button">Add alternative form</a><br/>
             </div>
         </div>
         
@@ -86,6 +86,7 @@
     {{ parent() }}
     <script src="{{ asset('js/spectrum.js') }}"></script>    
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="{{ asset('js/admin_marker.js') }}"></script>
     <script>
         $("#sense_bgColor").val('{{ initial_sense.bgcolor }}');
         $("#sense_bgColor").spectrum({
@@ -156,6 +157,8 @@
         $('.confirmation').on('click', function () {
             return confirm('Are you sure you want to delete the sense? As a result you will also remove annotation that uses this sense. The operation is permanent.');
         });
+        
+        var id_marker = {{ mark.id }};
         
    </script>
 {% endblock %}

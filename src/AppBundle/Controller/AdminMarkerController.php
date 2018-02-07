@@ -20,6 +20,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Form\Type\MarkableType;
@@ -114,6 +115,25 @@ class AdminMarkerController extends Controller {
         ));
     }    
     
+    /**
+     * @Route("/admin/marker/add-alternative/{id}/{alternative}")
+     */
+    public function addAlternativeAction($id, $alternative) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id);
+        
+        if($mark) {
+            $mark->addAlternative($alternative);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($mark);
+            $em->flush();
+        }
+        
+        return new JsonResponse();
+    }
+
+
     /**********************************************************************
      * 
      * Private methods

@@ -62,6 +62,13 @@ class Markable
     protected $categories;
     
     /**
+     * @ORM\Column(type="text")
+     * String which contains alternative forms of the marker. They are 
+     * separated by ##
+     */
+    protected $alternatives;
+
+    /**
      * The constructor
      */
     public function __construct() {
@@ -253,4 +260,18 @@ class Markable
     {
         return $this->categories;
     }
+    
+    public function getAlternatives() {
+        return $this->alternatives;
+    }
+
+    public function setAlternatives($alternatives) {
+        $this->alternatives = $alternatives;
+    }
+    
+    public function addAlternative($alternative) {
+        $this->alternatives .= "##" . $alternative;
+        return $this->alternatives;
+    }
+
 }
