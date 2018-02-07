@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Entity\Category;
 use AppBundle\Form\Type\CategoryType;
+use AppBundle\Utils\SharedFunctions;
 
 /**
  * Controller which implements the Category related actions
@@ -35,24 +36,8 @@ class CategoryAdminController extends Controller {
      * Displays a tree with categories
      * @Route("/admin/category/list", name="admin_cat_list")
      */
-    public function indexAction() {                        
-        $categories = $this->getDoctrine()
-                           ->getRepository("AppBundle:Category")
-                           ->findAll();
-        $cat_tree = array();       
-        
-        foreach($categories as $category) {
-            if($category->getName() == "No parent category") {
-                continue;
-            }
-            
-            if($category->getParent()) {
-                $cat_tree[$category->getParent()->getName()][] = $category;                
-            } else {
-                $cat_tree[$category->getName()] = array();
-                $cat_tree[$category->getName()][] = $category;                
-            }
-        }
+    public function indexAction() {                                
+        $cat_tree = SharedFunctions::getCategoryTree($this->getDoctrine());
                 
         return $this->render('Admin/categories/list_categories.html.twig', array(
                 'categories' => $cat_tree,
