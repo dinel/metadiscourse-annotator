@@ -274,5 +274,13 @@ class Markable
         $this->alternatives .= "##" . $alternative;
         return $this->alternatives;
     }
+    
+    public function deleteAlternative($alternative) {
+        $this->alternatives = str_replace(
+                "##" . $alternative, 
+                "", 
+                $this->alternatives);
+        return $this->alternatives;
+    }
 
 }
