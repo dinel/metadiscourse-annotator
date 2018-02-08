@@ -134,6 +134,26 @@ class AdminMarkerController extends Controller {
         
         return new JsonResponse();
     }
+    
+    /**
+     * @Route("/admin/marker/remove-alternative/{id}/{alternative}")
+     */
+    public function removeAlternativeAction($id, $alternative) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id);
+        
+        if($mark) {
+            $doctrine = $this->getDoctrine();
+            $em = $doctrine->getManager();
+            SharedFunctions::removeMarkable($mark, $em, $doctrine, $alternative);
+            $mark->deleteAlternative($alternative);            
+            $em->persist($mark);
+            $em->flush();
+        }
+        
+        return new JsonResponse();        
+    }
 
 
     /**********************************************************************

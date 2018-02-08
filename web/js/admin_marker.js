@@ -29,7 +29,19 @@ $( document ).ready(function() {
             }
         });
         $('#txt-alternative').val("");
-
+    });
+    
+    $('#list-alternatives').on('click', '.alternative', function() {
+        var answer = confirm("Are you sure you want to delete the form?");
+        if(answer) {
+            $.ajax({
+                type: 'POST',
+                url: '/admin/marker/remove-alternative/' + id_marker + "/" + $(this).text(),
+                success: function(msg) {
+                }
+            });
+            $(this).remove();
+        }
     });
 });
 

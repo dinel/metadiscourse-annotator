@@ -95,5 +95,12 @@ li.sense a {
 
 .alternative {
     margin-left: 6px;
-    margin-right: 6px;
+    padding-right: 15px;
+}
+
+.alternative:hover {
+    background-image: url("close-button-png-30227.png");
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: right top;
 }
