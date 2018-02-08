@@ -243,19 +243,19 @@ class AdminController extends Controller
      * @Route("/admin/marker/delete/{id_marker}", name="admin_mark_delete")
      */
     public function deleteMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $id_marker) {
-        $mark = $this->getDoctrine()
-                     ->getRepository('AppBundle:Markable')
-                     ->find($id_marker);
-        $em = $this->getDoctrine()->getManager();
+        $doctrine = $this->getDoctrine();
+        $mark = $doctrine->getRepository('AppBundle:Markable')
+                         ->find($id_marker);
+        $em = $doctrine->getManager();
         
         if($mark) {
             // Step 1: delete all the senses associated with this marker
             foreach($mark->getSenses() as  $sense) {
-                $this->removeSense($sense, $mark, $em);
+                SharedFunctions::removeSense($sense, $mark, $em, $doctrine);
             }
             
             // Step 2: find all the tokens that have a markable remove the markable
-            $this->removeMarkable($mark, $em);            
+            SharedFunctions::removeMarkable($mark, $em, $doctrine);
         }
         
         return $this->redirectToRoute("admin_page");
@@ -273,12 +273,10 @@ class AdminController extends Controller
         $sense = $this->getDoctrine()
                      ->getRepository('AppBundle:Sense')
                      ->find($id_sense);
-        
-        // TODO: what to do if the marker is not found. Assumes it works right now
+                
         if($mark && $sense) {
-            $em = $this->getDoctrine()->getManager();
-            
-            $this->removeSense($sense, $mark, $em);
+            $em = $this->getDoctrine()->getManager();            
+            SharedFunctions::removeSense($sense, $mark, $em, $this->getDoctrine());
             
             return $this->redirectToRoute("admin_sense_add", 
                     array('id_marker' => $mark->getId()));
@@ -798,77 +796,5 @@ class AdminController extends Controller
         $em->flush();
         
         $this->updateMarkersCache($text->getId());
-    }
-    
-    /**
-     * Removes a sense
-     * @param AppBundle\Entity\Sense $sense
-     * @param AppBundle\Entity\Markable $mark
-     * @param type $em
-     */
-    private function removeSense($sense, $mark, $em) {
-        $annotations = $this->getDoctrine()
-                            ->getRepository('AppBundle:Annotation')
-                            ->createQueryBuilder('a')
-                            ->where('a.sense = :id')
-                            ->setParameter('id', $sense->getId())
-                            ->getQuery()
-                            ->iterate();
-            
-        while (($row = $annotations->next()) !== false) {
-            $annotation = $row[0];
-            $em->remove($annotation);
-        }
-        $mark->removeSense($sense);
-        if(! $em->contains($sense)) {
-            $sense = $em->merge($sense);
-        }
-        $em->remove($sense);
-        $em->flush();
-        $em->clear();
-    }
-    
-    /**
-     * Removes a markable
-     * @param type $mark
-     * @param type $em
-     */
-    private function removeMarkable($mark, $em) {
-        $tokens = $this->getDoctrine()
-                       ->getRepository('\AppBundle\Entity\Token')
-                       ->createQueryBuilder('t')
-                       ->where('t.markable = :id')
-                       ->setParameter('id', $mark->getId())
-                       ->getQuery()
-                       ->iterate();
-            
-        while (($row = $tokens->next()) !== false) {
-            
-            $token = $row[0];
-            
-            $token->setMarkable(null);
-            $em->persist($token);
-            
-            // tidy up if there is any left annotation with senseid = 0 (not metadiscourse)
-            $annotations = $this->getDoctrine()
-                                ->getRepository('AppBundle:Annotation')
-                                ->createQueryBuilder('a')
-                                ->where('a.token = :id')
-                                ->setParameter('id', $token->getId())
-                                ->getQuery()
-                                ->iterate();
-            while (($row = $annotations->next()) !== false) {
-                $annotation = $row[0];
-                $em->remove($annotation);
-            }
-        }
-        if(! $em->contains($mark)) {
-            $mark = $em->merge($mark);
-        }
-
-        $em->flush();
-        $em->remove($mark);
-        $em->flush();
-        $em->clear();
-    }
+    }    
 }
