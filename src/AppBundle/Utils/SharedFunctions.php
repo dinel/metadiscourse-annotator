@@ -62,4 +62,14 @@ class SharedFunctions {
         
         return $cat_tree;
     }
+    
+    /**
+     * Function which compares two strings
+     * @param string $a the first string
+     * @param string $b the second string
+     * @return boolean True if the two strings are equal
+     */
+    public static function sameWord($a, $b) {
+        return strtolower($a) == strtolower($b);
+    }
 }
