@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
 use AppBundle\Entity\Cache;
+use AppBundle\Utils\SharedFunctions;
 
 class AdminController extends Controller 
 {
@@ -537,21 +538,25 @@ class AdminController extends Controller
         
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
         foreach($marks_array as $mark) {
-            $a_text = $tokenizer->tokenize($mark->getText());
-            $match = True;
-            for($i = 0; $i < count($a_text); $i++) {
-                if(($pos + $i >= count($tokens)) ||
-                   (($pos + $i < count($tokens)) 
-                     && strtolower($a_text[$i]) != strtolower($tokens[$pos + $i]))) {
-                    $match = False;
-                    break;
-                }
-            }
+            $forms_to_check = array_merge([$mark->getText()], explode("##", $mark->getAlternatives()));
             
-            if($match) {
-                if($best_match_len < count($a_text)) {
-                    $best_match = $mark;
-                    $best_match_len = count($a_text);
+            foreach($forms_to_check as $form) {
+                $a_text = $tokenizer->tokenize($form);
+                $match = True;
+                for($i = 0; $i < count($a_text); $i++) {
+                    if(($pos + $i >= count($tokens)) ||
+                       (($pos + $i < count($tokens)) 
+                        && !SharedFunctions::sameWord($a_text[$i], $tokens[$pos + $i]))) {
+                        $match = False;
+                        break;
+                    }
+                }
+
+                if($match) {
+                    if($best_match_len < count($a_text)) {
+                        $best_match = $mark;
+                        $best_match_len = count($a_text);
+                    }
                 }
             }            
         }
@@ -559,6 +564,48 @@ class AdminController extends Controller
         if($best_match_len) return array($best_match, $best_match_len);
         else return null;
     }
+    
+    /**
+     * Finds markables in an array of tokens
+     * @param array $tokens the array of tokens
+     * @param int $pos the position from which the search starts
+     * @param array $marks_array an array with the markables
+     * @return array the longest markable that starts at position pos
+     * TODO: findMarkable is very similar. have only one of them. 
+     */
+    private function findMarkableInDatabase($tokens, $pos, $marks_array, $ignore_annotated = true) {
+        $best_match = null;
+        $best_match_len = 0;
+        
+        $tokenizer = new WhitespaceAndPunctuationTokenizer();
+        foreach($marks_array as $mark) {
+            $forms_to_check = array_merge([$mark->getText()], explode("##", $mark->getAlternatives()));
+            
+            foreach($forms_to_check as $form) {
+                $a_text = $tokenizer->tokenize($form);
+                $match = True;
+                for($i = 0; $i < count($a_text); $i++) {
+                    if(($pos + $i >= count($tokens)) ||
+                       ($ignore_annotated && $tokens[$pos + $i]->getMarkable()) ||
+                        !SharedFunctions::sameWord($a_text[$i], $tokens[$pos + $i]->getContent())) {
+                        $match = False;
+                        break;
+                    }
+                }
+
+                if($match) {
+                    if($best_match_len < count($a_text)) {
+                        $best_match = $mark;
+                        $best_match_len = count($a_text);
+                    }
+                }            
+            }
+        }
+        
+        if($best_match_len) return array($best_match, $best_match_len);
+        else return null;
+    }    
+    
 
     private function processText(\AppBundle\Entity\Text $text, $em, $target = null) {
         // get the tokens in the text
@@ -684,47 +731,6 @@ class AdminController extends Controller
         }
         $em->flush();                       
     }
-
-    /**
-     * Finds markables in an array of tokens
-     * @param array $tokens the array of tokens
-     * @param int $pos the position from which the search starts
-     * @param array $marks_array an array with the markables
-     * @return array the longest markable that starts at position pos
-     * TODO: findMarkable is very similar. have only one of them. 
-     */
-    private function findMarkableInDatabase($tokens, $pos, $marks_array, $ignore_annotated = true) {
-        $best_match = null;
-        $best_match_len = 0;
-        
-        $tokenizer = new WhitespaceAndPunctuationTokenizer();
-        foreach($marks_array as $mark) {
-            if(strtolower($mark->getText()) === strtolower("you know")) {
-                $a_text = array("you know");
-            } else {
-                $a_text = $tokenizer->tokenize($mark->getText());
-            }
-            $match = True;
-            for($i = 0; $i < count($a_text); $i++) {
-                if(($pos + $i >= count($tokens)) ||
-                   ($ignore_annotated && $tokens[$pos + $i]->getMarkable()) ||
-                   (strtolower($a_text[$i]) != strtolower($tokens[$pos + $i]->getContent()))) {
-                    $match = False;
-                    break;
-                }
-            }
-            
-            if($match) {
-                if($best_match_len < count($a_text)) {
-                    $best_match = $mark;
-                    $best_match_len = count($a_text);
-                }
-            }            
-        }
-        
-        if($best_match_len) return array($best_match, $best_match_len);
-        else return null;
-    }    
 
     private function annotateTextInDatabase(\AppBundle\Entity\Text $text, $em) {       
         set_time_limit(0);
