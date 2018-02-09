@@ -406,6 +406,12 @@ function updateAnnotationPanel(data) {
         explanations.push(data.senses[i][2]);
     }
     $('#list-senses').html(sense_html);
+    
+    $('select#list-senses').selectmenu({
+        style: 'popup',
+        width: 350,
+        appendTo: '#tag-attributes'
+    });
 
     // categories
     var primary_cat_html = "<option value='0'>...</option>";

@@ -6,7 +6,9 @@
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
     <link href="{{ path('annotation_css') }}" rel="stylesheet">
     
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />    
+    <link rel="stylesheet" href="{{ asset('css/selectmenu/jquery.ui.selectmenu.css') }}">    
+    
     <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script type="text/javascript">
@@ -119,10 +121,10 @@
                 
                 <div class="row voffset3">
                     <div class="col-md-5 current-annotation">
-                        <div id="annotation-message">Annotation</div>
-                        <p class="voffset3"><a id="not-marker" class="btn btn-default" role="button">{{ prefs.notMarkableLabel }}</a></p>
-                        <p id="list-senses-container"><label class="voffset3" for="list-senses">Select sense:</label> <select id="list-senses"></select></p>
+                        <div id="annotation-message">Annotation</div>                        
+                        <p id="list-senses-container"><label class="voffset3" for="list-senses">Select sense:</label> <select id="list-senses"></select></p>                        
                         <div style="display:none" id="explanation"></div>
+                        <p class="voffset3"><a id="not-marker" class="btn btn-default" role="button">{{ prefs.notMarkableLabel }}</a></p>
                     </div>
                     
                     <div class="col-md-6">
@@ -181,7 +183,9 @@
     {{ parent() }}
     <script src="{{ asset('js/annotation.js') }}"></script>
     <script src="{{ asset('jquery/jquery-ui.js') }}"></script>    
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/selectmenu/jquery.ui.selectmenu.js') }}"></script>
 {% endblock %}
 
 
