@@ -76,6 +76,32 @@ class AdminSenseController extends Controller {
             ));
         }
     }
+    
+    /**
+     * Action which deletes a sense from a marker
+     * @param integer $id_marker the ID of the marker from which the sense is deleted
+     * @param integer $id_sense the ID of the sense to be deleted
+     * @Route("/admin/sense/delete/{id_marker}/{id_sense}", name="admin_sense_delete")
+     */
+    public function senseDeleteAction($id_marker, $id_sense) {
+        $mark = $this->getDoctrine()
+                     ->getRepository('AppBundle:Markable')
+                     ->find($id_marker);
+        
+        $sense = $this->getDoctrine()
+                     ->getRepository('AppBundle:Sense')
+                     ->find($id_sense);
+                
+        if($mark && $sense) {
+            $em = $this->getDoctrine()->getManager();            
+            SharedFunctions::removeSense($sense, $mark, $em, $this->getDoctrine());
+            
+            return $this->redirectToRoute("admin_sense_add", 
+                    array('id_marker' => $mark->getId()));
+        }
+        
+        return $this->redirectToRoute("admin_page");
+    }    
         
     /**
      * Action which edits a sense to a given marker

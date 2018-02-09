@@ -235,57 +235,7 @@ class AdminController extends Controller
                 'form' => $form->createView(),
         ));  
     }
-            
-    /**
-     * 
-     * @param Request $request
-     * @param type $id_marker
-     * @Route("/admin/marker/delete/{id_marker}", name="admin_mark_delete")
-     */
-    public function deleteMarkerAction(\Symfony\Component\HttpFoundation\Request $request, $id_marker) {
-        $doctrine = $this->getDoctrine();
-        $mark = $doctrine->getRepository('AppBundle:Markable')
-                         ->find($id_marker);
-        $em = $doctrine->getManager();
-        
-        if($mark) {
-            // Step 1: delete all the senses associated with this marker
-            foreach($mark->getSenses() as  $sense) {
-                SharedFunctions::removeSense($sense, $mark, $em, $doctrine);
-            }
-            
-            // Step 2: find all the tokens that have a markable remove the markable
-            SharedFunctions::removeMarkable($mark, $em, $doctrine);
-        }
-        
-        return $this->redirectToRoute("admin_page");
-    }
-    
-    /**
-     * Action which deletes a sense
-     * @Route("/admin/sense/delete/{id_marker}/{id_sense}", name="admin_sense_delete")
-     */
-    public function senseDeleteAction($id_marker, $id_sense, \Symfony\Component\HttpFoundation\Request $request) {
-        $mark = $this->getDoctrine()
-                     ->getRepository('AppBundle:Markable')
-                     ->find($id_marker);
-        
-        $sense = $this->getDoctrine()
-                     ->getRepository('AppBundle:Sense')
-                     ->find($id_sense);
-                
-        if($mark && $sense) {
-            $em = $this->getDoctrine()->getManager();            
-            SharedFunctions::removeSense($sense, $mark, $em, $this->getDoctrine());
-            
-            return $this->redirectToRoute("admin_sense_add", 
-                    array('id_marker' => $mark->getId()));
-        }
-        
-        return $this->redirectToRoute("admin_page");
-    }
-    
-    
+                    
     /**
      * @Route("/admin/corpus/edit/{id}", name="edit_corpus")
      */

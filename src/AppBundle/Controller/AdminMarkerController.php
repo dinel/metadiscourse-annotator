@@ -86,6 +86,30 @@ class AdminMarkerController extends Controller {
     }
     
     /**
+     * Action which deletes a marker
+     * @param integer $id_marker the ID of the marker to be deleted
+     * @Route("/admin/marker/delete/{id_marker}", name="admin_mark_delete")
+     */
+    public function deleteMarkerAction($id_marker) {
+        $doctrine = $this->getDoctrine();
+        $mark = $doctrine->getRepository('AppBundle:Markable')
+                         ->find($id_marker);
+        $em = $doctrine->getManager();
+        
+        if($mark) {
+            // Step 1: delete all the senses associated with this marker
+            foreach($mark->getSenses() as  $sense) {
+                SharedFunctions::removeSense($sense, $mark, $em, $doctrine);
+            }
+            
+            // Step 2: find all the tokens that have a markable remove the markable
+            SharedFunctions::removeMarkable($mark, $em, $doctrine);
+        }
+        
+        return $this->redirectToRoute("admin_page");
+    }
+    
+    /**
      * Action which edits an existing marker 
      * @Route("/admin/marker/edit/{id}", name="admin_marker_edit")
      */
