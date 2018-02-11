@@ -40,7 +40,9 @@
                 <strong>Alternative forms:</strong>
                 <span id="list-alternatives">
                 {% for alt in mark.alternatives|split('##') %}
-                    <span class="alternative">{{ alt }}</span>
+                    {% if alt %}
+                        <span class="alternative">{{ alt }}</span>
+                    {% endif %}
                 {% endfor %}
                 </span><br/>
                 <input type="text" id="txt-alternative" size="20"> <a class="btn btn-default" id="add-alternative-button">Add alternative form</a><br/>
