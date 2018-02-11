@@ -633,10 +633,10 @@ class AdminController extends Controller
         while (($row = $tokens->next()) !== false) {          
             $token = $row[0];
             if($token->getMarkable()) {
-                if(array_key_exists(strtolower($token->getContent()), $stats)) {
-                    $stats[strtolower($token->getContent())]++;
+                if(array_key_exists(strtolower($token->getMarkable()->getText()), $stats)) {
+                    $stats[strtolower($token->getMarkable()->getText())]++;
                 } else {
-                    $stats[strtolower($token->getContent())] = 1;
+                    $stats[strtolower($token->getMarkable()->getText())] = 1;
                 }
             }
         }
