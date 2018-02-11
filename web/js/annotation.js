@@ -230,6 +230,11 @@ $( document ).ready(function() {
         });
     });
     
+    $('#secondary-category').change(function() {
+        $('#update-annotation').removeClass('disabled');
+        $('#update-annotation').addClass('red');
+    });
+    
     /*
      * Function triggered when the user changes the selection of a sense
      */
