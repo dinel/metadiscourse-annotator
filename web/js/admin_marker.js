@@ -43,6 +43,11 @@ $( document ).ready(function() {
             $(this).remove();
         }
     });
+    
+    $('#show-categories').click(function() {
+       $('#cat-tree-intern').toggle(); 
+       $('.msg-show-categories').toggle();
+    });
 });
 
 function reorderCategories(categoriesLabel) {

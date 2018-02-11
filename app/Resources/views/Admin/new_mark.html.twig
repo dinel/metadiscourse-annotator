@@ -9,15 +9,27 @@
 
 {% block body %}
     <div class="container">
-        <div class="row voffset5">        
+        <div class="row voffset4">
+            <div class="center-block" style="width: 600px;">
         {{ form_start(form) }}
-        {{ form_row(form.text, { 'attr':{'placeholder':'Enter the metadiscourse marker'} }) }}
-        {{ form_row(form.description, { 'attr':{'placeholder':'Enter a description for the metadiscourse marker'} }) }}        
+        
+        {{ form_widget(form.text, { 'attr':{'placeholder':'Enter the metadiscourse marker', 'style':'font-size:250%; margin: 20px;'} }) }}        
+            
+        {{ form_widget(form.description, { 'attr':{'placeholder':'Enter a description for the metadiscourse marker', 'style':'margin: 20px;'} }) }}        
+        
+        {{ form_widget(form.categories) }}
+        
+        <div id="buttons">
+            {{ form_widget(form.save, { 'attr':{'style':'margin: 20px; display: inline-block;'} }) }}        
+            {% if in_edit_mode == 1 %}
+                <div style="margin: 20px;display: inline-block"><a href="{{ path('admin_mark_delete', {'id_marker': mark_id}) }}" class="btn btn-default ">Delete this marker? (use with great care!!!)</a></div>
+            {% endif %}
+            <div style="margin: 20px;display: inline-block"><a class="btn btn-default" href="{{ path('admin_page') }}">Back</a>
+        </div>
+        
         {{ form_widget(form) }}
         {{ form_end(form) }}
-        {% if in_edit_mode == 1 %}
-            <div><a href="{{ path('admin_mark_delete', {'id_marker': mark_id}) }}" class="btn btn-default confirmation">Delete this marker? (use with great care!!!)</a></div>
-        {% endif %}
+            </div>
         </div>
     </div>
         

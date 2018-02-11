@@ -1,10 +1,16 @@
 <div id="cat-tree-container">
-    {% for cat in cat_tree %}
-        <div class="voffset2">
-            <strong>{{ cat[0].name }}</strong>
-            <div style="padding-left: 2em;" id="parent-cat-{{cat[0].id}}"></div>
-        </div>
-    {% endfor %}       
+    <div id="show-categories" class="btn btn-default" style="margin: 20px;">
+        <span class="msg-show-categories">Edit categories</span>
+        <span class="msg-show-categories" style="display:none;">Hide categories</span>
+    </div>
+    <div id="cat-tree-intern" style="display: none;">
+        {% for cat in cat_tree %}
+            <div class="voffset2" style="display: inline-block; vertical-align: top; margin: 10px;">
+                <strong>{{ cat[0].name }}</strong>
+                <div style="padding-left: 2em;" id="parent-cat-{{cat[0].id}}"></div>
+            </div>
+        {% endfor %}       
+    </div>
 </div>
 
 <script>
