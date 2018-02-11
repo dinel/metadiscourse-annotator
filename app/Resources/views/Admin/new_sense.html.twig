@@ -34,9 +34,9 @@
 {% block body %}
     <div class="container">
         <div class="row voffset5"> 
-            <div class="col-md-8">
-                <strong>Metadiscourse marker:</strong> {{ mark.text }}<br/>
-                <strong>Description:</strong> {{ mark.description }} <br/>
+            <div class="center-block" style="width: 600px;">
+                <div style="font-size:250%;">{{ mark.text }}</div>
+                <div><em>{{ mark.description }}</em></div>
                 <strong>Alternative forms:</strong>
                 <span id="list-alternatives">
                 {% for alt in mark.alternatives|split('##') %}
@@ -50,7 +50,7 @@
         </div>
         
         <div class="row voffset2">
-            <div class="col-md-8">
+            <div class="center-block" style="width: 600px;">
                 {% if mark.senses[0].definition %}               
                     <strong>Current senses:</strong>
                     {% include 'Admin/sense/display_formatted_senses.html.twig' with {'senses': mark.senses, 'mark_id': mark.id} %}
@@ -60,25 +60,33 @@
             </div>
         </div>        
             
-        <hr width="75%" align="center"/>
-        
-        <h3>{{ message }}</h3>
+        <hr width="75%" align="center"/>                
         
         <div class="row voffset3">
-            <div class="col-md-8">
+            <div class="center-block" style="width: 600px;">
+                <h3>{{ message }}</h3>
+                
                 {{ form_start(form) }}
                 {{ form_row(form.definition) }}
-                {{ form_widget(form.score) }}                
+                {{ form_row(form.explanation) }}
+                {{ form_widget(form.score) }}    
+                {{ form_widget(form.categories) }}
+                <div class="voffset3">
+                    <strong>Text color</strong>: {{ form_widget(form.fgColor, { 'attr':{'style':'margin: 20px; display: inline-block;'} }) }}
+                    <strong style="margin-left: 2em;">Background color</strong>: {{ form_widget(form.bgColor, { 'attr':{'style':'margin: 20px; display: inline-block;'} }) }}
+                    <div id="preview" style="margin-left: 2em; display: inline-block;">Preview</div>
+                </div>
+                <div class="voffset4">
+                    {{ form_widget(form.save, { 'attr':{'style':'margin: 10px; display: inline-block;'} }) }}
+                    {% if delete_button == 1 %}
+                        <div style="margin: 10px; display: inline-block;">
+                            <a href="{{ path('admin_sense_delete', {'id_marker': mark.id, 'id_sense': initial_sense.id}) }}" class="btn btn-default confirmation">Delete this sense (use with great care!!!)</a>
+                        </div>
+                    {% endif %} 
+                    <a style="margin: 10px; display: inline-block;" class="btn btn-default" href=" {{ path('admin_page') }} ">Back to admin</a>
+                </div>
                 {{ form_end(form) }}
-                {% if delete_button == 1 %}
-                    <div><a href="{{ path('admin_sense_delete', {'id_marker': mark.id, 'id_sense': initial_sense.id}) }}" class="btn btn-default confirmation">Delete this sense (use with great care!!!)</a></div>
-                {% endif %}
-                <div id="preview" class="voffset2">Preview</div>
-            </div>
-        </div>
-        <div class="row voffset2">
-            <div class="col-md-8">
-                <a href=" {{ path('admin_page') }} ">Back to admin</a>
+                               
             </div>
         </div>
     </div>            
