@@ -21,6 +21,7 @@ namespace AppBundle\Form\Type;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -47,8 +48,7 @@ class MarkableType extends AbstractType {
                 'label' => 'Metadiscourse marker',
                 'disabled' => $this->in_edit_mode,
             ))
-            ->add('description', TextType::class)
-            
+            ->add('description', TextareaType::class)            
             ->add('categories', EntityType::class, array(
                     'class'     => 'AppBundle:Category',
                     'choice_label' => 'Categories',
