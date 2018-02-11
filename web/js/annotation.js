@@ -493,21 +493,23 @@ function preFetch(start) {
     } 
     
     var nextToken = getNextToken(start);
+    
+    if(nextToken !== start) {
+        $.ajax({
+            type: 'POST',
+            url: '/document/next/' + nextToken,
+            dataType: 'json',
+            success: function(data) {
+                if(! checkAlreadyInQueue(data.tok_id)) {
+                    nextMarkerQueue.push(data);
+                }
 
-    $.ajax({
-        type: 'POST',
-        url: '/document/next/' + nextToken,
-        dataType: 'json',
-        success: function(data) {
-            if(! checkAlreadyInQueue(data.tok_id)) {
-                nextMarkerQueue.push(data);
+                if(nextMarkerQueue.length < 2) {
+                    preFetch(nextToken);
+                }
             }
-            
-            if(nextMarkerQueue.length < 2) {
-                preFetch(nextToken);
-            }
-        }
-    });
+        });
+    }
 }
 
 /**
@@ -535,7 +537,7 @@ function getNextToken(start) {
     var nextToken = start;
     
     var metaMarkers = $('.meta-marker').toArray();
-    for(var i = 0; i < metaMarkers.length; i++) {
+    for(var i = 0; i < metaMarkers.length - 1; i++) {
         if(metaMarkers[i].id === start && i < metaMarkers.length) {
             nextToken = metaMarkers[i+1].id;
             break;                
