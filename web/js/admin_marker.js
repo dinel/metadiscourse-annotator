@@ -18,6 +18,7 @@
 
 $( document ).ready(function() {
     reorderCategories(categoriesLabel);
+    $('[data-toggle="popover"]').popover();
     
     $('#add-alternative-button').click(function() {
         $('#list-alternatives').append('<span class="alternative">' + $('#txt-alternative').val() + '</span>');        

@@ -27,7 +27,11 @@
         .ui-slider-horizontal {
             height: 8px;
             width: 200px;
-        }                
+        }   
+        
+        .popover{
+            width:500px;
+        }
     </style>
 {% endblock stylesheets %}
 
@@ -42,6 +46,25 @@
                         </div>
                         <div class="col-xs-6 with-border">
                             <strong>Alternative forms:</strong>
+                            <div class="pull-right">
+                                <a data-toggle="popover" 
+                                   data-container="body"
+                                   tabindex="0"
+                                   role="button"
+                                   data-trigger="focus"
+                                   title="About alternative forms" 
+                                   data-content="This option allows you to specify alternative
+                                   forms for a given marker. These alternative forms can be
+                                   morphological variations or something different which is 
+                                   related to the current marker. During the annotation 
+                                   alternative forms will have exactly the same options as
+                                   the marker. To add one enter the text in the box below
+                                   and press the 'Add form' button. To delete a form, 
+                                   click on it and confirm the deletion. Any existing 
+                                   annotation
+                                   associated with the form is deleted as well."><i class="glyphicon glyphicon-question-sign pull-right" aria-hidden="true"></i></a>
+                            </div>
+                            
                             <div id="list-alternatives">
                             {% for alt in mark.alternatives|split('##') %}
                                 {% if alt %}
