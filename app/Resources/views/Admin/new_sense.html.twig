@@ -84,14 +84,18 @@
                     <strong style="margin-left: 4em;">Background color</strong>: {{ form_widget(form.bgColor, { 'attr':{'style':'margin: 20px; display: inline-block;'} }) }}
                     <div id="preview" style="margin-left: 2em; display: inline-block; font-size: 175%;" class="pull-right">Preview</div>
                 </div>
-                <div class="voffset4">
-                    {{ form_widget(form.save, { 'attr':{'style':'margin: 10px; display: inline-block;'} }) }}                    
+                <div class="voffset4-5 text-right">
+                    {% set currentPath = path(app.request.attributes.get('_route'),
+                                              app.request.attributes.get('_route_params')) %}
+                    
+                    {{ form_widget(form.save, { 'attr':{'style':'margin: 10px 10px 10px 0; display: inline-block;'} }) }}                    
+                    <a style="margin: 10px; display: inline-block;" class="btn btn-default" href=" {{ path('admin_sense_add', {'id_marker': mark.id}) }} ">Discard changes</a>
                     {% if delete_button == 1 %}
                         <div style="margin: 10px; display: inline-block;">
-                            <a href="{{ path('admin_sense_delete', {'id_marker': mark.id, 'id_sense': initial_sense.id}) }}" class="btn btn-default confirmation">Delete this sense (use with great care!!!)</a>
+                            <a href="{{ path('admin_sense_delete', {'id_marker': mark.id, 'id_sense': initial_sense.id}) }}" class="btn btn-default confirmation red">Delete this sense (use with care!!!)</a>
                         </div>
                     {% endif %} 
-                    <a style="margin: 10px; display: inline-block;" class="btn btn-default" href=" {{ path('admin_page') }} ">Back to admin</a>
+                    <a style="margin: 10px 0 10px 10px; display: inline-block;" class="btn btn-default" href=" {{ path('admin_page') }} ">Back to admin</a>
                 </div>
                 {{ form_end(form) }}
                                
