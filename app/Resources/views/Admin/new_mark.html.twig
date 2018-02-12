@@ -22,9 +22,9 @@
         <div id="buttons">
             {{ form_widget(form.save, { 'attr':{'style':'margin: 20px; display: inline-block;'} }) }}        
             {% if in_edit_mode == 1 %}
-                <div style="margin: 20px;display: inline-block"><a href="{{ path('admin_mark_delete', {'id_marker': mark_id}) }}" class="btn btn-default confirmation">Delete this marker? (use with great care!!!)</a></div>
+                <div style="margin: 20px;display: inline-block"><a href="{{ path('admin_mark_delete', {'id_marker': mark_id}) }}" class="btn btn-default confirmation red">Delete this marker? (use with great care!!!)</a></div>
             {% endif %}
-            <div style="margin: 20px;display: inline-block"><a class="btn btn-default" href="{{ path('admin_page') }}">Back</a>
+            <div style="margin: 20px;display: inline-block"><a class="btn btn-default" href="{{ path('admin_page') }}">Back</a></div>
         </div>
         
         {{ form_widget(form) }}
