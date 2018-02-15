@@ -150,13 +150,18 @@ class AdminMarkerController extends Controller {
                      ->find($id);
         
         if($mark) {
-            $mark->addAlternative($alternative);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($mark);
-            $em->flush();
+            $msg = $this->wereAlternativeUsed($alternative);
+            if($msg) {
+                return new JsonResponse($msg);
+            } else {
+                $mark->addAlternative($alternative);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($mark);
+                $em->flush();
+            }
         }
         
-        return new JsonResponse();
+        return new JsonResponse("OK");
     }
     
     /**
@@ -208,5 +213,28 @@ class AdminMarkerController extends Controller {
         ksort($grouped_marks);
         
         return $grouped_marks;
+    }
+    
+    /**
+     * Checks whether an alternative form was used before somewhere.
+     */
+    private function wereAlternativeUsed($alternative) {
+        $marks = $this->getDoctrine()
+                      ->getRepository("AppBundle:Markable")
+                      ->findAll();
+        
+        foreach($marks as $mark) {
+            if(SharedFunctions::sameWord($mark->getText(), $alternative)) {
+                return "The alternative form you are trying to add has already been used as a marker <b>" . $mark->getText() . "</b>!";
+            }
+            
+            foreach(explode("##", $mark->getAlternatives()) as $alt) {
+                if(SharedFunctions::sameWord($alt, $alternative)) {
+                    return "The alternative form you are trying to add has already been used as an alternative form for marker <b>" . $mark->getText() . "</b>!";
+                }
+            }            
+        }
+        
+        return true;
     }
 }

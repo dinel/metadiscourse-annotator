@@ -20,13 +20,18 @@ $( document ).ready(function() {
     reorderCategories(categoriesLabel);
     $('[data-toggle="popover"]').popover();
     
-    $('#add-alternative-button').click(function() {
-        $('#list-alternatives').append('<span class="alternative">' + $('#txt-alternative').val() + '</span>');        
-        
-        $.ajax({
+    $('#add-alternative-button').click(function() {        
+        var alternative = $('#txt-alternative').val();        
+        $.ajax({            
             type: 'POST',
-            url: '/admin/marker/add-alternative/' + id_marker + "/" + $('#txt-alternative').val(),
+            url: '/admin/marker/add-alternative/' + id_marker + "/" + alternative,
             success: function(msg) {
+                if(msg === "OK") {
+                    $('#list-alternatives').append('<span class="alternative">' + alternative + '</span>');        
+                } else {
+                    $('#modal-msg').html(msg);
+                    $('#myModal').modal('show');
+                }
             }
         });
         $('#txt-alternative').val("");
