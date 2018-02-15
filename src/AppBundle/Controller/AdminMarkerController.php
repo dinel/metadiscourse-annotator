@@ -175,9 +175,13 @@ class AdminMarkerController extends Controller {
         if($mark) {
             $doctrine = $this->getDoctrine();
             $em = $doctrine->getManager();
-            SharedFunctions::removeMarkable($mark, $em, $doctrine, $alternative);
-            $mark->deleteAlternative($alternative);            
-            $em->persist($mark);
+            SharedFunctions::removeMarkable($mark, $em, $doctrine, $alternative);            
+            
+            if(! $em->contains($mark)) {
+                $mark = $em->merge($mark);
+            }
+            $mark->deleteAlternative($alternative);
+            
             $em->flush();
         }
         
@@ -235,6 +239,6 @@ class AdminMarkerController extends Controller {
             }            
         }
         
-        return true;
+        return false;
     }
 }
