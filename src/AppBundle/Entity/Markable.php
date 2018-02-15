@@ -11,8 +11,10 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use AppBundle\Utils\SharedFunctions;
+
 /**
- * Description of Domain
+ * Method which implements the Markable (Marker) entity
  *
  * @author dinel
  */
@@ -275,11 +277,16 @@ class Markable
         return $this->alternatives;
     }
     
-    public function deleteAlternative($alternative) {
-        $this->alternatives = str_replace(
-                "##" . $alternative, 
-                "", 
-                $this->alternatives);
+    public function deleteAlternative($alternative) {        
+        $alts = explode("##", $this->alternatives);
+        $this->alternatives = "";
+        
+        foreach($alts as $alt) {
+            if($alt && !SharedFunctions::sameWord($alt, $alternative)) {
+                $this->alternatives .= "##" . $alt;
+            }
+        }
+        
         return $this->alternatives;
     }
 
