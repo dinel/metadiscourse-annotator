@@ -78,17 +78,6 @@ class AdminController extends Controller
                         'label' => false,
                         'required' => false,
                     ))
-                /*
-                ->add('domains', 'entity', array(
-                        'class'     => 'AppBundle:Domain',
-                        'choice_label' => 'Domains',
-                        'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
-                                return $er->createQueryBuilder('d')
-                                        ->where('d.disabled = 0');
-                        },
-                        'expanded'  => true,
-                        'multiple'  => true
-                    ))*/
                 ->add('save', 'submit', array('label' => 'Add text'))
                 ->getForm();
         
@@ -457,18 +446,7 @@ class AdminController extends Controller
             $em->persist($cat);
             $em->flush();            
         }
-        
-        $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Domain");
-        $domain_any = $repository->findBy(array("name" => "Any"));        
-        if(count($domain_any) == 0) {
-            $domain = new \AppBundle\Entity\Domain();
-            $domain->setName("Any");
-            $domain->setDescription("A general domain");
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($domain);
-            $em->flush();
-        } 
-        
+                
         return $this->redirectToRoute("admin_page");
         
     }
@@ -564,7 +542,6 @@ class AdminController extends Controller
         $tokenizer = new WhitespaceAndPunctuationTokenizer();
         
         // load all the markers
-        // TODO: filter by domain
         $repository = $this->getDoctrine()->getRepository("\AppBundle\Entity\Markable");
         $marks = $repository->findBy(array(), array('text' => 'ASC'));
         $marks_array = array();
