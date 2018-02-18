@@ -32,54 +32,8 @@
             </div>
         </div>
     </div>
-                
-                {#
-                <h3>Domains</h3>
-                
-                <ul class="edit-list">
-                {% for domain in domains %}
-                    <li>
-                        {% set extra_class = "" %}
-                        {% if domain.disabled %}
-                            <i class="fa fa-times"></i>
-                            {% set extra_class = "faded" %}
-                        {% endif %}
-                        {% if domain.name == 'Any' %}
-                            {{ domain.name }} : {{ domain.description }}
-                        {% else %} 
-                            <a class="{{ extra_class }} editable-link" href="/admin/domain/edit/{{ domain.id }}">
-                                {{ domain.name }} : {{ domain.description }} <i class="">&nbsp;</i>
-                            </a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-                </ul>
-                <p><a class="btn btn-default" href="{{ path('admin_domain_add') }}" role="button">Add new domain &raquo;</a></p>
-                <p><a class="btn btn-default" href="{{ path('admin_domain_export') }}" role="button">Export domains to file&raquo;</a></p>
-                <p><a class="btn btn-default" id="import-domains" role="button">Import domains to file&raquo;</a></p>
-                <form id="import-domains-form" action="{{ path('admin_domain_import') }}" method="post" enctype="multipart/form-data">
-                    <input type="file" name="file">
-                    <input type="submit">
-                    <input type="reset" value="Cancel" id="import-domains-cancel">
-                </form>
-                
-                
-                
-                
-            </div>
-            
-            <div class="col-md-4">
-                <h2>Texts</h2>
-                
-                {% for text in texts %}
-                    <div>{{ text.title }}</div>
-                {% endfor %}
-                <p><a class="btn btn-default" href="{{ path('admin_text_add') }}" role="button">Add text &raquo;</a></p>
-            </div>
-                        #}                
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/admin.js') }}"></script>
 {% endblock %}
