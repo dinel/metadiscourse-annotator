@@ -4,13 +4,13 @@
 
 {% block settings_div %}
     <h2>Current users</h2>
-    <table class="table table-hover">
+    <table class="table table-hover" id="table-users">
     <thead>
-    <td><b>Name</b></td>
-    <td><b>Login</b></td>
-    <td><b>Last login</b></td>
-    <td><b>Administrator</b></td>
-    <td><b>Actions</b></td>
+    <th onclick="sortTable(0)"><b>Name</b> <span class="glyphicon glyphicon-sort" aria-hidden="true"></span></th>
+    <th onclick="sortTable(1)"><b>Login <span class="glyphicon glyphicon-sort" aria-hidden="true"></span></b></th>
+    <th onclick="sortTable(2)"><b>Last login <span class="glyphicon glyphicon-sort" aria-hidden="true"></span></b></th>
+    <th><b>Administrator</b></th>
+    <th><b>Actions</b></th>
     </thead>
     {% for user in users %}
     <tr>
@@ -39,4 +39,79 @@
     <div class="voffset3">
         <div class="voffset3"><a class="btn btn-default" href="{{ path('admin_user_add') }}" role="button">Add new user &raquo;</a></div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        /**
+         * Sorts the table with users. 
+         * Function inspired from https://www.w3schools.com/howto/howto_js_sort_table.asp
+         * @param n the row number
+         * @returns underfined it does not return anything. Makes the changes
+         * directly on the table
+         */
+        function sortTable(n) {
+            var table = document.getElementById('table-users');
+            var flag = true;
+            var i = 0;
+            var dir = "asc";
+            var switchcount = 0;
+            
+            while(flag) {
+                flag = false;
+                rows = table.getElementsByTagName("tr");
+                for(i = 1; i < (rows.length - 1); i++) {
+                    x = rows[i].getElementsByTagName("td")[n].innerHTML.toLowerCase();
+                    y = rows[i + 1].getElementsByTagName("td")[n].innerHTML.toLowerCase();
+                    
+                    if(compare(x, y, dir, n)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                
+                if(flag) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switchcount ++;
+                } else {
+                    if(switchcount === 0 && dir === "asc") {
+                        dir = "desc";
+                        flag = true;
+                    }
+                }                
+            }
+        }
+        
+        /**
+         * Function which compares two values. 
+         * @param x the first value
+         * @param y the second value
+         * @param dir the direction for comparison. Can have two values <strong>
+         * asc</strong> or <strong>desc</strong>
+         * @param n the column number. This determines type. 0 and 1 are strings
+         * whilst 2 is date in format dd-mm-yyyy
+         * @returns {Boolean} the result of comparison
+         */
+        function compare(x, y, dir, n) {
+            if(n === 0 || n === 1) {
+                if(dir === "asc") {
+                    return x > y;
+                } else {
+                    return x < y;
+                }
+            } else if(n === 2) {
+                dateParts = x.split("-");
+                var d1 = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+                dateParts = y.split("-");
+                var d2 = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+                
+                if(dir === "asc") {
+                    return d1 > d2;
+                } else {
+                    return d1 < d2;
+                }
+            }
+        }
+    </script>
 {% endblock %}
