@@ -34,11 +34,26 @@
                                     {% for marker in markers %}
                                         <div style="padding-bottom: 0.5em;">
                                         <a href="{{ path('admin_marker_edit', {'id': marker.id}) }}">{{ marker.text }}</a>: {{ marker.description }}<br/>
-                                        <strong>Categories</strong>
+                                        <strong>Alternative forms</strong>:
+                                        {% if not marker.alternatives | length %}
+                                            <em>none</em>
+                                        {% endif %}
+                                        
+                                        {% for alt in marker.alternatives|split('##') %}
+                                            {% if alt %}
+                                                {{ alt }}
+                                                {% if loop.last %}{% else %},{% endif %}
+                                            {% endif %}
+                                        {% endfor %}<br/>
+                                        <strong>Categories</strong>:      
+                                        {% if not marker.categories | length %}
+                                            <em>none</em>
+                                        {% endif %}
+                                        
                                         {% for cat in marker.categories %}
                                             {{ cat.name }}{% if not loop.last %},{% endif %}
                                         {% endfor %}<br>
-                                        <strong>Senses</strong>
+                                        <strong>Senses</strong>:
                                         {% include 'Admin/sense/display_formatted_senses.html.twig' with {'senses': marker.senses, 'mark_id': marker.id} %}
                                         </div>
                                     {% endfor %}
