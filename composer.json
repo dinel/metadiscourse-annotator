@@ -1,7 +1,16 @@
 {
     "name": "dinel/meta_discourse_annotator",
-    "license": "proprietary",
+    "description": "Annotation tool for metadiscourse markers and similar phenomena",
+    "license": "Apache-2.0",
     "type": "project",
+    "authors": [
+        {
+            "name": "Constantin Orasan",
+            "email": "dinel@dinel.org.uk",
+            "homepage": "http://www.dinel.org.uk",
+            "role": "Developer"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "": "src/"
