@@ -41,8 +41,16 @@
                         </div>                                                                       
                    
                         <div id="operations-tab" class="tab-pane fade voffset2">
-                            <a href="/admin_new">Define the characteristics of the corpus</a><br/>
-                            <a href="/">Back to front page</a>
+                            <div>
+                                <a href="/admin_new">Define the characteristics of the corpus</a>
+                            </div>
+                            <div class="voffset3">
+                                <a class="btn btn-default confirmation" href="{{ path('admin_misc_emtpy_cache') }}" role="button">Empty cache</a><br/>
+                                <em class="red">Use this option only if you really need to</em>
+                            </div>
+                            <div class="voffset3">
+                                <a href="/">Back to front page</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -53,4 +61,9 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>    
+        $('.confirmation').on('click', function () {
+            return confirm('Are you sure you want to empty cache?');
+        });
+    </script> 
 {% endblock %}

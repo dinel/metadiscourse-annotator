@@ -37,6 +37,17 @@ use AppBundle\Utils\SharedFunctions;
 class AdminController extends Controller 
 {
     /**
+     * @Route("/admin/misc/empty-cache", name="admin_misc_emtpy_cache")
+     */
+    public function emptyCacheAction() {
+        $connection = $this->getDoctrine()->getManager()->getConnection();
+        $platform   = $connection->getDatabasePlatform();
+        $connection->executeUpdate($platform->getTruncateTableSQL('cache'));
+
+        return $this->redirectToRoute("admin_page");        
+    }
+
+    /**
      * @Route("/admin/text/add", name="admin_text_add")
      */
     public function newTextAction(\Symfony\Component\HttpFoundation\Request $request) {
