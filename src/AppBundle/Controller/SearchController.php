@@ -209,29 +209,27 @@ class SearchController extends Controller
      * @Route("/statistics/by-category-intern/{corpus_id}", name="statistics_by_category_intern") 
      */
     public function statisticsByCategoryInternAction($corpus_id) {
-        $statistics = array();
+        $statistics = array();                
+        set_time_limit(0);                
+        $em = $this->getDoctrine()->getManager();        
         
-        set_time_limit(0);
-        
-        $tokens = $this->getTokensFromCorpus($corpus_id);
+        $queryBuilder = $em->createQueryBuilder();       
+        $queryBuilder->addSelect("annotation")
+                     ->from("AppBundle:Annotation", 'annotation')
+                     ->from("AppBundle:Token", 'token')
+                     ->andWhere("annotation.token = token")
+                     ->andWhere("token.document IN (:param)")
+                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
 
-        $em = $this->getDoctrine()->getManager();
-        
-        while (($row = $tokens->next()) !== false) {
-            $token = $row[0];
-            
-            $annotations = $this->getAnnotationsForToken($token->getId());                    
-            
-            foreach($annotations as $annotation) {
-                $category = $annotation->getCategory();
-                if($category) {
-                    $this->updateStatisticsForCategories($statistics, $category->getName());
-                    if($category->getParent()) {
-                        $this->updateStatisticsForCategories($statistics, $category->getParent()->getName());
-                    }
+        $annotations = $queryBuilder->getQuery()->getResult();                                                    
+        foreach($annotations as $annotation) {
+            $category = $annotation->getCategory();
+            if($category) {
+                $this->updateStatisticsForCategories($statistics, $category->getName());
+                if($category->getParent()) {
+                    $this->updateStatisticsForCategories($statistics, $category->getParent()->getName());
                 }
             }
-            $em->detach($token);
         }
         
         $cats = $this->getDoctrine()
@@ -333,7 +331,7 @@ class SearchController extends Controller
         $str_r = $this->getContext(
                 "SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id > ?1 ORDER BY t.id", 
                 $term_id, 1);
-                
+                                
         $str_l = $this->getContext("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id < ?1 ORDER BY t.id DESC", 
                 $term_id, 2);
         
