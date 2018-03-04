@@ -147,19 +147,11 @@ class SearchController extends Controller
     public function searchCategoryInternAction($corpus_id, $category_id) {
         $statistics = array();
         $results = array();
-        $em = $this->getDoctrine()->getManager();
         $styles = array();
                
         set_time_limit(0);
         
-        $queryBuilder = $em->createQueryBuilder();       
-        $queryBuilder->addSelect("annotation")
-                     ->from("AppBundle:Annotation", 'annotation')
-                     ->from("AppBundle:Token", 'token')
-                     ->andWhere("annotation.token = token")
-                     ->andWhere("token.document IN (:param)")
-                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
-        $annotations = $queryBuilder->getQuery()->getResult(); 
+        $annotations = $this->getAnnotationsForCorpus($corpus_id);
         
         foreach($annotations as $annotation) {
             $category = $annotation->getCategory();
@@ -191,8 +183,6 @@ class SearchController extends Controller
                 $this->updateStatisticsForSenses($statistics, $annotation);
             }
         }
-            
-        $em->clear();
         
         $search_scope = "the " . $this->getCorpusById($corpus_id)->getName() . " corpus";
         
@@ -221,17 +211,8 @@ class SearchController extends Controller
     public function statisticsByCategoryInternAction($corpus_id) {
         $statistics = array();                
         set_time_limit(0);                
-        $em = $this->getDoctrine()->getManager();        
         
-        $queryBuilder = $em->createQueryBuilder();       
-        $queryBuilder->addSelect("annotation")
-                     ->from("AppBundle:Annotation", 'annotation')
-                     ->from("AppBundle:Token", 'token')
-                     ->andWhere("annotation.token = token")
-                     ->andWhere("token.document IN (:param)")
-                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
-
-        $annotations = $queryBuilder->getQuery()->getResult();                                                    
+        $annotations = $this->getAnnotationsForCorpus($corpus_id);        
         foreach($annotations as $annotation) {
             $category = $annotation->getCategory();
             if($category) {
@@ -247,8 +228,6 @@ class SearchController extends Controller
                      ->findAll();
         
         $corpus = $this->getCorpusById($corpus_id);
-        
-        $em->clear();
         
         return $this->render('Search/statistics_by_category_intern.html.twig', array(
                     'stats' => $statistics,
@@ -293,6 +272,24 @@ class SearchController extends Controller
      * Private methods from here
      * 
      ***********************************************************************/      
+    
+    /**
+     * Helper function which returns all the annotation corresponding to a corpus
+     * @param int $corpus_id the ID of the corpus
+     * @return the list of annotations
+     */
+    private function getAnnotationsForCorpus($corpus_id) {
+        $em = $this->getDoctrine()->getManager();        
+        $queryBuilder = $em->createQueryBuilder();       
+        $queryBuilder->addSelect("annotation")
+                     ->from("AppBundle:Annotation", 'annotation')
+                     ->from("AppBundle:Token", 'token')
+                     ->andWhere("annotation.token = token")
+                     ->andWhere("token.document IN (:param)")
+                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 
     /**
      * Helper function that retrieves the left or right context for a term
@@ -455,19 +452,7 @@ class SearchController extends Controller
             $a_sense["   "] += 1;                
         }
     }
-    
-    /**
-     * Return all the tokens only from texts in a corpus
-     * @param int $corpus_id the id of the corpus
-     * @return iterator return an iterator which contains the tokens
-     */
-    private function getTokensFromCorpus($corpus_id) {        
-        $tokens = $this->retrieveTokensWithCondition(
-                't.document IN (:param)', explode(",", $this->getListIdTextFromCorpus($corpus_id)));                
-        
-        return $tokens;
-    }        
-    
+               
     /**
      * Function which returns a list with the IDs of texts from a corpus
      * @param int $corpus_id the ID of corpus
