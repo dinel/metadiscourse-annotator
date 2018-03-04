@@ -15,6 +15,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -22,6 +23,7 @@ class SearchController extends Controller
 {
     /**
      * @Route("/search")
+     * @Method({"GET"})
      */
     public function indexAction() {
         return $this->render('Search/index.html.twig');
@@ -29,6 +31,7 @@ class SearchController extends Controller
     
     /**
      * @Route("/search/enter_term/{corpus_id}", name="enter_term")
+     * @Method({"GET"})     
      */
     public function enterTermAction($corpus_id) {
         return $this->render("Search/enter_term.html.twig", array(
@@ -39,6 +42,7 @@ class SearchController extends Controller
 
     /**
      * @Route("/search/term/{corpus_id}/{term}", name="search_term")
+     * @Method({"GET"})
      */
     public function searchTermAction($corpus_id, $term) {        
         return $this->render('Search/search_term.html.twig', array(
@@ -52,6 +56,7 @@ class SearchController extends Controller
     
     /**
      * @Route("/search/term_intern/{corpus_id}/{term}", name="search_term_intern")
+     * @Method({"GET"})
      */
     public function searchTermInternAction($corpus_id, $term) {
         $statistics = array();
@@ -119,6 +124,7 @@ class SearchController extends Controller
     
     /**
      * @Route("/search/category/{corpus_id}/{category_id}", name="search_category")
+     * @Method({"GET"})
      */
     public function searchCategoryAction($corpus_id, $category_id) {
         $cat = $this->getDoctrine()
@@ -136,6 +142,7 @@ class SearchController extends Controller
     
     /**
      * @Route("/search/category_intern/{corpus_id}/{category_id}", name="search_category_intern")
+     * @Method({"GET"})
      */
     public function searchCategoryInternAction($corpus_id, $category_id) {
         $statistics = array();
@@ -199,6 +206,7 @@ class SearchController extends Controller
        
     /**
      * @Route("/statistics/by-category/{corpus_id}", name="statistics_by_category") 
+     * @Method({"GET"})
      */
     public function statisticsByCategoryAction($corpus_id) {
         return $this->render('Search/statistics_by_category.html.twig', array(
@@ -208,6 +216,7 @@ class SearchController extends Controller
     
     /**
      * @Route("/statistics/by-category-intern/{corpus_id}", name="statistics_by_category_intern") 
+     * @Method({"GET"})
      */
     public function statisticsByCategoryInternAction($corpus_id) {
         $statistics = array();                
@@ -250,6 +259,7 @@ class SearchController extends Controller
 
     /**
      * @Route("/search/retrieve_info/{id}")
+     * @Method({"GET"})
      */
     public function getAnnotationInformation($id) {
         $annotation = $this->getDoctrine()
