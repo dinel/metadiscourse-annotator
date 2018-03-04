@@ -142,50 +142,51 @@ class SearchController extends Controller
         $results = array();
         $em = $this->getDoctrine()->getManager();
         $styles = array();
-        
-        $tokens = $this->getTokensFromCorpus($corpus_id);
-        
+               
         set_time_limit(0);
         
-        while (($row = $tokens->next()) !== false) {
-            $token = $row[0];
-            
-            $annotations = $this->getAnnotationsForToken($token->getId());
-            
-            foreach($annotations as $annotation) {
-                $category = $annotation->getCategory();
-                if($category && $annotation->getSense() &&
-                  (($category->getId() == $category_id) ||
-                   ($category->getParent() && $category->getParent()->getId() == $category_id))) {
-                    $r = array();
-                    $r[] = $annotation->getId();
-                    $r[] = $annotation->getSense()->getId();
-                    $r[] = $this->getSentence($token->getId(), $token->getContent());
-                    
-                    $label = $this->markableHashFilter($annotation->getUserName());
-                    $label .= '-';
-                    $label .= $this->markableHashFilter($annotation->getToken()->getContent());
-                    $label .= '-';
-                    $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
-                    if($annotation->getSense()) {
-                        $label .= '-';
-                        $label .= $this->markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
-                    }
-                    $r[] = $label;
-                    
-                    $results[] = $r;
-                    
-                    $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
+        $queryBuilder = $em->createQueryBuilder();       
+        $queryBuilder->addSelect("annotation")
+                     ->from("AppBundle:Annotation", 'annotation')
+                     ->from("AppBundle:Token", 'token')
+                     ->andWhere("annotation.token = token")
+                     ->andWhere("token.document IN (:param)")
+                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
+        $annotations = $queryBuilder->getQuery()->getResult(); 
+        
+        foreach($annotations as $annotation) {
+            $category = $annotation->getCategory();
+            if($category && $annotation->getSense() &&
+              (($category->getId() == $category_id) ||
+               ($category->getParent() && $category->getParent()->getId() == $category_id))) {
+                $token = $annotation->getToken();
 
-                    $this->updateStatisticsForSenses($statistics, $annotation);
+                $r = array();                    
+                $r[] = $annotation->getId();
+                $r[] = $annotation->getSense()->getId();
+                $r[] = $this->getSentence($token->getId(), $token->getContent());
+
+                $label = $this->markableHashFilter($annotation->getUserName());
+                $label .= '-';
+                $label .= $this->markableHashFilter($annotation->getToken()->getContent());
+                $label .= '-';
+                $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
+                if($annotation->getSense()) {
+                    $label .= '-';
+                    $label .= $this->markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
                 }
-                $em->detach($annotation);
-            }
-            
-            $em->detach($token);
-            $em->clear();
-        }
+                $r[] = $label;
 
+                $results[] = $r;
+
+                $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
+
+                $this->updateStatisticsForSenses($statistics, $annotation);
+            }
+        }
+            
+        $em->clear();
+        
         $search_scope = "the " . $this->getCorpusById($corpus_id)->getName() . " corpus";
         
         return $this->render('Search/search_term_intern.html.twig', array(        
