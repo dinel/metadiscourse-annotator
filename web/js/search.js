@@ -22,17 +22,16 @@ $( document ).ready(function() {
     
     $('.more-info').hide();
     
-    $("#results").on('click', '.concordance', function() {        
+    $("#results").on('click', '.concordance', function(e) {        
         var node = $(this).parent().parent().next().find('.more-info-block');
         if(node.html()) {
             node.parent().toggle();
             return;
         }
         
-         $.ajax({
-            type: 'POST',
+        $.ajax({
+            type: 'GET',
             url: '/search/retrieve_info/' + $(this).attr("id"),
-            dataType: 'json',
             success: function(data) {
                 var display = "<strong>Annotator: </strong>" + data.annotator;
                 display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Sense selected: </strong> " + data.sense;
@@ -51,11 +50,11 @@ $( document ).ready(function() {
                 if(data.uncertain === true) {
                     display += "<br/><strong style='text-color: red'>The annotator was uncertain about this annotation!!</strong>";
                 }
-                display += "<br/>";
-                
+                display += "<br/>";                
                 node.html(display);
             }
         });
+                e.preventDefault();
         
         node.parent().show();
     });
