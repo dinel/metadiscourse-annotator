@@ -25,6 +25,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,6 +35,7 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
+     * @Method({"GET"})
      */
     public function indexAction(Request $request)
     {
@@ -42,6 +44,7 @@ class DefaultController extends Controller
     
     /**
      * @Route("/utils/subcategory/{parent}", name="get_subcategory")
+     * add the method
      */
     public function getSubcategory(Request $request, $parent) {
         if($request->isXmlHttpRequest()) {
@@ -62,6 +65,7 @@ class DefaultController extends Controller
     /**
      * Action which retrieves information associated with a sense
      * @Route("/utils/data-by-sense/{id_sense}")
+     * add the method
      */
     public function getDataBySenseAction(Request $request, $id_sense) {
         if($request->isXmlHttpRequest()) {
