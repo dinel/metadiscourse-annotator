@@ -29,6 +29,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use AppBundle\Utils\SharedFunctions;
+
 class SearchController extends Controller
 {
     /**
@@ -104,14 +106,14 @@ class SearchController extends Controller
                     $styles["Not a marker"] = "";
                 }
                 
-                $label = $this->markableHashFilter($annotation->getUserName());
+                $label = SharedFunctions::markableHashFilter($annotation->getUserName());
                 $label .= '-';
-                $label .= $this->markableHashFilter($annotation->getToken()->getContent());
+                $label .= SharedFunctions::markableHashFilter($annotation->getToken()->getContent());
                 $label .= '-';
-                $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
+                $label .= SharedFunctions::markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
                 if($annotation->getSense()) {
                     $label .= '-';
-                    $label .= $this->markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
+                    $label .= SharedFunctions::markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
                 }
                 $r[] = $label;
                 
@@ -175,14 +177,14 @@ class SearchController extends Controller
                 $r[] = $annotation->getSense()->getId();
                 $r[] = $this->getSentence($token->getId(), $token->getContent());
 
-                $label = $this->markableHashFilter($annotation->getUserName());
+                $label = SharedFunctions::markableHashFilter($annotation->getUserName());
                 $label .= '-';
-                $label .= $this->markableHashFilter($annotation->getToken()->getContent());
+                $label .= SharedFunctions::markableHashFilter($annotation->getToken()->getContent());
                 $label .= '-';
-                $label .= $this->markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
+                $label .= SharedFunctions::markableHashFilter($annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker");
                 if($annotation->getSense()) {
                     $label .= '-';
-                    $label .= $this->markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
+                    $label .= SharedFunctions::markableHashFilter($annotation->getCategoryName() ? $annotation->getCategoryName() : "No category");
                 }
                 $r[] = $label;
 
@@ -225,7 +227,7 @@ class SearchController extends Controller
         $annotations = $this->getAnnotationsForCorpus($corpus_id);        
         foreach($annotations as $annotation) {
             $category = $annotation->getCategory();
-            if($category) {
+            if($category && $annotation->getSense()) {
                 $this->updateStatisticsForCategories($statistics, $category->getName());
                 if($category->getParent()) {
                     $this->updateStatisticsForCategories($statistics, $category->getParent()->getName());
@@ -488,23 +490,5 @@ class SearchController extends Controller
         return $this->getDoctrine()
                     ->getRepository('\AppBundle\Entity\Corpus')
                     ->find($corpus_id);
-    }
-    
-    
-    private function markableHashFilter($string) {
-        $pos = strpos($string, "/");
-        if($pos !== false) {
-            $string = substr($string , $pos + 1);
-        }
-        $md5str = md5($string);
-        $ret = "";
-        for($i = 0; $i < strlen($md5str); $i++) {
-            if(ctype_alpha($md5str[$i])) {
-                $ret .= $md5str[$i];
-            }
-        }
-        
-        return $ret;
-    }
-    
+    }            
 }
