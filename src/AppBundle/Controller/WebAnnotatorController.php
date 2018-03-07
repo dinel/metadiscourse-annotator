@@ -115,7 +115,6 @@ class WebAnnotatorController extends Controller
      * @Route("/document_contexts/{id_doc}", name="context_marker_show")
      */
     public function annotationPerMarkerAction($id_doc) {
-        ini_set('memory_limit', '-1');
         $annotationPreferences = $this->getAnnotationPreferences();
         $doc = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
@@ -138,12 +137,6 @@ class WebAnnotatorController extends Controller
             $markers = array();
             
             $em = $this->getDoctrine()->getManager();
-            
-            //$session = $this->get('session');
-            //$id_mark = $session->get('filter-mark-id');
-            //$id_mark = $id_marker;
-            //$id_mark = array($id_marker, 259);
-            $logger = $this->get('your.logger');
             
             $pos = 0;
             while($pos < count($tokens)) {
