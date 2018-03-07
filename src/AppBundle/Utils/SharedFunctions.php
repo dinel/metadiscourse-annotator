@@ -170,5 +170,66 @@ class SharedFunctions {
     public static function sameWord($a, $b) {
         return strtolower($a) == strtolower($b);
     }
-
+        
+    /**
+     * Function that returns a tuple that contain the left and right context 
+     * for concordances
+     * 
+     * @param int $term_id the ID of the term for which the context is retrieved
+     * @param string $term the actual term. Probably it will be removed because it
+     *                     is not really necessary
+     * @param EntityManager $em the entity manager
+     * @return array a tuple that contains (left context, term, right context)
+     */    
+    public static function getSentence($term_id, $term, $em) {
+        $str_r = self::getContext(
+                "SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id > ?1 ORDER BY t.id", 
+                $term_id, 1, $em);
+                                
+        $str_l = self::getContext("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id < ?1 ORDER BY t.id DESC", 
+                $term_id, 2, $em);
+        
+        return array($str_l, $term, $str_r);
+    }
+    
+    
+    /***********************************************************************
+     * 
+     * Private methods from here
+     * 
+     ***********************************************************************/      
+    
+    /**
+     * Helper function that retrieves the left or right context for a term
+     * @param string $str_query the query that needs to be run to retrieve the 
+     * context
+     * @param int $term_id the ID of the term
+     * @param int $direction indicates whether it is left context (value 1) or 
+     * right context (any other value)
+     * @param EntityManager $em the entity manager
+     * @return string the context
+     */
+    private function getContext($str_query, $term_id, $direction, $em) {        
+        $query = $em->createQuery($str_query);
+        $query->setParameter(1, $term_id);
+        $query->setMaxResults(15);
+                
+        $str = "";
+        $tokens = $query->execute();
+        foreach($tokens as $token) {
+            if($direction == 1) {
+                $str .= ($token["content"] . " ");
+            } else {
+                $str = ($token["content"] . " ") . $str;
+            }
+            
+            if (strlen($str) > 40) {
+                break;
+            }
+        }
+        
+        $em->clear();
+        
+        return $str;        
+    }
 }
