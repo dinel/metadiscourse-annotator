@@ -25,6 +25,10 @@
 namespace AppBundle\Twig;
 
 class AppExtension extends \Twig_Extension {
+    /**
+     * Returns the extensions defined 
+     * @return array the filters implemented
+     */
     public function getFilters()
     {
         return array(
@@ -32,6 +36,11 @@ class AppExtension extends \Twig_Extension {
         );
     }
     
+    /**
+     * Returns the md5sum for the string
+     * @param string $string the string for which the hash is needed
+     * @return string the md5sum for the string
+     */
     public function markableHashFilter($string) {
         $pos = strpos($string, "/");
         if($pos !== false) {
