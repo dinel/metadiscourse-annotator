@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use AppBundle\Entity\Sense;
+use AppBundle\Utils\SharedFunctions;
 
 class WebAnnotatorController extends Controller
 {
@@ -114,6 +115,7 @@ class WebAnnotatorController extends Controller
      * @Route("/document_contexts/{id_doc}", name="context_marker_show")
      */
     public function annotationPerMarkerAction($id_doc) {
+        ini_set('memory_limit', '-1');
         $annotationPreferences = $this->getAnnotationPreferences();
         $doc = $this->getDoctrine()
                 ->getRepository('AppBundle:Text')
@@ -335,11 +337,12 @@ class WebAnnotatorController extends Controller
             $senses = $mark->getSenses();
             
             // get the context
-            $toks = $token->getDocument()->getTokens();
-            $pos = $toks->indexOf($token);
-            $context = join(" ", $toks->slice($pos - 10, 10))
+            $context_l = SharedFunctions::getSentence($token->getId(), 
+                                                      $token->getContent(), 
+                                                      $this->getDoctrine()->getEntityManager());
+            $context = $context_l[0] 
                     . " <strong>" . $token->getContent() . "</strong> "
-                    . join(" ", $toks->slice($pos + 1, 10));            
+                    . $context_l[2];
 
             $a_senses  = $senses->map(function($value) {
                 return array($value->getId(), $value->getDefinition(), $value->getExplanation());
