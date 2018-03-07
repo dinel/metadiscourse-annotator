@@ -62,6 +62,30 @@ class SharedFunctions {
         
         return $cat_tree;
     }
+    
+    /**
+     * Returns the md5sum for the string
+     * @param string $string the string for which the hash is needed. Only the 
+     * part after / is considered
+     * @return string the md5sum for the string
+     */
+    public static function markableHashFilter($string) {
+        $pos = strpos($string, "/");
+        if($pos !== false) {
+            $string = substr($string, $pos + 1);
+        }
+        $md5str = md5($string);        
+        $md5str_len = strlen($md5str);
+        
+        $ret = "";
+        for($i = 0; $i < $md5str_len; $i++) {
+            if(ctype_alpha($md5str[$i])) {
+                $ret .= $md5str[$i];
+            }
+        }
+        
+        return $ret;
+    }
         
     /**
      * Removes a markable from the database and all the annotation associated

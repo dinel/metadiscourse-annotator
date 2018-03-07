@@ -24,6 +24,8 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Utils\SharedFunctions;
+
 class AppExtension extends \Twig_Extension {
     /**
      * Returns the extensions defined 
@@ -43,20 +45,6 @@ class AppExtension extends \Twig_Extension {
      * @return string the md5sum for the string
      */
     public function markableHashFilter($string) {
-        $pos = strpos($string, "/");
-        if($pos !== false) {
-            $string = substr($string, $pos + 1);
-        }
-        $md5str = md5($string);        
-        $md5str_len = strlen($md5str);
-        
-        $ret = "";
-        for($i = 0; $i < $md5str_len; $i++) {
-            if(ctype_alpha($md5str[$i])) {
-                $ret .= $md5str[$i];
-            }
-        }
-        
-        return $ret;
+        return SharedFunctions::markableHashFilter($string);
     }
 }
