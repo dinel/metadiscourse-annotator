@@ -334,7 +334,7 @@ class WebAnnotatorController extends Controller
                                                       $token->getContent(), 
                                                       $this->getDoctrine()->getEntityManager());
             $context = $context_l[0] 
-                    . " <strong>" . $token->getContent() . "</strong> "
+                    . " <b>" . $token->getContent() . "</b> "
                     . $context_l[2];
 
             $a_senses  = $senses->map(function($value) {
