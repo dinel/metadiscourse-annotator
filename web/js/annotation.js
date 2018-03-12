@@ -349,7 +349,9 @@ $( document ).ready(function() {
     });
     
     $('#locate').click(function() {
-        if($('#pointer').css('display') !== 'none') return;
+        if($('#pointer').css('display') !== 'none') {
+            $('#pointer').finish();
+        }
         var pos = $('#' + currentToken).offset();
         pos.left = pos.left + 108 + $('#' + currentToken).width();
         pos.top = pos.top - 10;
