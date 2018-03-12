@@ -167,6 +167,7 @@ $( document ).ready(function() {
         if(nextMarkerQueue.length > 0) {
             data = nextMarkerQueue.shift();
             updateAnnotationPanel(data);
+            $('#locate').trigger('click');
             preFetch(currentToken);
         } else {
             var nextToken = getNextToken(currentToken);
@@ -177,6 +178,7 @@ $( document ).ready(function() {
                 dataType: 'json',
                 success: function(data) {
                     updateAnnotationPanel(data);
+                    $('#locate').trigger('click');
                     preFetch(nextToken);
                 }
             });
@@ -191,7 +193,7 @@ $( document ).ready(function() {
         var prevToken = currentToken;
         var metaMarkers = $('.meta-marker').toArray();
         for(var i = 0; i < metaMarkers.length; i++) {
-            if(metaMarkers[i].id == currentToken && i > 0) {
+            if((metaMarkers[i].id === currentToken) && (i > 0)) {
                 prevToken = metaMarkers[i-1].id;
                 break;                
             }
@@ -202,7 +204,8 @@ $( document ).ready(function() {
             url: '/document/prev/' + prevToken,
             dataType: 'json',
             success: function(data) {
-                updateAnnotationPanel(data);                
+                updateAnnotationPanel(data);
+                $('#locate').trigger('click');
             }
         });
     });
