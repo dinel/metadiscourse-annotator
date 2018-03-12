@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+/* global callFunction */
+
 var explanations = [];
 var currentToken = 0;
 var discardTaggleEvent = false;
@@ -343,6 +345,19 @@ $( document ).ready(function() {
         $('#list-senses-container').addClass('select-annotation');
     });
     
+    $('#locate').click(function() {
+        if($('#pointer').css('display') !== 'none') return;
+        var pos = $('#' + currentToken).offset();
+        pos.left = pos.left + 108 + $('#' + currentToken).width();
+        pos.top = pos.top - 10;
+        $('#pointer').show();
+        $('#pointer').offset(pos);
+        $('#pointer').animate({
+            left: '-=100px'
+        }, "slow", function() {
+            $('#pointer').fadeOut("slow");
+        });
+    });    
 });
 
 $(function() {
@@ -390,7 +405,7 @@ function updateAnnotationPanel(data) {
     $('#tok_id').val(data.tok_id);
     $('#mark_id').val(data.mark_id);
     $('#sense-id').val(data.current_sense_id);
-
+    
     // select the annotation
     updateDisplayedAnnotation(data.current_sense);  
     
