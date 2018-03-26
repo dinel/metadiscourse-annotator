@@ -136,6 +136,11 @@ class UserAdminController extends Controller {
                 } else {
                     $user->removeRole("ROLE_ADMIN");
                 }
+                
+                if($form->get("change_password")->getData() == true) {
+                    $user->setChangePassword(1);
+                }
+                
                 $user->addRole("ROLE_USER");
                 $user->setEnabled(true);
                 $userManager->updateUser($user, true);
