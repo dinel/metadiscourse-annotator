@@ -77,7 +77,7 @@ class UserAdminController extends Controller {
         $userManager = $this->get('fos_user.user_manager');
         $user = $userManager->createUser();
         
-        $form = $this->createForm(new UserType(), $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         
         if($form->isValid()) {
@@ -119,11 +119,11 @@ class UserAdminController extends Controller {
         $user = $userManager->findUserByUsername($username);
         if($user) {            
             $editing_current_user = ($username === UserUtils::getCurrentUserName($this));
-            $form = $this->createForm(new UserType(
-                            true, 
-                            $editing_current_user,
-                            $user->isAdmin()),
-                        $user);
+            $form = $this->createForm(UserType::class, $user, [
+                            'in_edit_mode' => true,
+                            'current_user' => $editing_current_user,
+                            'is_admin' => $user->isAdmin(),
+                        ]);
             $form->handleRequest($request);
         
             if($form->isValid()) {

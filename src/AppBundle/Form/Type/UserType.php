@@ -19,7 +19,12 @@
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of UserType
@@ -30,45 +35,58 @@ class UserType extends AbstractType {
     private $in_edit_mode = false;
     private $current_user = false;
     private $is_admin = false;
-
-    public function __construct($in_edit_mode = false, $current_user = false, $is_admin = false) {
-        $this->in_edit_mode = $in_edit_mode;
-        $this->current_user = $current_user;
-        $this->is_admin = $is_admin;
-    }
     
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        $this->in_edit_mode = $options['in_edit_mode'];
+        $this->current_user = $options['current_user'];
+        $this->is_admin = $options['is_admin'];
+        
         $builder
-            ->add('username', 'text', array(
+            ->add('username', TextType::class, array(
                     'label' => 'Login name',
                     'disabled' => $this->in_edit_mode,
             ))
-            ->add('full_name', 'text', array(
+            ->add('full_name', TextType::class, array(
                     'label' => 'Name of user',
             ))
             ->add('email')
-            ->add('plain_password', 'password', array(
+            ->add('plain_password', PasswordType::class, array(
                     'label' => 'Password',
                     'mapped' => false,
                     'required' => $this->in_edit_mode ? false : true,
             ))
-            ->add('repeat_plain_password', 'password', array(
+            ->add('repeat_plain_password', PasswordType::class, array(
                     'label' => 'Repeat password',
                     'mapped' => false,
                     'required' => $this->in_edit_mode ? false : true,
             ))
-            ->add('is_administrator', 'checkbox', array(
+            ->add('is_administrator', CheckboxType::class, array(
                     'label' => 'Is administrator?',
                     'mapped' => false,
                     'required' => false,
                     'disabled' => $this->current_user,
                     'attr' => $this->is_admin ? array( 'checked' => 'checked') : array(),
             ))
-            ->add('save', 'submit', array(
+            ->add('change_password', CheckboxType::class, array(
+                    'label' => 'Change password at next login?',
+                    'mapped' => false,
+                    'required' => false,
+                    'disabled' => $this->current_user,
+                    'attr' => $this->is_admin ? array( 'checked' => 'checked') : array(),
+            ))
+            ->add('save', SubmitType::class, array(
                 'label' => $this->in_edit_mode ? 'Edit user' : 'Add user'));
     }
     
-    public function getName() {
-        return "user";
+    /**
+     * Sets the default options
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver) {
+        $resolver->setDefaults([
+                'in_edit_mode' => false,
+                'current_user' => false,
+                'is_admin' => false,
+        ]);
     }
 }
