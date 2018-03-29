@@ -160,6 +160,7 @@ class SearchController extends Controller
         $statistics = array();
         $results = array();
         $styles = array();
+        $em = $this->getDoctrine()->getManager();
                
         set_time_limit(0);
         
@@ -175,7 +176,7 @@ class SearchController extends Controller
                 $r = array();                    
                 $r[] = $annotation->getId();
                 $r[] = $annotation->getSense()->getId();
-                $r[] = $this->getSentence($token->getId(), $token->getContent());
+                $r[] = SharedFunctions::getSentence($token->getId(), $token->getContent(), $em);
 
                 $label = SharedFunctions::markableHashFilter($annotation->getUserName());
                 $label .= '-';
