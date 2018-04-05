@@ -192,7 +192,24 @@ class SharedFunctions {
         return array($str_l, $term, $str_r);
     }
     
-    
+    /**
+     * Returns the tokens from a document as an iterator
+     * @param integer $doc_id the ID of the document
+     * @param Doctrine $doctrine object which gives access to Doctrine
+     * @return an iterator which gives access to the tokens
+     */
+    public static function getTokensFromDocument($doc_id, $doctrine) {
+        $tokens = $doctrine->getRepository('AppBundle:Token')
+                           ->createQueryBuilder('t')
+                           ->where('t.document = :id')
+                           ->setParameter('id', $doc_id)
+                           ->getQuery()
+                           ->iterate();
+        
+        return $tokens;
+    }
+
+
     /***********************************************************************
      * 
      * Private methods from here
