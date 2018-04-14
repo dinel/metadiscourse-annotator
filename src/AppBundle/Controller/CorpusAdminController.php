@@ -13,8 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-
 use AppBundle\Form\Type\CorpusType;
+use AppBundle\Utils\SharedFunctions;
 
 /**
  * Description of CorpusAdminController
@@ -73,18 +73,27 @@ class CorpusAdminController extends Controller
      * @Route("/admin/corpus/stats/{id}", name="corpus_update_stats")
      */
     public function corpusUpdateStats(Request $request, $id) {
-        
         if($request->isXmlHttpRequest()) {
-            $corpus = $this->getCorpus($id);
+            // just in case but on a decent server this should not be needed
+            set_time_limit(0);
+            $doctrine = $this->getDoctrine();
+            $corpus = SharedFunctions::getCorpusById($id, $doctrine);
+            $list_texts = SharedFunctions::getListIdTextFromCorpus($id, $doctrine);
+
+            $query = $doctrine->getManager()
+                              ->createQuery("SELECT t.content, COUNT(t.content) AS freq " 
+                                            . "FROM AppBundle\Entity\Token t "
+                                            . "WHERE t.document in (:param) "
+                                            . "GROUP BY t.content ORDER BY freq DESC")
+                              ->setParameters(['param' => explode(",", $list_texts)]);;
+            $rows = $query->execute();
+
             $totalWords = 0;
-            $types = array();
-            foreach($corpus->getTexts() as $text) {
-                foreach($text->getTokens() as $token) {
-                    // TODO: check how multiword expressions are treated
-                    $totalWords++;
-                    $types[$token->getContent()] = 1;
-                }
-            }
+            foreach($rows as $row) {
+                $types[$row["content"]] = 1;
+                $totalWords += $row["freq"];
+            }        
+            
             $corpus->setNumberTypes(count($types));
             $corpus->setNumberTokens($totalWords);
             $corpus->setStatisticsOutdated(0);
