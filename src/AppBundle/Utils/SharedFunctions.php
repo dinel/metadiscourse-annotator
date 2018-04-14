@@ -170,6 +170,34 @@ class SharedFunctions {
     public static function sameWord($a, $b) {
         return strtolower($a) == strtolower($b);
     }
+    
+    /**
+     * Retrives the corpus based on the ID
+     * @param int $corpus_id the ID of the corpus
+     * @param Doctrine $doctrine object which gives access to Doctrine
+     * @return the corpus
+     */
+    public static function getCorpusById($corpus_id, $doctrine) {
+        return $doctrine->getRepository('\AppBundle\Entity\Corpus')
+                        ->find($corpus_id);
+    }
+    
+    /**
+     * Function which returns a list with the IDs of texts from a corpus
+     * @param int $corpus_id the ID of corpus
+     * @param Doctrine $doctrine object which gives access to Doctrine
+     * @return string a string which contains the IDs of texts separated by comma
+     */
+    public static function getListIdTextFromCorpus($corpus_id, $doctrine) {
+        $corpus = SharedFunctions::getCorpusById($corpus_id, $doctrine);
+        
+        $list_texts = "";
+        foreach($corpus->getTexts() as $text) {
+            $list_texts .= ("," . $text->getId());
+        }
+        
+        return substr($list_texts, 1);
+    }
         
     /**
      * Function that returns a tuple that contain the left and right context 
@@ -190,6 +218,23 @@ class SharedFunctions {
                 $term_id, 2, $em);
         
         return array($str_l, $term, $str_r);
+    }
+    
+    /**
+     * Returns the tokens from a document as an iterator
+     * @param integer $doc_id the ID of the document
+     * @param Doctrine $doctrine object which gives access to Doctrine
+     * @return an iterator which gives access to the tokens
+     */
+    public static function getTokensFromCorpus($corpus_id, $doctrine) {
+        $tokens = $doctrine->getRepository('AppBundle:Token')
+                           ->createQueryBuilder('t')
+                           ->where('t.document IN (:ids)')
+                           ->setParameter('ids', explode(",", SharedFunctions::getListIdTextFromCorpus($corpus_id, $doctrine)))
+                           ->getQuery()
+                           ->iterate();
+        
+        return $tokens;
     }
     
     /**
