@@ -18,10 +18,16 @@
                 
                 <div id="list-corpora">
                 {% for corpus in corpora %}
-                    <div class="voffset3">
+                    <div class="voffset3 with-border">
                         <strong>{{ corpus.name }}</strong><br/>
                         {{ corpus.description | truncate(200) }} ...<br/>
                         No of texts: {{ corpus.texts | length }} <br/>
+                        {% if corpus.statisticsoutdated %}
+                            Types: ??/Tokens: ??
+                        {% else %}
+                            Types: {{ corpus.numbertypes }}/Tokens: {{ corpus.numbertokens }}
+                        {% endif %}
+                        <br/>
                         {% if not path %}
                             {% if is_granted('ROLE_ADMIN')  %}
                                 <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
