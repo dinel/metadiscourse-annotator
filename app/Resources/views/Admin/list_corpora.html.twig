@@ -26,7 +26,11 @@
                             <br/><br/>
                             No of texts: {{ corpus.texts | length }} <br/>
                             {% if corpus.statisticsoutdated %}
-                                Types: ??/Tokens: ??
+                                Types: <span class="val-types">??</span>/Tokens: <span class="val-tokens">??</span>
+                                <div class="btn btn-default {% if is_granted('ROLE_ADMIN')  %}recalculate{% endif %}" 
+                                   role="button" data-corpus="{{ corpus.id }}">
+                                   <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>                                
+                                </div>
                             {% else %}
                                 Types: {{ corpus.numbertypes }}/Tokens: {{ corpus.numbertokens }}
                             {% endif %}

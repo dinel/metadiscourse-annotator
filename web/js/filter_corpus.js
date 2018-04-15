@@ -62,6 +62,23 @@ $( document ).ready(function() {
     $('.confirmation').on('click', function () {
         return confirm('Are you sure?');
     });
+    
+    $('.recalculate').click(function() {
+        var corpus = $(this).attr('data-corpus');
+        $(this).html('<img src="infinity.gif">')
+        $.ajax({
+            context: this, 
+            type: 'POST',
+            url: '/admin/corpus/stats/' + corpus,
+            dataType: 'json',
+            success: function(data) {
+                $(this).parent().find('.val-tokens').html(data.nowords);
+                $(this).parent().find('.val-types').html(data.notypes);
+                $(this).html("");
+                $(this).removeClass();
+            }
+        });
+    });
 });
 
 function getFilter() {
