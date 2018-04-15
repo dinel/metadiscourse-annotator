@@ -18,37 +18,43 @@
                 
                 <div id="list-corpora">
                 {% for corpus in corpora %}
-                    <div class="voffset3 with-border">
-                        <strong>{{ corpus.name }}</strong><br/>
-                        {{ corpus.description | truncate(200) }} ...<br/>
-                        No of texts: {{ corpus.texts | length }} <br/>
-                        {% if corpus.statisticsoutdated %}
-                            Types: ??/Tokens: ??
-                        {% else %}
-                            Types: {{ corpus.numbertypes }}/Tokens: {{ corpus.numbertokens }}
-                        {% endif %}
-                        <br/>
-                        {% if not path %}
-                            {% if is_granted('ROLE_ADMIN')  %}
-                                <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default" role="button">Edit</a>
+                    <div class="voffset3 with-border row row-list">
+                        <div class="col-xs-9">
+                            <strong>{{ corpus.name }}</strong><br/>
+                            {{ corpus.description | truncate(200) }}
+                            {% if corpus.description|length > 200 %}...{% endif %}
+                            <br/><br/>
+                            No of texts: {{ corpus.texts | length }} <br/>
+                            {% if corpus.statisticsoutdated %}
+                                Types: ??/Tokens: ??
                             {% else %}
-                                <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" class="btn btn-default disabled" role="button">Edit</a>
+                                Types: {{ corpus.numbertypes }}/Tokens: {{ corpus.numbertokens }}
                             {% endif %}
-                            
-                            {% if is_granted('ROLE_ADMIN')  %}
-                                <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation" role="button">Delete</a>
-                            {% else %}
-                                <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" class="btn btn-default confirmation disabled" role="button">Delete</a>
+                        </div>
+                        <div class="col-xs-3 right">
+                            {% if not path %}
+                                <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default right" role="button">Annotate</a>
+                                <br/><br/>
+                                <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" 
+                                   class="btn btn-default {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
+                                   role="button">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>                                    
+                                </a>
+                                <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" 
+                                   class="btn btn-default confirmation {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
+                                   role="button">
+                                   <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>                                    
+                                </a>
+                                <br/>                            
                             {% endif %}
-                            <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default" role="button">Annotate</a>
-                        {% endif %}
-                        {% if path == "by-category" %}
-                            <a href="{{ path('statistics_by_category', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
-                        {% endif %}
-                        
-                        {% if path == "concordance" %}
-                            <a href="{{ path('enter_term', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
-                        {% endif %}
+                            {% if path == "by-category" %}
+                                <a href="{{ path('statistics_by_category', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
+                            {% endif %}
+
+                            {% if path == "concordance" %}
+                                <a href="{{ path('enter_term', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
+                            {% endif %}
+                        </div>
 
                     </div>
                 {% endfor %}
