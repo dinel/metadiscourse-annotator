@@ -428,13 +428,12 @@ class SearchController extends Controller
     }
     
     /**
+     * @deprecated since 6 April
      * Retrives the corpus based on the ID
      * @param int $corpus_id the ID of the corpus
      * @return the corpus
      */
     private function getCorpusById($corpus_id) {
-        return $this->getDoctrine()
-                    ->getRepository('\AppBundle\Entity\Corpus')
-                    ->find($corpus_id);
+        return SharedFunctions::getCorpusById($corpus_id, $this->getDoctrine());
     }            
 }
