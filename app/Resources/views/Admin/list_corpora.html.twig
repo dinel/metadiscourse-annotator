@@ -29,11 +29,16 @@
                                 Types: <span class="val-types">??</span>/Tokens: <span class="val-tokens">??</span>
                                 <div class="btn btn-default {% if is_granted('ROLE_ADMIN')  %}recalculate{% endif %}" 
                                    role="button" data-corpus="{{ corpus.id }}">
-                                   <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>                                
+                                   <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                                 </div>
                             {% else %}
                                 Types: {{ corpus.numbertypes }}/Tokens: {{ corpus.numbertokens }}
                             {% endif %}
+                            <div class="small voffset3">
+                                {% for pair in corpus.pairs %}
+                                    <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>{{ pair.value.name }}&nbsp;
+                                {% endfor %}
+                            </div>
                         </div>
                         <div class="col-xs-3 right">
                             {% if not path %}
