@@ -18,6 +18,8 @@
 
 namespace AppBundle\Utils;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
 /**
  * Class which implements a number of static functions that are useful
  * in several controllers
@@ -174,10 +176,10 @@ class SharedFunctions {
     /**
      * Retrives the corpus based on the ID
      * @param int $corpus_id the ID of the corpus
-     * @param Doctrine $doctrine object which gives access to Doctrine
+     * @param Registry $doctrine object which gives access to Doctrine
      * @return the corpus
      */
-    public static function getCorpusById($corpus_id, $doctrine) {
+    public static function getCorpusById($corpus_id, Registry $doctrine) {
         return $doctrine->getRepository('\AppBundle\Entity\Corpus')
                         ->find($corpus_id);
     }
