@@ -19,6 +19,7 @@
 namespace AppBundle\Utils;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Class which implements a number of static functions that are useful
@@ -273,7 +274,7 @@ class SharedFunctions {
      * @param EntityManager $em the entity manager
      * @return string the context
      */
-    private function getContext($str_query, $term_id, $direction, $em) {        
+    private function getContext($str_query, $term_id, $direction, EntityManager $em) {        
         $query = $em->createQuery($str_query);
         $query->setParameter(1, $term_id);
         $query->setMaxResults(15);
