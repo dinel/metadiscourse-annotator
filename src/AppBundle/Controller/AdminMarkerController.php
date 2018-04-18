@@ -94,16 +94,15 @@ class AdminMarkerController extends Controller {
         $doctrine = $this->getDoctrine();
         $mark = $doctrine->getRepository('AppBundle:Markable')
                          ->find($id_marker);
-        $em = $doctrine->getManager();
         
         if($mark) {
             // Step 1: delete all the senses associated with this marker
             foreach($mark->getSenses() as  $sense) {
-                SharedFunctions::removeSense($sense, $mark, $em, $doctrine);
+                SharedFunctions::removeSense($sense, $mark, $doctrine);
             }
             
             // Step 2: find all the tokens that have a markable remove the markable
-            SharedFunctions::removeMarkable($mark, $em, $doctrine);
+            SharedFunctions::removeMarkable($mark, $doctrine);
         }
         
         return $this->redirectToRoute("admin_page");
@@ -175,7 +174,7 @@ class AdminMarkerController extends Controller {
         if($mark) {
             $doctrine = $this->getDoctrine();
             $em = $doctrine->getManager();
-            SharedFunctions::removeMarkable($mark, $em, $doctrine, $alternative);            
+            SharedFunctions::removeMarkable($mark, $doctrine, $alternative);            
             
             if(! $em->contains($mark)) {
                 $mark = $em->merge($mark);

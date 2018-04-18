@@ -101,7 +101,8 @@ class SharedFunctions {
      * @param $doctrine handle to doctrine
      * @param string $form the alternative form to delete
      */
-    public static function removeMarkable($mark, $em, $doctrine, $form = null) {
+    public static function removeMarkable($mark, $doctrine, $form = null) {
+        $em = $doctrine->getManager();
         $tokens = $doctrine->getRepository('\AppBundle\Entity\Token')
                            ->createQueryBuilder('t')
                            ->where('t.markable = :id')
@@ -144,12 +145,12 @@ class SharedFunctions {
      * Removes a sense
      * @param Sense $sense
      * @param AppBundle\Entity\Markable $mark
-     * @param EntityManager $em
      * @param Repository $doctrine
      * 
      * @return nothing Does not return anything
      */
-    public static function removeSense(Sense $sense, Markable $mark, EntityManager $em, Registry $doctrine) {
+    public static function removeSense(Sense $sense, Markable $mark, Registry $doctrine) {
+        $em = $doctrine->getManager();
         $annotations = $doctrine->getRepository('AppBundle:Annotation')
                                 ->createQueryBuilder('a')
                                 ->where('a.sense = :id')

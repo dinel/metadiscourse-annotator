@@ -93,8 +93,7 @@ class AdminSenseController extends Controller {
                      ->find($id_sense);
                 
         if($mark && $sense) {
-            $em = $this->getDoctrine()->getManager();            
-            SharedFunctions::removeSense($sense, $mark, $em, $this->getDoctrine());
+            SharedFunctions::removeSense($sense, $mark, $this->getDoctrine());
             
             return $this->redirectToRoute("admin_sense_add", 
                     array('id_marker' => $mark->getId()));
