@@ -21,6 +21,9 @@ namespace AppBundle\Utils;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
+use AppBundle\Entity\Sense;
+use AppBundle\Entity\Markable;
+
 /**
  * Class which implements a number of static functions that are useful
  * in several controllers
@@ -139,11 +142,14 @@ class SharedFunctions {
     
     /**
      * Removes a sense
-     * @param AppBundle\Entity\Sense $sense
+     * @param Sense $sense
      * @param AppBundle\Entity\Markable $mark
-     * @param type $em
+     * @param EntityManager $em
+     * @param Repository $doctrine
+     * 
+     * @return nothing Does not return anything
      */
-    public static function removeSense($sense, $mark, $em, $doctrine) {
+    public static function removeSense(Sense $sense, Markable $mark, EntityManager $em, Registry $doctrine) {
         $annotations = $doctrine->getRepository('AppBundle:Annotation')
                                 ->createQueryBuilder('a')
                                 ->where('a.sense = :id')
