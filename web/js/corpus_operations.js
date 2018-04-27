@@ -30,6 +30,19 @@ $( document ).ready(function() {
             }  
         });        
     });    
+    
+    $('.unpin-text').click(function() {
+        var text = $(this).data('text');
+        $.ajax({
+            type: 'GET',
+            url: '/corpus/unpin_text/' + text,
+            dataType: 'json',
+            context: this, 
+            success: function(data) {
+                $(this).parents('.dropdown').find('.glyphicon-pushpin').remove();
+            }  
+        });        
+    }); 
 });
 
 function orderTexts() {

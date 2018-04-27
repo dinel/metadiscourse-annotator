@@ -273,26 +273,61 @@ class CorpusAdminController extends Controller
     }
     
     /**
+     * Action for when a user pins a text.
      * @Route("/corpus/pin_text/{text}")
      * @Method({"GET"})
      */
     public function pinTextAction(Request $request, $text) {
-        $user = $this->getUser()->getId();
-        $corpus = $this->get('session')->get("corpus");
-        if($user && $corpus && $text) {
-            $pt = new PinnedText();
-            $pt->setCorpusId($corpus);
-            $pt->setTextId($text);
-            $pt->setUserId($user);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($pt);
-            $em->flush();
-            
-            return new JsonResponse("Success");
+        if($request->isXmlHttpRequest()) {
+            $user = $this->getUser()->getId();
+            $corpus = $this->get('session')->get("corpus");
+            if($user && $corpus && $text) {
+                $pt = new PinnedText();
+                $pt->setCorpusId($corpus);
+                $pt->setTextId($text);
+                $pt->setUserId($user);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($pt);
+                $em->flush();
+
+                return new JsonResponse("Success");
+            }
+
+            return new JsonResponse("Error");        
+        } else {
+            return $this->redirectToRoute("homepage");
         }
-        
-        return new JsonResponse("Error");        
     }
+    
+    /**
+     * Action for when a user pins a text.
+     * @Route("/corpus/unpin_text/{text}")
+     * @Method({"GET"})
+     */
+    public function unpinTextAction(Request $request, $text) {
+        if($request->isXmlHttpRequest()) {
+            $uid = $this->getUser()->getId();
+            $cid = $this->get('session')->get("corpus");
+            if($uid && $cid && $text) {
+                $pinnedText = $this->getDoctrine()
+                                ->getRepository("AppBundle:PinnedText")
+                                ->findBy(['corpusId' => $cid, 'userId' => $uid, 'textId' => $text]);
+                if($pinnedText) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->remove($pinnedText[0]);
+                    $em->flush();
+                    $em->clear();
+                }
+
+                return new JsonResponse("Success");
+            }
+
+            return new JsonResponse("Error");        
+        } else {
+            return $this->redirectToRoute("homepage");
+        }
+    }
+    
 
     /****************************************************************
      * Utility methods
