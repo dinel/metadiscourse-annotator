@@ -99,7 +99,7 @@ class CorpusAdminController extends Controller
                                             . "FROM AppBundle\Entity\Token t "
                                             . "WHERE t.document in (:param) "
                                             . "GROUP BY t.content ORDER BY freq DESC")
-                              ->setParameters(['param' => explode(",", $list_texts)]);;
+                              ->setParameters(['param' => explode(",", $list_texts)]);
             $rows = $query->execute();
 
             $totalWords = 0;
