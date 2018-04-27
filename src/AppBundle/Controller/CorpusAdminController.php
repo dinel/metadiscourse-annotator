@@ -275,7 +275,7 @@ class CorpusAdminController extends Controller
     /**
      * Action for when a user pins a text.
      * @Route("/corpus/pin_text/{text}")
-     * @Method({"GET"})
+     * @Method({"POST"})
      */
     public function pinTextAction(Request $request, $text) {
         if($request->isXmlHttpRequest()) {
@@ -302,7 +302,7 @@ class CorpusAdminController extends Controller
     /**
      * Action for when a user pins a text.
      * @Route("/corpus/unpin_text/{text}")
-     * @Method({"GET"})
+     * @Method({"POST"})
      */
     public function unpinTextAction(Request $request, $text) {
         if($request->isXmlHttpRequest()) {

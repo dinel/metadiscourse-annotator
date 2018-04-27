@@ -20,7 +20,7 @@ $( document ).ready(function() {
     $('.pin-text').click(function() {
         var text = $(this).data('text');
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/corpus/pin_text/' + text,
             dataType: 'json',
             context: this, 
@@ -34,7 +34,7 @@ $( document ).ready(function() {
     $('.unpin-text').click(function() {
         var text = $(this).data('text');
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/corpus/unpin_text/' + text,
             dataType: 'json',
             context: this, 
