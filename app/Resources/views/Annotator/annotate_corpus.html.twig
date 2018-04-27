@@ -11,13 +11,42 @@
 {% endblock stylesheets %}
 
 {% block body %}    
+    <style>
+        #dLabel {
+            font-size: 50%;
+        }
+        .dropdown-menu {
+            font-size: 10px;
+            min-width: 0px;
+        }
+    </style>
     
     <div class="container">
         <div class="row voffset3">
             <div class="col-md-8">
             <h3>Select the text you want to annotate</h3>
-            {% for text in texts %}
+            <div id="texts">
+            {% for text in corpus.texts %}
                 <div class="in-a-box">
+                    <div class="dropdown pull-right">
+                        {% if text.id in pinned %}
+                            <span class="glyphicon glyphicon-pushpin right-margin-1em" aria-hidden="true" title="Text pinned"></span>
+                        {% endif %}
+                            
+                        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                            {% if text.id in pinned %}
+                                <li><a class="unpin-text" data-text="{{ text.id }}">Unpin text</a></li>
+                            {% else %}
+                                <li><a class="pin-text" data-text="{{ text.id }}">Pin text</a></li>
+                            {% endif %}
+                            <li><a>Mark done</a></li>
+                        </ul>
+                    </div>
+                    
                     Title of text: <em>{{ text.title }}</em><br/>
                     {% if text.description %}
                         Description: <em>{{ text.description }}</em>
@@ -36,7 +65,13 @@
                 </div>
             {% endfor %}
             </div>
+            </div>
         </div>
     </div>    
     
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/corpus_operations.js') }}"></script>
 {% endblock %}

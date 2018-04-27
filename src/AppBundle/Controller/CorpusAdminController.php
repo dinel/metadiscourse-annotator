@@ -8,11 +8,13 @@
 
 namespace AppBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+use AppBundle\Entity\PinnedText;
 use AppBundle\Form\Type\CorpusType;
 use AppBundle\Utils\SharedFunctions;
 
@@ -255,14 +257,41 @@ class CorpusAdminController extends Controller
      */
     public function corpusAnnotateAction(Request $request, $id) {
         $session = $this->get('session');
-        $session->remove("filter-mark-id");
+        $session->remove("filter-mark-id");        
         
         $corpus = $this->getCorpus($id);
+        $pinnedTexts =  $this->getPinnedTexts($id);
+        if($corpus) {
+            $session->set("corpus", $id);            
+            return $this->render('Annotator/annotate_corpus.html.twig', [
+                'corpus' => $corpus,
+                'pinned' => $pinnedTexts,
+            ]);
+        } else {
+            // an error occured 
+        }
+    }
+    
+    /**
+     * @Route("/corpus/pin_text/{text}")
+     * @Method({"GET"})
+     */
+    public function pinTextAction(Request $request, $text) {
+        $user = $this->getUser()->getId();
+        $corpus = $this->get('session')->get("corpus");
+        if($user && $corpus && $text) {
+            $pt = new PinnedText();
+            $pt->setCorpusId($corpus);
+            $pt->setTextId($text);
+            $pt->setUserId($user);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($pt);
+            $em->flush();
+            
+            return new JsonResponse("Success");
+        }
         
-        return $this->render('Annotator/annotate_corpus.html.twig', array(
-                'texts' => $corpus->getTexts(),
-        ));
-        
+        return new JsonResponse("Error");        
     }
 
     /****************************************************************
@@ -283,6 +312,19 @@ class CorpusAdminController extends Controller
         return $corpus;
     }
     
+    /**
+     * Returns a list of text IDs that is pinned by a user in a corpus
+     * @param interger the corpus ID
+     * @return array an array of text IDs that have been pinned
+     */
+    private function getPinnedTexts($cid) {
+        $uid = $this->getUser()->getId();
+        $pinnedTexts = $this->getDoctrine()
+                            ->getRepository("AppBundle:PinnedText")
+                            ->findBy(['corpusId' => $cid, 'userId' => $uid]);
+        return array_map(function(PinnedText $t) { return $t->getTextId(); }, $pinnedTexts);
+    }
+
     /**
      * Saves the object to the database
      * @param Corpus $corpus

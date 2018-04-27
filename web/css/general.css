@@ -80,6 +80,10 @@ ul.edit-list a.faded:hover {
     margin-left: 1em;
 }
 
+.right-margin-1em {
+    margin-right: 1em;
+}
+
 .in-a-box {
     border: thin dotted black;
     padding: 1em;
