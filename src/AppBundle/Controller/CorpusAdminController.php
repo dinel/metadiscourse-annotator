@@ -45,6 +45,20 @@ class CorpusAdminController extends Controller
     }
     
     /**
+     * @Route("/corpus-info/{id}", name="corpus_info")
+     */
+    public function displayCorpusInfoAction($id) {
+        $corpus = $this->getDoctrine()
+                        ->getRepository("AppBundle:Corpus")
+                        ->find($id);
+        
+        if($corpus) {
+            return $this->render('Admin/corpus_display_detailed.html.twig', 
+                    ['corpus' => $corpus,]);
+        }
+    }             
+
+    /**
      * Creates a new corpus or edits an existing one
      * @Route("/admin/corpus/new/{id}", name="admin_new_corpus")
      */
@@ -98,6 +112,14 @@ class CorpusAdminController extends Controller
             $corpus->setNumberTokens($totalWords);
             $corpus->setStatisticsOutdated(0);
             $this->saveCorpus($corpus);
+            
+            // update statistics per text
+            $em = $this->getDoctrine()->getManager();
+            foreach($corpus->getTexts() as $text) {
+                $text->calculateStatistics($this->getDoctrine());
+                $em->persist($text);
+            }
+            $em->flush();
             
             return new JsonResponse(array(
                     'nowords' => $totalWords,

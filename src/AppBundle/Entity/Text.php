@@ -61,7 +61,17 @@ class Text {
      *      )
      */
     protected $domains;
-     
+    
+    /**
+     * @ORM\Column(type="integer", nullable = true)
+     */
+    protected $no_types;
+
+    /**
+     * @ORM\Column(type="integer", nullable = true)
+     */
+    protected $no_tokens;        
+
     /**
      * The constructor
      */
@@ -254,5 +264,30 @@ class Text {
     public function getCorpora()
     {
         return $this->corpora;
+    }
+    
+    public function getNoTypes() {
+        return $this->no_types;
+    }
+
+    public function getNoTokens() {
+        return $this->no_tokens;
+    }
+
+    public function calculateStatistics($doctrine) {
+        $query = $doctrine->getManager()
+                          ->createQuery("SELECT t.content, COUNT(t.content) AS freq " 
+                                        . "FROM AppBundle\Entity\Token t "
+                                        . "WHERE t.document = (:param) "
+                                        . "GROUP BY t.content ORDER BY freq DESC")
+                          ->setParameters(['param' => $this->getId() ]);;
+        $rows = $query->execute();
+        
+        $this->no_tokens = 0;
+        $this->no_types = 0;
+        foreach($rows as $row) {
+            $this->no_types++;
+            $this->no_tokens += $row["freq"];
+        }        
     }
 }
