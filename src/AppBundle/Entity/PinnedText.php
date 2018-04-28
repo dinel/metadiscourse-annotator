@@ -53,6 +53,16 @@ class PinnedText {
      */
     protected $userId;
     
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    protected $type;
+    
+    /**
+     * @ORM\Column(type="date")     
+     */
+    protected $date;
+
     public function getId() {
         return $this->id;
     }
@@ -89,6 +99,21 @@ class PinnedText {
         return $this;
     }
 
+    public function getType() {
+        return $this->type;
+    }
 
+    public function getDate() {
+        return $this->date;
+    }
 
+    public function setType($type) {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function setDate($date) {
+        $this->date = $date;
+        return $this;
+    }
 }
