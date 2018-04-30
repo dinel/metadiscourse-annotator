@@ -26,7 +26,7 @@ $( document ).ready(function() {
             context: this, 
             success: function(data) {
                 var pos = $(this).parents('.dropdown').children().first();
-                $('<span class="glyphicon glyphicon-pushpin right-margin-1em" aria-hidden="true" title="Text pinned"></span>').insertBefore(pos);
+                $('<span class="glyphicon glyphicon-pushpin" aria-hidden="true" title="Text pinned"></span>').insertBefore(pos);
             }  
         });        
     });    
@@ -43,9 +43,38 @@ $( document ).ready(function() {
             }  
         });        
     }); 
+    
+    $('.done-text').click(function() {
+        var text = $(this).data('text');
+        $.ajax({
+            type: 'POST',
+            url: '/corpus/text_done/' + text,
+            dataType: 'json',
+            context: this, 
+            success: function(data) {
+                var pos = $(this).parents('.dropdown').children().first();
+                $('<span class="glyphicon glyphicon-ok green" aria-hidden="true" title="Text done"></span>').insertBefore(pos);
+            }  
+        });        
+    }); 
+    
+    $('.undone-text').click(function() {
+        var text = $(this).data('text');
+        $.ajax({
+            type: 'POST',
+            url: '/corpus/text_undone/' + text,
+            dataType: 'json',
+            context: this, 
+            success: function(data) {
+                $(this).parents('.dropdown').find('.glyphicon-ok').remove();
+            }  
+        });        
+    }); 
 });
 
 function orderTexts() {
+    var doneTexts = $('.in-a-box').has('.done-text');
+    doneTexts.prependTo("#texts");
     var pinnedTexts = $('.in-a-box').has('.unpin-text');
     pinnedTexts.prependTo('#texts');    
 };

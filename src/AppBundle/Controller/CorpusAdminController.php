@@ -260,15 +260,16 @@ class CorpusAdminController extends Controller
         $session->remove("filter-mark-id");        
         
         $corpus = $this->getCorpus($id);
-        $pinnedTexts =  $this->getPinnedTexts($id);
         if($corpus) {
             $session->set("corpus", $id);            
             return $this->render('Annotator/annotate_corpus.html.twig', [
                 'corpus' => $corpus,
-                'pinned' => $pinnedTexts,
+                'pinned' => $this->getPinnedTexts($id),
+                'done' => $this->getDoneTexts($id),
+                'usersPerText' => $this->getUsersPerDoneTexts($id),
             ]);
         } else {
-            // an error occured 
+            // TODO: an error occured 
         }
     }
    
@@ -299,9 +300,46 @@ class CorpusAdminController extends Controller
         $uid = $this->getUser()->getId();
         $pinnedTexts = $this->getDoctrine()
                             ->getRepository("AppBundle:PinnedText")
-                            ->findBy(['corpusId' => $cid, 'userId' => $uid]);
+                            ->findBy(['corpusId' => $cid, 'userId' => $uid, 'type' => 'PIN']);
         return array_map(function(PinnedText $t) { return $t->getTextId(); }, $pinnedTexts);
     }
+    
+    /**
+     * Returns a list of text IDs that are marked done by a user
+     * @param interger the corpus ID
+     * @return array an array of text IDs that have been marked done
+     */
+    private function getDoneTexts($cid) {
+        $uid = $this->getUser()->getId();
+        $doneTexts = $this->getDoctrine()
+                          ->getRepository("AppBundle:PinnedText")
+                          ->findBy(['corpusId' => $cid, 'userId' => $uid, 'type' => 'DONE']);
+        return array_map(function(PinnedText $t) { return $t->getTextId(); }, $doneTexts);
+    }
+    
+    /**
+     * Returns a list of text IDs that are marked done by a user
+     * @param interger the corpus ID
+     * @return array an array of text IDs that have been pinned
+     */
+    private function getUsersPerDoneTexts($cid) {
+        $doneTexts = $this->getDoctrine()
+                          ->getRepository("AppBundle:PinnedText")
+                          ->findBy(['corpusId' => $cid, 'type' => 'DONE']);
+        $usersPerText = [];
+        foreach($doneTexts as $text) {
+            $usersPerText[$text->getTextId()][] = $this->getUserName($text->getUserId());
+        }
+        return $usersPerText;
+    }
+    
+    private function getUserName($uid) {
+        $user = $this->getDoctrine()
+                     ->getRepository('AppBundle:User')
+                     ->find($uid);
+        return $user->getFullName();
+    }
+
 
     /**
      * Saves the object to the database

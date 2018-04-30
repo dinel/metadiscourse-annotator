@@ -30,10 +30,14 @@
                 <div class="in-a-box">
                     <div class="dropdown pull-right">
                         {% if text.id in pinned %}
-                            <span class="glyphicon glyphicon-pushpin right-margin-1em" aria-hidden="true" title="Text pinned"></span>
+                            <span class="glyphicon glyphicon-pushpin" aria-hidden="true" title="Text pinned"></span>
+                        {% endif %}
+                        
+                         {% if text.id in done %}
+                            <span class="glyphicon glyphicon-ok green" aria-hidden="true" title="Text done"></span>
                         {% endif %}
                             
-                        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="left-margin-1em">
                             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
                             <span class="caret"></span>
                         </button>
@@ -43,7 +47,11 @@
                             {% else %}
                                 <li><a class="pin-text" data-text="{{ text.id }}">Pin text</a></li>
                             {% endif %}
-                            <li><a>Mark done</a></li>
+                            {% if text.id in done %}
+                                <li><a class="undone-text" data-text="{{ text.id }}">Mark undone</a></li>
+                            {% else %}
+                                <li><a class="done-text" data-text="{{ text.id }}">Mark done</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                     
@@ -60,6 +68,16 @@
                             <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-default pull-right" role="button">Re-process</a>
                         {% else %}
                             <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-default pull-right disabled" role="button">Re-process</a>
+                        {% endif %}
+                    </div>
+                    <div class="voffset3" style="font-size: 75%;">
+                        Marked done by:
+                        {% if usersPerText[text.id] is defined %}
+                            {% for user in usersPerText[text.id] %}
+                                {{user}}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}                                                        
+                            no one
                         {% endif %}
                     </div>
                 </div>
