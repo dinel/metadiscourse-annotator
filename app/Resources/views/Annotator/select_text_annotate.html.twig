@@ -35,24 +35,13 @@
                     <i class="fas fa-check green" title="Text done"></i>
                 {% endif %}
                 
-                <button class="btn btn-outline-secondary dropdown-toggle left-margin-1em" type="button" id="dLabel{{text.id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-secondary dropdown-toggle left-margin-1em" 
+                        type="button" id="dLabel{{text.id}}" data-toggle="dropdown" 
+                        aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-bars"></i>
                 </button>
-                
-                <div class="dropdown-menu" aria-labelledby="dLabel{{text.id}}">
-                    {% if text.id in pinned %}
-                        <a class="dropdown-item pin-text d-none" data-text="{{ text.id }}">Pin text</a>
-                        <a class="dropdown-item unpin-text" data-text="{{ text.id }}">Unpin text</a>                        
-                    {% else %}
-                        <a class="dropdown-item pin-text" data-text="{{ text.id }}">Pin text</a>
-                        <a class="dropdown-item unpin-text d-none" data-text="{{ text.id }}">Unpin text</a>
-                    {% endif %}
-                    {% if text.id in done %}
-                        <a class="dropdown-item undone-text" data-text="{{ text.id }}">Mark undone</a>
-                    {% else %}
-                        <a class="dropdown-item done-text" data-text="{{ text.id }}">Mark done</a>
-                    {% endif %}
-                </div>
+                    
+                {% include 'Annotator/context_menu.html.twig' with {'text':text} %}                                
             </div>
 
             Title of text: <em>{{ text.title }}</em><br/>

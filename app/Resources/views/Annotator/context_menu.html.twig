@@ -1,0 +1,16 @@
+{# empty Twig template #}
+
+<div class="dropdown-menu" aria-labelledby="dLabel{{text.id}}">
+    {% if text.id in pinned %}
+        <a class="dropdown-item pin-text d-none" data-text="{{ text.id }}">Pin text</a>
+        <a class="dropdown-item unpin-text" data-text="{{ text.id }}">Unpin text</a>                        
+    {% else %}
+        <a class="dropdown-item pin-text" data-text="{{ text.id }}">Pin text</a>
+        <a class="dropdown-item unpin-text d-none" data-text="{{ text.id }}">Unpin text</a>
+    {% endif %}
+    {% if text.id in done %}
+        <a class="dropdown-item undone-text" data-text="{{ text.id }}">Mark undone</a>
+    {% else %}
+        <a class="dropdown-item done-text" data-text="{{ text.id }}">Mark done</a>
+    {% endif %}
+</div>
