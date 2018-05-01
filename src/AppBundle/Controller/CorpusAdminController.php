@@ -262,7 +262,7 @@ class CorpusAdminController extends Controller
         $corpus = $this->getCorpus($id);
         if($corpus) {
             $session->set("corpus", $id);            
-            return $this->render('Annotator/annotate_corpus.html.twig', [
+            return $this->render('Annotator/select_text_annotate.html.twig', [
                 'corpus' => $corpus,
                 'pinned' => $this->getPinnedTexts($id),
                 'done' => $this->getDoneTexts($id),

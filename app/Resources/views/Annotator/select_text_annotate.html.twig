@@ -1,0 +1,94 @@
+{# app/Resources/views/Annotator/select_text_annotate.html.twig #}
+
+{% extends 'base_new.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}     
+    <style>
+        .dropdown-toggle {
+            font-size: 60%;
+        }
+        .dropdown-menu {
+            font-size: 10px;
+            min-width: 0px;
+        }
+    </style>        
+    <link rel="stylesheet" 
+          href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" 
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" 
+          crossorigin="anonymous">    
+{% endblock stylesheets %}
+
+{% block content %}        
+<div class="row voffset3">
+    <div class="col-md-8">
+    <h3>Select the text you want to annotate</h3>
+    <div id="texts">
+    {% for text in corpus.texts %}
+        <div class="in-a-box">
+            <div class="dropdown float-right">
+                {% if text.id in pinned %}
+                    <i class="fas fa-thumbtack green" title="Text pinned"></i>
+                {% endif %}
+
+                 {% if text.id in done %}
+                    <i class="fas fa-check green" title="Text done"></i>
+                {% endif %}
+                
+                <button class="btn btn-outline-secondary dropdown-toggle left-margin-1em" type="button" id="dLabel{{text.id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="dropdown-menu" aria-labelledby="dLabel{{text.id}}">
+                    {% if text.id in pinned %}
+                        <a class="dropdown-item pin-text d-none" data-text="{{ text.id }}">Pin text</a>
+                        <a class="dropdown-item unpin-text" data-text="{{ text.id }}">Unpin text</a>                        
+                    {% else %}
+                        <a class="dropdown-item pin-text" data-text="{{ text.id }}">Pin text</a>
+                        <a class="dropdown-item unpin-text d-none" data-text="{{ text.id }}">Unpin text</a>
+                    {% endif %}
+                    {% if text.id in done %}
+                        <a class="dropdown-item undone-text" data-text="{{ text.id }}">Mark undone</a>
+                    {% else %}
+                        <a class="dropdown-item done-text" data-text="{{ text.id }}">Mark done</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            Title of text: <em>{{ text.title }}</em><br/>
+            {% if text.description %}
+                Description: <em>{{ text.description }}</em>
+            {% endif %}
+            <div class="voffset2">
+                <a href="{{ path('document_show', {'id': text.id } ) }}" class="btn btn-outline-primary" role="button">Annotate</a>
+                <a href="{{ path('select_mark', {'id': text.id } ) }}" class="btn btn-outline-primary" role="button">Annotate by marker</a>
+                <a href="{{ path('select_category', {'id': text.id } ) }}" class="btn btn-outline-primary" role="button">Annotate by category</a>
+
+                {% if is_granted('ROLE_ADMIN')  %}
+                    <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-outline-primary float-right" role="button">Re-process</a>
+                {% else %}
+                    <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-outline-primary float-right disabled" role="button">Re-process</a>
+                {% endif %}
+            </div>
+            <div class="voffset3" style="font-size: 75%;">
+                Marked done by:
+                {% if usersPerText[text.id] is defined %}
+                    {% for user in usersPerText[text.id] %}
+                        {{user}}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}                                                        
+                    no one
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    </div>
+</div>    
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/corpus_operations.js') }}"></script>
+{% endblock %}

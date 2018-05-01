@@ -26,7 +26,9 @@ $( document ).ready(function() {
             context: this, 
             success: function(data) {
                 var pos = $(this).parents('.dropdown').children().first();
-                $('<span class="glyphicon glyphicon-pushpin" aria-hidden="true" title="Text pinned"></span>').insertBefore(pos);
+                $('<i class="fas fa-thumbtack green" title="Text pinned"></i>').insertBefore(pos);
+                $(this).parents('.dropdown').find('.pin-text').addClass('d-none');
+                $(this).parents('.dropdown').find('.unpin-text').removeClass('d-none');
             }  
         });        
     });    
@@ -39,7 +41,9 @@ $( document ).ready(function() {
             dataType: 'json',
             context: this, 
             success: function(data) {
-                $(this).parents('.dropdown').find('.glyphicon-pushpin').remove();
+                $(this).parents('.dropdown').find('.fa-thumbtack').remove();
+                $(this).parents('.dropdown').find('.unpin-text').addClass('d-none');
+                $(this).parents('.dropdown').find('.pin-text').removeClass('d-none');
             }  
         });        
     }); 
@@ -53,7 +57,7 @@ $( document ).ready(function() {
             context: this, 
             success: function(data) {
                 var pos = $(this).parents('.dropdown').children().first();
-                $('<span class="glyphicon glyphicon-ok green" aria-hidden="true" title="Text done"></span>').insertBefore(pos);
+                $('<i class="fas fa-check green" title="Text done"></i>').insertBefore(pos);
             }  
         });        
     }); 
@@ -66,15 +70,15 @@ $( document ).ready(function() {
             dataType: 'json',
             context: this, 
             success: function(data) {
-                $(this).parents('.dropdown').find('.glyphicon-ok').remove();
+                $(this).parents('.dropdown').find('.fa-check').remove();
             }  
         });        
     }); 
 });
 
 function orderTexts() {
-    var doneTexts = $('.in-a-box').has('.done-text');
-    doneTexts.prependTo("#texts");
-    var pinnedTexts = $('.in-a-box').has('.unpin-text');
+    var doneTexts = $('.in-a-box').has('.fa-check');
+    doneTexts.appendTo("#texts");
+    var pinnedTexts = $('.in-a-box').has('.fa-thumbtack');
     pinnedTexts.prependTo('#texts');    
 };
