@@ -1,0 +1,12 @@
+{# app/Resources/views/Annotator/who_marked_done.html.twig #}
+
+<div class="voffset3" style="font-size: 75%;">
+    Marked done by:
+    {% if usersPerText[text.id] is defined %}
+        {% for user in usersPerText[text.id] %}
+            {{user}}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    {% else %}                                                        
+        no one
+    {% endif %}
+</div>

@@ -70,16 +70,9 @@
                     <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-outline-primary float-right disabled" role="button">Re-process</a>
                 {% endif %}
             </div>
-            <div class="voffset3" style="font-size: 75%;">
-                Marked done by:
-                {% if usersPerText[text.id] is defined %}
-                    {% for user in usersPerText[text.id] %}
-                        {{user}}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                {% else %}                                                        
-                    no one
-                {% endif %}
-            </div>
+            {% if is_granted('ROLE_ADMIN')  %}
+                {% include 'Annotator/who_marked_done.html.twig' %}
+            {% endif %}
         </div>
     {% endfor %}
     </div>
