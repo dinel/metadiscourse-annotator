@@ -73,7 +73,11 @@ $( document ).ready(function() {
                 $(this).parents('.dropdown').find('.fa-check').remove();
             }  
         });        
-    }); 
+    });
+    
+    $('#pinned-only').change(function() {controlDisplay()});
+    
+    $('#done-only').change(function() {controlDisplay()});
 });
 
 function orderTexts() {
@@ -82,3 +86,17 @@ function orderTexts() {
     var pinnedTexts = $('.in-a-box').has('.fa-thumbtack');
     pinnedTexts.prependTo('#texts');    
 };
+
+function controlDisplay() {
+    $('.pin-text').not('.d-none').parents('.in-a-box').show();
+    $('.done-text').not('.d-none').parents('.in-a-box').show();
+    
+    if($('#pinned-only').is(':checked') && $('#done-only').is(':checked')) {
+        $('.pin-text').not('.d-none').parents('.in-a-box').hide();
+        $('.done-text').not('.d-none').parents('.in-a-box').hide();
+    } else if ($('#pinned-only').is(':checked')){
+        $('.pin-text').not('.d-none').parents('.in-a-box').hide();
+    } else if($('#done-only').is(':checked')) {
+        $('.done-text').not('.d-none').parents('.in-a-box').hide();
+    }           
+}
