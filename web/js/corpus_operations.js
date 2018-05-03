@@ -16,6 +16,7 @@
 
 $( document ).ready(function() {
     orderTexts();
+    controlDisplay();
     
     $('.pin-text').click(function() {
         var text = $(this).data('text');
