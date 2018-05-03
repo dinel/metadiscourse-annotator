@@ -10,7 +10,9 @@
     {% endif %}
     {% if text.id in done %}
         <a class="dropdown-item undone-text" data-text="{{ text.id }}">Mark undone</a>
+        <a class="dropdown-item done-text d-none" data-text="{{ text.id }}">Mark done</a>
     {% else %}
+        <a class="dropdown-item undone-text d-none" data-text="{{ text.id }}">Mark undone</a>
         <a class="dropdown-item done-text" data-text="{{ text.id }}">Mark done</a>
     {% endif %}
 </div>

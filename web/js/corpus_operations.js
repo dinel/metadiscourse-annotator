@@ -59,6 +59,8 @@ $( document ).ready(function() {
             success: function(data) {
                 var pos = $(this).parents('.dropdown').children().first();
                 $('<i class="fas fa-check green" title="Text done"></i>').insertBefore(pos);
+                $(this).parents('.dropdown').find('.done-text').addClass('d-none');
+                $(this).parents('.dropdown').find('.undone-text').removeClass('d-none');
             }  
         });        
     }); 
@@ -72,6 +74,8 @@ $( document ).ready(function() {
             context: this, 
             success: function(data) {
                 $(this).parents('.dropdown').find('.fa-check').remove();
+                $(this).parents('.dropdown').find('.undone-text').addClass('d-none');
+                $(this).parents('.dropdown').find('.done-text').removeClass('d-none');
             }  
         });        
     });
