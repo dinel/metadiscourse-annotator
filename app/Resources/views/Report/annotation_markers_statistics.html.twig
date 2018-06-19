@@ -28,7 +28,7 @@
                 <a name="{{section}}"/><h3>{{ section }}</h3>
                 <div style="margin-left: 1em;">
                 {% for mark in stats %}
-                    <h5 class="voffset2"><a href="{{ path('report_corpus', {'id': 7, 'marker': mark[2]}) }}">{{mark[0]}}</a>: {{mark[1]}}</h5>
+                    <h5 class="voffset2"><a href="{{ path('report_corpus', {'id': corpus_id, 'marker': mark[2]}) }}">{{mark[0]}}</a>: {{mark[1]}}</h5>
                 {% endfor %}            
                 </div>
             {% endfor %}      
