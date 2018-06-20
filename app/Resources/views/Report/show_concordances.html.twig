@@ -1,0 +1,88 @@
+{# app/Resources/views/Report/show_concordances.html.twig #}
+
+{% extends 'base_new.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ path('annotation_css') }}" rel="stylesheet">
+    <style>
+        .left-context {
+            width: 450px;
+            display: inline-block;
+        }
+        .left-context div {
+            overflow:hidden;
+            width: 100%;
+            white-space: nowrap;
+            text-align: right;
+        }
+        
+        .keyword {
+            display: inline-block;
+            font-weight: bold; 
+        }
+        
+        .keyword div {
+            overflow:hidden;
+            width: 100%;
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        .right-context {
+            width: 450px;
+            display: inline-block;
+        }
+        
+        .right-context div {
+            overflow:hidden;
+            width: 100%;
+            white-space: nowrap;
+            text-align: left;
+        }       
+        
+        .concordance {
+            counter-increment: line;
+        }
+        
+        .concordance:before {
+            content: counter(line) ".";
+            vertical-align: top;
+            margin-right: 1em;
+            width: 30px;
+            text-align: right;
+            display: inline-block;
+        }
+                
+        #results {
+            counter-reset: line;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="row voffset3">
+    <div class="col-md-12">
+        <div>
+            <h3>Concordances from <strong>{{ search_scope }}</strong></h3>
+            
+            <div class="voffset4" id="results">            
+            {% for row in concordances %}
+                <div class="concordance">
+                    <div class="left-context"><div>{{ row.concordance[0] }}</div></div> 
+                    <div class="keyword"><div class="sense{{row.style}}">{{ row.concordance[1] }}</div></div> 
+                    <div class="right-context"><div>{{ row.concordance[2] }}</div></div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        <br/>
+    </div>
+</div>
+                
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/concordancer.js') }}"></script>
+{% endblock %}
