@@ -8,7 +8,7 @@ span.sensedummy {
 
 {% autoescape 'html' %}
     {% for sense in senses %}
-        span.sense{{sense.id}} {
+        .sense{{sense.id}} {
           background-color: {{ sense.bgcolor }};
           color: {{ sense.fgcolor }};
           border: dotted thin black;
