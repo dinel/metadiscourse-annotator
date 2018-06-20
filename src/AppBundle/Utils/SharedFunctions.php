@@ -217,15 +217,16 @@ class SharedFunctions {
      * @param string $term the actual term. Probably it will be removed because it
      *                     is not really necessary
      * @param EntityManager $em the entity manager
+     * @param int $max_width controls the number of characters in the context
      * @return array a tuple that contains (left context, term, right context)
      */    
-    public static function getSentence($term_id, $term, $em) {
+    public static function getSentence($term_id, $term, $em, $max_width = 40) {
         $str_r = self::getContext(
                 "SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id > ?1 ORDER BY t.id", 
-                $term_id, 1, $em);
+                $term_id, 1, $em, $max_width);
                                 
         $str_l = self::getContext("SELECT t.content FROM AppBundle\Entity\Token t WHERE t.id < ?1 ORDER BY t.id DESC", 
-                $term_id, 2, $em);
+                $term_id, 2, $em, $max_width);
         
         return array($str_l, $term, $str_r);
     }
@@ -279,9 +280,10 @@ class SharedFunctions {
      * @param int $direction indicates whether it is left context (value 1) or 
      * right context (any other value)
      * @param EntityManager $em the entity manager
+     * @param int $max_width controls the number of characters in the context
      * @return string the context
      */
-    private function getContext($str_query, $term_id, $direction, EntityManager $em) {        
+    private function getContext($str_query, $term_id, $direction, EntityManager $em, $max_width = 40) {        
         $query = $em->createQuery($str_query);
         $query->setParameter(1, $term_id);
         $query->setMaxResults(15);
@@ -295,7 +297,7 @@ class SharedFunctions {
                 $str = ($token["content"] . " ") . $str;
             }
             
-            if (strlen($str) > 40) {
+            if (strlen($str) > $max_width) {
                 break;
             }
         }
