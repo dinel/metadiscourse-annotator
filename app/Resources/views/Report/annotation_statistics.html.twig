@@ -1,0 +1,45 @@
+{# app/Resources/views/Report/annotation_statistics.html.twig #}
+
+{% extends 'base_new.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/search.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="row voffset3">
+    <div class="col-md-8 col-md-offset-2">
+        <div>
+            <h3>The statistics are from <strong>{{ search_scope }}</strong></h3>
+            
+            {{ dump(stats) }}
+            
+            <div class="voffset4" id="results">            
+            {% for mark, m_stats in stats %}
+                <h5 class="voffset2">
+                    {{mark}}: {{m_stats["total"]}} 
+                    <a href="{{ path('get_concordances', {'id': corpus_id, 'marker':m_stats.id }) }}"><i class="fas fa-angle-double-right"></i></a>
+                </h5>
+                <div style="margin-left: 1em; margin-bottom: 0.75em;">
+                {% for sense, s_stats in m_stats%}
+                    {% if sense != "total" and sense != "id"%}
+                        <strong>Sense:</strong> {{ sense }}: {{ s_stats["total"] }} <i class="fas fa-angle-double-right"></i>
+                        <div style="margin-left: 1em; margin-bottom: 0.75em;">
+                        {% for user, freq in m_stats[sense] %}
+                            {% if user != "total" %}
+                                {{ user }}, {{ freq }} <i class="fas fa-angle-double-right"></i><br/>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+            {% endfor %}            
+            </div>
+        </div>
+        <br/>
+    </div>
+</div>
+                
+{% endblock %}
