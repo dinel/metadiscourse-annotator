@@ -48,7 +48,7 @@ class ReportController extends Controller {
         foreach($statistics as $key => $dummy) {
             $statistics[$key]["total"] = count($statistics[$key]["total"]);
             foreach($statistics[$key] as $sense => $dummy) {
-                if($sense != "total") {
+                if($sense != "total" && $sense != "id") {
                     $statistics[$key][$sense]["total"] = count($statistics[$key][$sense]["total"]);
                 }
             }
@@ -111,6 +111,35 @@ class ReportController extends Controller {
     }
     
     /**
+     * @Route("/report/concordances/{id}/{marker}", name="get_concordances")
+     * @Method({"GET"})
+     */
+    public function getConcordancesAction($id, $marker = null) {
+        ini_set('memory_limit', '-1');
+        $concordances = array(); 
+        $em = $this->getDoctrine()->getManager();
+        set_time_limit(0);
+        
+        $annotations = $this->getAnnotationsForCorpus($id, $marker);
+        
+        foreach($annotations as $annotation) {
+            $token = $annotation->getToken();
+            $concordances[] = [
+                'concordance' => SharedFunctions::getSentence($token->getId(), $token->getContent(), $em, 80),
+                'style' => $annotation->getSense() ? $annotation->getSense()->getId(): "",
+            ];
+        }
+                
+        $search_scope = "the " . $this->getCorpusById($id)->getName() . " corpus";
+        
+        return $this->render('Report/show_concordances.html.twig', array(        
+                    'concordances' => $concordances,
+                    'search_scope' => $search_scope,
+                    'corpus_id' => $id,
+                ));        
+    }
+    
+    /**
      * Helper function which returns all the annotation corresponding to a corpus
      * @param int $corpus_id the ID of the corpus
      * @return the list of annotations
@@ -158,8 +187,7 @@ class ReportController extends Controller {
     private function getCorpusById($corpus_id) {
         return SharedFunctions::getCorpusById($corpus_id, $this->getDoctrine());
     }   
-    
-    
+        
     /**
      * Update the statistics about senses on the basis of an annotation
      * 
@@ -173,6 +201,7 @@ class ReportController extends Controller {
         if(!array_key_exists($tokenContent, $statistics)) {
             $statistics[$tokenContent] = array();
             $statistics[$tokenContent]["total"] = array();
+            $statistics[$tokenContent]["id"] = $annotation->getToken()->getMarkable()->getId();
             $statistics[$tokenContent]["Not a marker"] = array("total" => []);
             foreach($annotation->getToken()->getMarkable()->getSenses() as $sense) {
                 $statistics[$tokenContent][$sense->getDefinition()] = array("total" => []);
