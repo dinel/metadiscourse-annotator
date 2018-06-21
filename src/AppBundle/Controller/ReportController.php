@@ -111,16 +111,16 @@ class ReportController extends Controller {
     }
     
     /**
-     * @Route("/report/concordances/{id}/{marker}", name="get_concordances")
+     * @Route("/report/concordances/{id}/{marker}/{sense}/{user}", name="get_concordances")
      * @Method({"GET"})
      */
-    public function getConcordancesAction($id, $marker = null) {
+    public function getConcordancesAction($id, $marker = null, $sense = null, $user = null) {
         ini_set('memory_limit', '-1');
         $concordances = array(); 
         $em = $this->getDoctrine()->getManager();
         set_time_limit(0);
         
-        $annotations = $this->getAnnotationsForCorpus($id, $marker);
+        $annotations = $this->getAnnotationsForCorpus($id, $marker, $sense, $user);
         
         foreach($annotations as $annotation) {
             $token = $annotation->getToken();
@@ -144,7 +144,7 @@ class ReportController extends Controller {
      * @param int $corpus_id the ID of the corpus
      * @return the list of annotations
      */
-    private function getAnnotationsForCorpus($corpus_id, $marker = null) {
+    private function getAnnotationsForCorpus($corpus_id, $marker = null, $sense = null, $user = null) {
         $em = $this->getDoctrine()->getManager();        
         $queryBuilder = $em->createQueryBuilder();       
         $queryBuilder->addSelect("annotation")
@@ -157,6 +157,20 @@ class ReportController extends Controller {
         if($marker) {
             $queryBuilder->andWhere("token.markable = (:param_mark)")
                          ->setParameter('param_mark', $marker);
+        }
+        
+        if($sense) {
+            if($sense === "none") {
+                $queryBuilder->andWhere("annotation.sense is null");
+            } else {
+                $queryBuilder->andWhere("annotation.sense = (:param_sense)")
+                             ->setParameter('param_sense', $sense);
+            }
+        }
+        
+        if($user) {
+            $queryBuilder->andWhere("annotation.userName = (:param_user)")
+                         ->setParameter('param_user', $user);
         }
 
         return $queryBuilder->getQuery()->getResult();
@@ -178,9 +192,9 @@ class ReportController extends Controller {
         return substr($list_texts, 1);
     }
     
-        /**
+    /**
      * @deprecated since 6 April
-     * Retrives the corpus based on the ID
+     * Retrieves the corpus based on the ID
      * @param int $corpus_id the ID of the corpus
      * @return the corpus
      */
@@ -202,9 +216,15 @@ class ReportController extends Controller {
             $statistics[$tokenContent] = array();
             $statistics[$tokenContent]["total"] = array();
             $statistics[$tokenContent]["id"] = $annotation->getToken()->getMarkable()->getId();
-            $statistics[$tokenContent]["Not a marker"] = array("total" => []);
+            $statistics[$tokenContent]["Not a marker"] = [
+                    "total" => [], 
+                    "sense" => "none"
+                ];
             foreach($annotation->getToken()->getMarkable()->getSenses() as $sense) {
-                $statistics[$tokenContent][$sense->getDefinition()] = array("total" => []);
+                $statistics[$tokenContent][$sense->getDefinition()] = [
+                        "total" => [], 
+                        "sense"=>$sense->getId()
+                    ];
             }
         }
         

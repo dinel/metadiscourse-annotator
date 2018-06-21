@@ -13,8 +13,6 @@
         <div>
             <h3>The statistics are from <strong>{{ search_scope }}</strong></h3>
             
-            {{ dump(stats) }}
-            
             <div class="voffset4" id="results">            
             {% for mark, m_stats in stats %}
                 <h5 class="voffset2">
@@ -24,11 +22,15 @@
                 <div style="margin-left: 1em; margin-bottom: 0.75em;">
                 {% for sense, s_stats in m_stats%}
                     {% if sense != "total" and sense != "id"%}
-                        <strong>Sense:</strong> {{ sense }}: {{ s_stats["total"] }} <i class="fas fa-angle-double-right"></i>
+                        <strong>Sense:</strong> {{ sense }}: {{ s_stats["total"] }} 
+                        <a href="{{ path('get_concordances', {'id': corpus_id, 'marker':m_stats.id, 'sense':m_stats[sense]["sense"] }) }}"><i class="fas fa-angle-double-right"></i></a>
                         <div style="margin-left: 1em; margin-bottom: 0.75em;">
                         {% for user, freq in m_stats[sense] %}
-                            {% if user != "total" %}
-                                {{ user }}, {{ freq }} <i class="fas fa-angle-double-right"></i><br/>
+                            {% if user != "total"  and user != "sense" %}
+                                {{ user }}, {{ freq }} 
+                                <a href="{{ path('get_concordances', {'id': corpus_id, 'marker':m_stats.id, 'sense':m_stats[sense]["sense"], 'user':user }) }}">
+                                    <i class="fas fa-angle-double-right"></i><br/>
+                                </a>
                             {% endif %}
                         {% endfor %}
                         </div>
