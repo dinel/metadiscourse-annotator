@@ -127,6 +127,7 @@ class ReportController extends Controller {
             $concordances[] = [
                 'concordance' => SharedFunctions::getSentence($token->getId(), $token->getContent(), $em, 80),
                 'style' => $annotation->getSense() ? $annotation->getSense()->getId(): "",
+                'id' => $annotation->getId(),
             ];
         }
                 
