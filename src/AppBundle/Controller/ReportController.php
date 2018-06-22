@@ -153,7 +153,8 @@ class ReportController extends Controller {
                      ->from("AppBundle:Token", 'token')
                      ->andWhere("annotation.token = token")
                      ->andWhere("token.document IN (:param)")
-                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)));
+                     ->setParameter('param', explode(",", $this->getListIdTextFromCorpus($corpus_id)))
+                     ->orderBy('token.id');
         
         if($marker) {
             $queryBuilder->andWhere("token.markable = (:param_mark)")
