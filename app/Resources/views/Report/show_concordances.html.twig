@@ -63,6 +63,10 @@
         #results {
             counter-reset: line;
         }
+        
+        .common {
+            border-left: thick blue solid;
+        }
     </style>
 {% endblock stylesheets %}
 
@@ -72,15 +76,19 @@
         <div>
             <h3>Concordances from <strong>{{ search_scope }}</strong></h3>
             
-            <div class="voffset4" id="results">            
-            {% for row in concordances %}
-                <div class="concordance">                    
-                    <div class="left-context"><div>{{ row.concordance[0] }}</div></div> 
-                    <div class="keyword"><div class="sense{{row.style}}">{{ row.concordance[1] }}</div></div> 
-                    <div class="right-context"><div>{{ row.concordance[2] }}</div></div>                    
-                    <div id="{{ row.id }}" class="details float-right"><i class="fas fa-search-plus"></i></div>
-                    <div class="more-info"></div>
-                </div>                    
+            <div class="voffset4" id="results">
+            {% for concordances in grouped_concordances %}
+                {% if concordances|length > 1 %}<div class="common">{% endif %}
+                {% for row in concordances %}
+                    <div class="concordance">                    
+                        <div class="left-context"><div>{{ row.concordance[0] }}</div></div> 
+                        <div class="keyword"><div class="sense{{row.style}}">{{ row.concordance[1] }}</div></div> 
+                        <div class="right-context"><div>{{ row.concordance[2] }}</div></div>                    
+                        <div id="{{ row.id }}" class="details float-right"><i class="fas fa-search-plus"></i></div>
+                        <div class="more-info"></div>
+                    </div>                    
+                {% endfor %}
+                {% if concordances|length > 1 %}</div>{% endif %}
             {% endfor %}
             </div>
         </div>

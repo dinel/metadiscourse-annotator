@@ -122,19 +122,28 @@ class ReportController extends Controller {
         
         $annotations = $this->getAnnotationsForCorpus($id, $marker, $sense, $user);
         
+        $grouped_concordances = [];
+        $previous_id = -1;
         foreach($annotations as $annotation) {
             $token = $annotation->getToken();
+            
+            if($previous_id != $token->getId()) {
+                $grouped_concordances[] = [];
+                $previous_id = $token->getId();
+            }
+            $concordances = $grouped_concordances[count($grouped_concordances) - 1];            
             $concordances[] = [
                 'concordance' => SharedFunctions::getSentence($token->getId(), $token->getContent(), $em, 80),
                 'style' => $annotation->getSense() ? $annotation->getSense()->getId(): "",
                 'id' => $annotation->getId(),
             ];
-        }
+            $grouped_concordances[count($grouped_concordances) - 1] = $concordances;
+        }        
                 
         $search_scope = "the " . $this->getCorpusById($id)->getName() . " corpus";
         
         return $this->render('Report/show_concordances.html.twig', array(        
-                    'concordances' => $concordances,
+                    'grouped_concordances' => $grouped_concordances,
                     'search_scope' => $search_scope,
                     'corpus_id' => $id,
                 ));        
