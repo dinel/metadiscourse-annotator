@@ -19,7 +19,7 @@ $( document ).ready(function() {
         var node = $(this).next();
         console.log(node);
         if(node.html()) {
-            node.parent().toggle();
+            node.toggle();
             return;
         }
         
