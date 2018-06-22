@@ -7,7 +7,7 @@
     <link href="{{ path('annotation_css') }}" rel="stylesheet">
     <style>
         .left-context {
-            width: 450px;
+            width: 375px;
             display: inline-block;
         }
         .left-context div {
@@ -30,7 +30,7 @@
         }
         
         .right-context {
-            width: 450px;
+            width: 375px;
             display: inline-block;
         }
         
@@ -43,14 +43,20 @@
         
         .concordance {
             counter-increment: line;
+            margin: 6px;
+            width: 100%;
         }
         
         .concordance:before {
             content: counter(line) ".";
             vertical-align: top;
-            margin-right: 1em;
+            margin: 6px 1em;
             width: 30px;
             text-align: right;
+            display: inline-block;
+        }
+        
+        .details {
             display: inline-block;
         }
                 
@@ -62,17 +68,19 @@
 
 {% block content %}
 <div class="row voffset3">
-    <div class="col-md-12">
+    <div class="col-md-10">
         <div>
             <h3>Concordances from <strong>{{ search_scope }}</strong></h3>
             
             <div class="voffset4" id="results">            
             {% for row in concordances %}
-                <div class="concordance">
+                <div class="concordance">                    
                     <div class="left-context"><div>{{ row.concordance[0] }}</div></div> 
                     <div class="keyword"><div class="sense{{row.style}}">{{ row.concordance[1] }}</div></div> 
-                    <div class="right-context"><div>{{ row.concordance[2] }}</div></div>
-                </div>
+                    <div class="right-context"><div>{{ row.concordance[2] }}</div></div>                    
+                    <div id="{{ row.id }}" class="details float-right"><i class="fas fa-search-plus"></i></div>
+                    <div class="more-info"></div>
+                </div>                    
             {% endfor %}
             </div>
         </div>
