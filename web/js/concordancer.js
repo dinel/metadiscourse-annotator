@@ -28,11 +28,11 @@ $( document ).ready(function() {
             url: '/search/retrieve_info/' + $(this).attr("id"),
             success: function(data) {
                 var display = "<strong>Annotator: </strong>" + data.annotator;
-                display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Sense selected: </strong> " + data.sense;
+                display += "<br/><strong>Sense selected: </strong> " + data.sense;
                 display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Category: </strong> " + data.category;
                 display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Polarity: </strong> " + data.polarity;
                 display += "<br/><strong>Notes: </strong>" + data.comments;
-                display += "<br/><strong>Source: </strong>" + data.source;
+                display += "<br/><strong>Source: </strong>" + data.source_title;
                 display += "<span style='margin-left: 5em'><a target='_blank' " 
                         + " href='/document/" + data.id_document + "/" + data.id_token + "'"
                         + ">Go to annotation</a></span>";
