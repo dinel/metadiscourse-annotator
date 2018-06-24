@@ -73,7 +73,6 @@ class ReportController extends Controller {
     public function documentReportMarkersAction($id) {
         ini_set('memory_limit', '-1');
         $markers = array();
-        $em = $this->getDoctrine()->getManager();
                
         set_time_limit(0);
         
