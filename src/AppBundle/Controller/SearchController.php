@@ -272,7 +272,7 @@ class SearchController extends Controller
                 'category' => $annotation->getCategoryName(),
                 'polarity' => $annotation->getPolarity(),
                 'uncertain' => $annotation->getUncertain(),
-                'source' => $annotation->getToken()->getDocument()->getTitle() . "(" . $annotation->getToken()->getDocument()->getId() . ")",
+                'source_title' => $annotation->getToken()->getDocument()->getTitle() . "(" . $annotation->getToken()->getDocument()->getId() . ")",
                 'id_token' => $annotation->getToken()->getId(),
                 'id_document' => $annotation->getToken()->getDocument()->getId(),
                 'source' => $source,
