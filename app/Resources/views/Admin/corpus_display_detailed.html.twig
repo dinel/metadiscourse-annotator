@@ -1,0 +1,17 @@
+{# empty Twig template #}
+
+{% extends 'base_new.html.twig' %}
+
+{% block content %}
+<div class="row voffset3">
+    <div class="col-md-8 col-md-offset-2">
+        <h3>{{corpus.name}}</h3>
+        <div><em>{{corpus.description}}</em></div>
+        <ol>
+        {% for text in corpus.texts %}
+            <li>{{ text.title }} - {{ text.notypes }}/{{ text.notokens }}</li>
+        {% endfor %}
+        </ol>
+    </div>
+</div>
+{% endblock %}

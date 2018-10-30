@@ -25,6 +25,7 @@
     <div class="col-xs-3 right">
         {% if not path %}
             <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default right" role="button">Annotate</a>
+            <a href="" class="btn btn-default" role="button"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
             <br/><br/>
             <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" 
                class="btn btn-default {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
