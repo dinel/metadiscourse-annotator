@@ -5,75 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ path('annotation_css') }}" rel="stylesheet">
-    <style>
-        .left-context {
-            width: 375px;
-            display: inline-block;
-        }
-        .left-context div {
-            overflow:hidden;
-            width: 100%;
-            white-space: nowrap;
-            text-align: right;
-        }
-        
-        .keyword {
-            display: inline-block;
-            font-weight: bold; 
-        }
-        
-        .keyword div {
-            overflow:hidden;
-            width: 100%;
-            white-space: nowrap;
-            text-align: center;
-        }
-        
-        .right-context {
-            width: 375px;
-            display: inline-block;
-        }
-        
-        .right-context div {
-            overflow:hidden;
-            width: 100%;
-            white-space: nowrap;
-            text-align: left;
-        }       
-        
-        .concordance {
-            counter-increment: line;
-            margin: 6px;
-            width: 100%;
-        }
-        
-        .concordance:before {
-            content: counter(line) ".";
-            vertical-align: top;
-            margin: 6px 1em;
-            width: 30px;
-            text-align: right;
-            display: inline-block;
-        }
-        
-        .details {
-            display: inline-block;
-        }
-                
-        #results {
-            counter-reset: line;
-        }
-        
-        .common-highlighed {
-            border-left: thick blue solid;
-        }
-        
-        .more-info {
-            margin: 0.5em 5em 0.5em 5em;
-            padding: 0px 3px 0px 3px;
-            background-color: #ECECEC;
-        }
-    </style>
+    <link href="{{ asset('css/reports/concordances.css') }}"  rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
