@@ -6,6 +6,15 @@
     {{ parent() }}
     <link href="{{ path('annotation_css') }}" rel="stylesheet">
     <link href="{{ asset('css/reports/concordances.css') }}"  rel="stylesheet">
+    <style>
+        #option-panel {
+            text-align: center;            
+        }
+        
+        #option-panel a {
+            margin: 1em;
+        }
+    </style>
 {% endblock stylesheets %}
 
 {% block content %}
@@ -31,6 +40,23 @@
             </div>
         </div>
         <br/>
+    </div>
+</div>
+            
+<div class="row voffset3">
+    <div class="col-md-10">
+        <div id="option-panel">
+                <a href="" onclick="window.history.go(-1); return false;" class="btn btn-outline-primary" role="button">
+                    <i class="fas fa-angle-double-left"></i> Back to statistics
+                </a>
+                <a href="{{ path('homepage') }}" class="btn btn-outline-primary" role="button">
+                    <i class="fas fa-angle-double-left"></i> Front page
+                </a>
+            
+                <a href="{{ path('select-corpus') }}" class="btn btn-outline-primary" role="button">
+                    <i class="fas fa-angle-double-left"></i> Select corpus
+                </a>
+        </div>       
     </div>
 </div>
                 
