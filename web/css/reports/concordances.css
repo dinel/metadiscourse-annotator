@@ -22,7 +22,7 @@ limitations under the License.
 */
 
 .left-context {
-    width: 375px;
+    width: 355px;
     display: inline-block;
 }
 .left-context div {
@@ -45,7 +45,7 @@ limitations under the License.
 }
 
 .right-context {
-    width: 375px;
+    width: 355px;
     display: inline-block;
 }
 
