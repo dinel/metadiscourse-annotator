@@ -5,6 +5,12 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/search.css') }}" rel="stylesheet">
+    <style>
+        #option-panel {
+            position: sticky;
+            top:20px;
+        }
+    </style> 
 {% endblock stylesheets %}
 
 {% block content %}
@@ -45,6 +51,27 @@
             </div>
         </div>
         <br/>
+    </div>
+    <div class="col-md-1 voffset3">
+        <div id="option-panel">
+            <div class="voffset4">
+                <a href="" onclick="window.history.go(-1); return false;" class="btn btn-outline-primary" role="button">
+                    <i class="fas fa-angle-double-left"></i> Select marker
+                </a>
+            </div>
+            
+            <div class="voffset4">
+                <a href="{{ path('homepage') }}" class="btn btn-outline-primary" role="button">
+                    <i class="fas fa-angle-double-left"></i> Front page
+                </a>
+            </div>
+            
+            <div class="voffset4">
+                <a href="{{ path('select-corpus') }}" class="btn btn-outline-primary" role="button">
+                    <i class="fas fa-angle-double-left"></i> Select corpus
+                </a>
+            </div>
+        </div>       
     </div>
 </div>
                 
