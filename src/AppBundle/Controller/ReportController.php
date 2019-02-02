@@ -67,7 +67,7 @@ class ReportController extends Controller {
     /**
      * Produces the list of markers in a corpus with their frequencies. It's the
      * starting point for digging down in the data
-     * @Route("/report/corpus-markers/{id}")
+     * @Route("/report/corpus-markers/{id}", name="get_markers_report")
      * @Method({"GET"})
      */
     public function documentReportMarkersAction($id) {
