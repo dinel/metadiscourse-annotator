@@ -46,6 +46,10 @@
         {% if path == "concordance" %}
             <a href="{{ path('enter_term', {'corpus_id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
         {% endif %}
+        
+        {% if path == "report" %}
+            <a href="{{ path('get_markers_report', {'id': corpus.id }) }}" class="btn btn-default" role="button">Select corpus</a>
+        {% endif %}
     </div>
 
 </div>
