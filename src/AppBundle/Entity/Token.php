@@ -44,7 +44,7 @@ class Token {
     protected $content;
             
    /**
-     * @ORM\ManyToOne(targetEntity="Text", inversedBy="tokens")
+     * @ORM\ManyToOne(targetEntity="Text", inversedBy="tokens", cascade={"persist"})
      * @ORM\JoinColumn(name="text_id", referencedColumnName="id")
      */
     protected $document;
