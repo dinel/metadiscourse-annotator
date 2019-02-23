@@ -67,12 +67,31 @@ class Token {
     protected $newLineBefore;
     
     /**
+     * @ORM\Column(type="string", length=256, nullable=true)
+     */
+    protected $xml_before;
+    
+    /**
+     * @ORM\Column(type="string", length=256, nullable=true)
+     */
+    protected $xml_after;
+    
+    /**
+     * String that will be used to compare values. Usually this will be lemma
+     * @ORM\Column(type="string", length=256, nullable=true)
+     */
+    protected $comparator;        
+    
+    /**
      * The constructor
      */
     public function __construct($content) {
         $this->content = trim($content);
         $this->markable = null;
         $this->newLineBefore = 0;
+        $this->xml_before = "";
+        $this->xml_after = "";
+        $this->comparator = "";
     }
 
     /**
@@ -222,4 +241,33 @@ class Token {
     {
         return $this->segment;
     }
+    
+    public function get_xml_before() {
+        return $this->xml_before;
+    }
+
+    public function get_xml_after() {
+        return $this->xml_after;
+    }
+
+    public function get_comparator() {
+        return $this->comparator;
+    }
+
+    public function set_xml_before($xml_before) {
+        $this->xml_before = $xml_before;
+        return $this;
+    }
+
+    public function set_xml_after($xml_after) {
+        $this->xml_after = $xml_after;
+        return $this;
+    }
+
+    public function set_comparator($comparator) {
+        $this->comparator = $comparator;
+        return $this;
+    }
+
+
 }
