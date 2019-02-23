@@ -45,7 +45,7 @@ class Corpus {
     protected $pairs;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Text")
+     * @ORM\ManyToMany(targetEntity="Text", cascade={"persist"})
      */
     protected $texts;
     
