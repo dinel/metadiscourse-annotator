@@ -49,7 +49,7 @@ class Text {
     protected $tokens;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Corpus")
+     * @ORM\ManyToMany(targetEntity="Corpus", cascade={"persist"})
      */
     protected $corpora;
     
