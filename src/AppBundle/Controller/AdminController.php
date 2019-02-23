@@ -31,6 +31,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 
+use DOMDocument;
+
 use AppBundle\Entity\Cache;
 use AppBundle\Utils\SharedFunctions;
 
@@ -63,7 +65,7 @@ class AdminController extends Controller
                         'choices' => array(                            
                             'Upload a text file' => 1,
                             //'Copy/paste the text'=> 2,
-                            //'Upload annotated text (experimental)' => 3,
+                            'Upload annotated text (experimental)' => 3,
                         ),                        
                         'choices_as_values' => true,
                     ))
@@ -82,10 +84,8 @@ class AdminController extends Controller
                         ),
                         'required' => false,
                     ))
-                ->add('upload_xml', 'text', array(
+                ->add('upload_xml', 'file', array(
                         'mapped' => false, 
-                        'data' => "This is an experimental feature which is currently disabled",
-                        'disabled' => true,
                         'label' => false,
                         'required' => false,
                     ))
@@ -94,8 +94,10 @@ class AdminController extends Controller
         
         $form->handleRequest($request);
         
-        if($form->isValid()) {            
-            if($form["upload_text"]->isValid()) {
+        if($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            
+            if($form["upload_text"]->isValid() && $form["upload_text"]->getData()) {
                 $tmpfname = tempnam("/tmp", "INP");
                 $form["upload_text"]->getData()->move(dirname($tmpfname), basename($tmpfname));
                 $handle = fopen($tmpfname, "r");
@@ -109,10 +111,21 @@ class AdminController extends Controller
                             break;
                         }
                     }
-                    $text->setTheText($input_text);
+                    $text->setTheText($input_text);                    
+                    $this->processText($text, $em);            
                 }
                 fclose($handle);
-                unlink($tmpfname);
+                unlink($tmpfname);                
+            }
+            
+            if($form["upload_xml"]->isValid() && $form["upload_xml"]->getData()) {
+                $tmpfname = tempnam("/tmp", "INP");
+                $form["upload_xml"]->getData()->move(dirname($tmpfname), basename($tmpfname));
+                $xmlDoc = new DOMDocument();
+                $xmlDoc->preserveWhiteSpace = TRUE;
+                $xmlDoc->load($tmpfname);
+                $this->processXMLText($text, $xmlDoc, $em);
+                $this->annotateTextInDatabase($text, $em);
             }
             
             $session = $request->getSession();
@@ -121,11 +134,9 @@ class AdminController extends Controller
                 $corpus = $this->getDoctrine()
                     ->getRepository('AppBundle:Corpus')
                     ->find($corpus_id);                
-                $text->addCorpora($corpus);
-            }
+                $text->addCorpora($corpus);                                
+            }           
             
-            $em = $this->getDoctrine()->getManager();
-            $this->processText($text, $em);            
             $em->persist($text);
             $em->flush();
             $em->clear();
@@ -543,6 +554,43 @@ class AdminController extends Controller
         else return null;
     }    
     
+    /**
+     * Function which processes an XML file. The assumption is that the tokens
+     * are marked by <W>tag
+     * @param type $text
+     * @param type $xmlDoc
+     * @param type $em
+     */
+    private function processXMLText($text, $xmlDoc, $em) {
+        $first = TRUE;
+        $text->setTheText($xmlDoc->saveXML($xmlDoc->documentElement));
+        $children = $xmlDoc->documentElement->childNodes;
+        foreach($children as $child) {
+            
+            if($child->nodeType == XML_ELEMENT_NODE) {
+                $str_node = $xmlDoc->saveXML($child);
+                if(preg_match("/(<W[^>]+?>)([^<]+?)(<\/W>)/", $str_node, $matches)) {
+                    $t = new \AppBundle\Entity\Token($matches[2]);
+                    $t->set_xml_before($matches[1]);
+                    $t->set_xml_after($matches[3]);
+                    if($first) {
+                        $t->setNewLineBefore (1);
+                        $first = FALSE;
+                    }
+                    
+                    $em->persist($t);
+                    $text->addToken($t);
+                }
+            }
+            
+            if($child->nodeType == XML_TEXT_NODE) {
+                if(strpos($child->textContent, "\n") !== false) {                    
+                    $first = TRUE;
+                }
+            }
+        }
+        
+    }
 
     private function processText(\AppBundle\Entity\Text $text, $em, $target = null) {
         // get the tokens in the text
