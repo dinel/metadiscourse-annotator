@@ -34,7 +34,7 @@ class Text {
     protected $title;
     
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable = true)
      */
     protected $description;
     
@@ -78,6 +78,7 @@ class Text {
     public function __construct() {
         $this->tokens = new \Doctrine\Common\Collections\ArrayCollection();
         $this->domains = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->description = " ";
     }
 
     /**

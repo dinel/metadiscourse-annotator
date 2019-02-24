@@ -57,7 +57,9 @@ class AdminController extends Controller
         
         $form = $this->createFormBuilder($text)
                 ->add('title', 'text')
-                ->add('description', 'text')
+                ->add('description', 'text', array(
+                    'required' => false,
+                ))
                 ->add('button', 'choice', array(
                         'label' => "Method",
                         'mapped' => False,
