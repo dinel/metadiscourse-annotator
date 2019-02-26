@@ -55,17 +55,31 @@ class ExportController extends Controller {
             while (($row = $tokens->next()) !== false) {
                 $token = $row[0];
                 $annotations = $this->getAnnotation($token->getId());
-                $element = htmlspecialchars($token->getContent());
+                $element = "";
+                
+                if($token->get_xml_before()) {
+                    $element .= $token->get_xml_before();
+                }
+                
+                $element .= htmlspecialchars($token->getContent());
+                
+                if($token->get_xml_after()) {
+                    $element .= $token->get_xml_after();
+                }
                  
                 if($annotations) {
-                    $tags = "<marker id='" . $token->getId() . "'>";
+                    $open_tags = "<marker id='" . $token->getId() . "'>";                    
+                    
                     foreach($annotations as $annotation) {
-                        $tags .= sprintf("<annotation id='%s' annotator='%s' sense='%s'/>",
+                        $open_tags .= sprintf("<annotation id='%s' annotator='%s' sense='%s'/>",
                                 $annotation->getId(), 
                                 $annotation->getUserName(),
                                 $annotation->getSense() ? $annotation->getSense()->getDefinition() : "NOT");
-                    }
-                    $element = $tags . $element . "</marker>";
+                    }                    
+  
+                    $close_tags = "</marker>";
+                                        
+                    $element = $open_tags . $element . $close_tags;                    
                 } else {
                     $element = " " . $element . " ";
                 }
