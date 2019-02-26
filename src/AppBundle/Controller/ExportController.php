@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Utils\SharedFunctions;
 
 /**
- * Description of ExportController
+ * Controller which provides the functionality to expert annotation to XML
  *
  * @author dinel
  */
