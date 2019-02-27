@@ -1,21 +1,19 @@
 {# app/Resources/views/default/new_corpus.html.twig #}
 
-{% extends 'base.html.twig' %}
+{% extends 'base_new.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
-{% block body %}
-    <div class="container">
-        <div class="row voffset5"> 
-            <div class="col-md-8">
+{% block content %}
+<div class="row voffset5"> 
+    <div class="col-md-8">
 
-            {{ form_start(form) }}
-            {{ form_widget(form) }}
-            {{ form_end(form) }}           
-            </div>
-        </div>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}           
     </div>
+</div>
 {% endblock %}
