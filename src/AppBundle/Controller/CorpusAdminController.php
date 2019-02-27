@@ -107,6 +107,7 @@ class CorpusAdminController extends Controller
             $rows = $query->execute();
 
             $totalWords = 0;
+            $types = [];
             foreach($rows as $row) {
                 $types[$row["content"]] = 1;
                 $totalWords += $row["freq"];
