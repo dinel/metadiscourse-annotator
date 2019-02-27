@@ -71,7 +71,9 @@ class CorpusAdminController extends Controller
             $corpus = new \AppBundle\Entity\Corpus();
         }
         
-        $form = $this->createForm(new CorpusType($id), $corpus);        
+        $form = $this->createForm(CorpusType::class, $corpus, [
+            'in_edit_mode' => $id ? True:False,
+        ]);
         $form->handleRequest($request);
                         
         if($form->isValid()) {           
