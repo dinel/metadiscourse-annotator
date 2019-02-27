@@ -1,7 +1,0 @@
-cd subdomains/meta/current/web
-chmod g-w app.php
-cd .. 
-chmod g-w app
-cd ..
-chmod g-w current
-chmod g-w releases

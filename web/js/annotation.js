@@ -11,6 +11,7 @@ var currentToken = 0;
 var discardTaggleEvent = false;
 var ctrlIsDown = false;
 var annotationAreaOn = false;
+var currentSenses = [];
 
 var nextMarkerQueue = [];
 
@@ -35,9 +36,12 @@ $( document ).ready(function() {
             return false;
         } 
         
-        if(ctrlIsDown && annotationAreaOn && e.which > 48 && e.which < 58) { 
-            $('#list-senses option').eq(e.which - 49).prop('selected', true);
+        /* Select Ctrl + Shift + [1-9] */
+        if(ctrlIsDown && annotationAreaOn && e.which > 48 && e.which < 58) {           
+            $('#list-senses').val(currentSenses[e.which - 49]);
+            $('#list-senses').selectmenu("refresh");
             $('#list-senses').trigger('change');
+            
             return false;
         }
         
@@ -46,11 +50,13 @@ $( document ).ready(function() {
             return false;
         }
         
+        /* Next marker Ctrl+> */
         if(ctrlIsDown && e.which === 190) {
             $('#next').trigger('click');
             return false;
         }
-                
+        
+        /* Previous marker Ctrl+< */
         if(ctrlIsDown && e.which === 188) {
             $('#previous').trigger('click');
             return false;
@@ -242,11 +248,18 @@ $( document ).ready(function() {
     
     /*
      * Function triggered when the user changes the selection of a sense
-     */
-    $('#list-senses').change(function() {
+     */           
+    $('#list-senses').on( "selectmenuchange", function() {
+    //$('#list-senses').change(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
         $('#sense-id').val(this.value);
+        alert(this.value);
+        $('#not-marker').removeClass('select-annotation');
+        $('#list-senses-container').addClass('select-annotation');
+        
+        $('#explanation').html(explanations[$('#list-senses').val() - 1]);
+
         
         $.ajax({
             type: 'POST',
@@ -340,13 +353,7 @@ $( document ).ready(function() {
     $('#uncertain').change(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');   
-    });
-    
-    $('#list-senses').change(function() {
-        $('#explanation').html(explanations[$('#list-senses').val() - 1]);
-        $('#not-marker').removeClass('select-annotation');
-        $('#list-senses-container').addClass('select-annotation');
-    });
+    });    
     
     $('#locate').click(function() {
         if($('#pointer').css('display') !== 'none') {
@@ -421,22 +428,25 @@ function updateAnnotationPanel(data) {
     var sense_html = "<option>...</option>";
 
     explanations = [];
+    currentSenses = []
     for(var i = 0; i < data.senses.length; i++) {
         selected = "";
-        if(data.senses[i][1] == data.current_sense) {
+        if(data.senses[i][1] === data.current_sense) {
             selected = " selected ";
             $('#explanation').html(data.senses[i][2]);
         }
         sense_html += "<option value='" + data.senses[i][0] + "'" + selected + ">" + data.senses[i][1] + "</option>";
         explanations.push(data.senses[i][2]);
+        currentSenses.push(data.senses[i][0]);
     }
     $('#list-senses').html(sense_html);
     
-    $('select#list-senses').selectmenu({
+    $('#list-senses').selectmenu({
         style: 'popup',
         width: 350,
         appendTo: '#tag-attributes'
     });
+    $('#list-senses').selectmenu("refresh");
 
     // categories
     var primary_cat_html = "<option value='0'>...</option>";
