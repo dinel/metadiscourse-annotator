@@ -254,7 +254,6 @@ $( document ).ready(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
         $('#sense-id').val(this.value);
-        alert(this.value);
         $('#not-marker').removeClass('select-annotation');
         $('#list-senses-container').addClass('select-annotation');
         
