@@ -65,17 +65,20 @@ $( document ).ready(function() {
     
     $('.recalculate').click(function() {
         var corpus = $(this).attr('data-corpus');
-        $(this).html('<img src="infinity.gif">')
+        $(this).find('.progress').toggle();
+        $(this).find('.glyphicon').toggle();
+        //$(this).html('<img src="infinity.gif">')
         $.ajax({
             context: this, 
             type: 'POST',
             url: '/admin/corpus/stats/' + corpus,
             dataType: 'json',
             success: function(data) {
-                $(this).parent().find('.val-tokens').html(data.nowords);
-                $(this).parent().find('.val-types').html(data.notypes);
-                $(this).html("");
-                $(this).removeClass();
+                $(this).closest('.with-border').find('.val-tokens').html(data.nowords);
+                $(this).closest('.with-border').find('.val-types').html(data.notypes);        
+                $(this).find('.progress').toggle();
+                $(this).find('.glyphicon').toggle();
+
             }
         });
     });
