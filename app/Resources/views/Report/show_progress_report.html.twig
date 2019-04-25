@@ -33,16 +33,17 @@
                 
                     <div class="voffset3">
                     {% if stat.anns %}                        
-                        <strong>Annotations</strong><br/>
+                        <strong>Annotators</strong><br/>
                         {% for an in stat.anns %}
                             {% set progress = 100 * an.c // stat.no_mark %}
                             {{ an.userName }}
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar" 
-                                     style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ an.c }}</div>                                
-                            </div>
-                            
+                                     style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ an.c }} ({{ progress }}%)</div>                                
+                            </div>                            
                         {% endfor %}
+                    {% else %}
+                        <strong>No annotation was carried out on this file so far.</strong>
                     {% endif %}
                     </div>
                 
@@ -58,7 +59,9 @@
             <div style="font-size: 75%; font-style: italic;">
                 This page displays the number of markers for each text, as well
                 as information about who annotated each text and how many markers
-                they annotated.
+                they annotated. The progress bar indicates both the number of
+                markers annotated by each person and the percentage of markers
+                they covered. 
             </div>
             <div class="voffset3"></div>
             <a href="{{ path('homepage') }}" class="btn btn-outline-primary" role="button">
