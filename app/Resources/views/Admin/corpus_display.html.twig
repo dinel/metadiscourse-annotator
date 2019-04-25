@@ -39,27 +39,27 @@
                     <a href="{{ path('admin_corpus_progress', {'id_corpus': corpus.id } ) }}"
                        class="btn btn-default {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
                        role="button">
-                       <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                       <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title="Obtain information about the corpus"></span>
                     </a>
                 </div>
                 <div>
                     <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" 
                        class="btn btn-default {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
                        role="button">
-                       <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>                                    
+                       <span class="glyphicon glyphicon-wrench" aria-hidden="true" title="Edit corpus"></span>                                    
                     </a>
                 </div>
                 <div>
                     <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" 
                        class="btn btn-default confirmation {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
                        role="button">
-                       <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>                                    
+                       <span class="glyphicon glyphicon-trash" aria-hidden="true" title="Delete corpus"></span>                                    
                     </a>
                 </div>
                 
-                <div class="btn btn-default {% if is_granted('ROLE_ADMIN')  %}recalculate{% endif %}" 
+                <div class="btn btn-default {% if is_granted('ROLE_ADMIN')  %}recalculate{% else %}disabled{% endif %}" 
                    role="button" data-corpus="{{ corpus.id }}">
-                   <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                   <span class="glyphicon glyphicon-refresh" aria-hidden="true" title="Refresh statistics"></span>
                    <img class="progress" style="display: none; padding: 0px; margin: 0px;" src="ajax-loader.gif">
                 </div>
             </div>
