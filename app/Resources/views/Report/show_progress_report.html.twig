@@ -1,0 +1,79 @@
+{# app/Resources/views/Report/show_progress_report.html.twig #}
+
+{% extends 'base_new.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}     
+    <style>
+        #option-panel {
+            position: sticky;
+            top:20px;
+        }
+    </style>        
+    <link rel="stylesheet"
+          href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="row voffset3">
+    <div class="col-md-8">
+        <div>
+            <div class="voffset4" id="results">
+            {% for stat in stats %}
+                <div class="in-a-box">
+                    Title of text: <em>{{ stat.text.title }}</em><br/>
+                    {% if stat.text.description %}
+                        Description: <em>{{ stat.text.description }}</em><br/>
+                    {% endif %}
+                    <div class="voffset3">
+                        Number of tokens: <em>{{ stat.text.notokens}}</em><br/>
+                        Number of types: <em>{{ stat.text.notypes}}</em><br/>
+                        Number of markers: <em>{{ stat.no_mark }}</em><br/>
+                    </div>
+                
+                    <div class="voffset3">
+                    {% if stat.anns %}                        
+                        <strong>Annotations</strong><br/>
+                        {% for an in stat.anns %}
+                            {% set progress = 100 * an.c // stat.no_mark %}
+                            {{ an.userName }}
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ an.c }}</div>                                
+                            </div>
+                            
+                        {% endfor %}
+                    {% endif %}
+                    </div>
+                
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        <br/>
+    </div>
+            
+    <div class="col-md-3">
+        <div id="option-panel">
+            <div style="font-size: 75%; font-style: italic;">
+                This page displays the number of markers for each text, as well
+                as information about who annotated each text and how many markers
+                they annotated.
+            </div>
+            <div class="voffset3"></div>
+            <a href="{{ path('homepage') }}" class="btn btn-outline-primary" role="button">
+                <i class="fas fa-angle-double-left"></i> Front page
+            </a>
+            <div class="voffset2"></div>
+            <a href="{{ path('select-corpus') }}" class="btn btn-outline-primary" role="button">
+                <i class="fas fa-angle-double-left"></i> Select corpus
+            </a>
+        </div>       
+    </div>
+</div>
+                
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

@@ -31,6 +31,56 @@ use AppBundle\Utils\SharedFunctions;
  */
 class ReportController extends Controller {
     /**
+     * @Route("/admin/corpus/progress/{id_corpus}", name="admin_corpus_progress")
+     * @Method({"GET"})
+     */
+    public function corpusProgressReportAction($id_corpus) {
+        $corpus = SharedFunctions::getCorpusById($id_corpus, $this->getDoctrine());
+        if($corpus) {
+            $stats = [];
+            foreach($corpus->getTexts() as $text) {
+                $val = [];
+                $val["text"] = $text;
+                $val["no_mark"] = $this->getNoMarkersPerText($text->getId());
+                $val["anns"] = $this->getAnnotatorsStatsPerText($text->getId());
+                $stats[] = $val;
+            }
+            
+            return $this->render('Report/show_progress_report.html.twig', array(        
+                    'stats' => $stats,
+                    'id_corpus' => $id_corpus,
+                ));  
+        }
+        
+    }
+    
+    private function getNoMarkersPerText($id_text) {
+        $em = $this->getDoctrine()->getManager();        
+        $queryBuilder = $em->createQueryBuilder();       
+        $queryBuilder->addSelect("count(token.id) as c")
+                     ->from("AppBundle:Token", 'token')
+                     ->andWhere("token.document=(:param)")
+                     ->andWhere("token.markable IS NOT NULL")
+                     ->setParameter('param', $id_text);
+
+        return $queryBuilder->getQuery()->getResult()[0]["c"];
+    }
+    
+    private function getAnnotatorsStatsPerText($id_text) {
+        $em = $this->getDoctrine()->getManager();        
+        $queryBuilder = $em->createQueryBuilder();       
+        $queryBuilder->addSelect("count(annotation.id) as c, annotation.userName")
+                     ->from("AppBundle:Annotation", 'annotation')
+                     ->from("AppBundle:Token", 'token')                
+                     ->andWhere("annotation.token = token")
+                     ->andWhere("token.document=(:param)")
+                     ->setParameter('param', $id_text)
+                     ->groupBy('annotation.userName');
+        return $queryBuilder->getQuery()->getResult();
+        
+    }
+
+    /**
      * @Route("/report/corpus/{id}/{marker}", name="report_corpus")
      * @Method({"GET"})
      */
