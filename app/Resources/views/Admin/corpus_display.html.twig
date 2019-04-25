@@ -1,7 +1,7 @@
 {# app/Resources/views/Admin/corpus_display.html.twig #}
 
 <div class="voffset3 with-border row row-list">
-    <div class="col-xs-9">
+    <div class="col-xs-8">
         <strong>{{ corpus.name }}</strong><br/>
         {{ corpus.description | truncate(200) }}
         {% if corpus.description|length > 200 %}...{% endif %}
@@ -22,16 +22,23 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-xs-3 right">
+    <div class="col-xs-4 right">
         {% if not path %}
-            <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-default right" role="button">Annotate</a>
-            <a href="" class="btn btn-default" role="button"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
+            <a href="{{ path('corpus_annotate', {'id': corpus.id }) }}" class="btn btn-block btn-default right" role="button">Annotate</a>
             <br/><br/>
+            
+            <a href="{{ path('admin_corpus_progress', {'id_corpus': corpus.id } ) }}"
+               class="btn btn-default {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
+               role="button">
+               <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+            </a>
+            
             <a href="{{ path('admin_new_corpus', {'id': corpus.id } ) }}" 
                class="btn btn-default {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
                role="button">
                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>                                    
             </a>
+               
             <a href="{{ path('admin_corpus_delete', {'id': corpus.id }) }}" 
                class="btn btn-default confirmation {% if not is_granted('ROLE_ADMIN')  %}disabled{% endif %}" 
                role="button">
