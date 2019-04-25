@@ -2,8 +2,8 @@
 
 <div class="voffset3" style="font-size: 75%;">
     Marked done by:
-    {% if usersPerText[text.id] is defined %}
-        {% for user in usersPerText[text.id] %}
+    {% if usersPerText[stat.text.id] is defined %}
+        {% for user in usersPerText[stat.text.id] %}
             {{user}}{% if not loop.last %}, {% endif %}
         {% endfor %}
     {% else %}                                                        

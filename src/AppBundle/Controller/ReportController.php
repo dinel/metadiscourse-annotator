@@ -49,6 +49,7 @@ class ReportController extends Controller {
             return $this->render('Report/show_progress_report.html.twig', array(        
                     'stats' => $stats,
                     'id_corpus' => $id_corpus,
+                    'usersPerText' => $this->getUsersPerDoneTexts($id_corpus),
                 ));  
         }
         
@@ -76,8 +77,30 @@ class ReportController extends Controller {
                      ->andWhere("token.document=(:param)")
                      ->setParameter('param', $id_text)
                      ->groupBy('annotation.userName');
-        return $queryBuilder->getQuery()->getResult();
-        
+        return $queryBuilder->getQuery()->getResult();        
+    }
+    
+    private function getUserName($uid) {
+        $user = $this->getDoctrine()
+                     ->getRepository('AppBundle:User')
+                     ->find($uid);
+        return $user->getFullName();
+    }
+    
+    /**
+     * Returns a list of text IDs that are marked done by a user
+     * @param interger the corpus ID
+     * @return array an array of text IDs that have been pinned
+     */
+    private function getUsersPerDoneTexts($cid) {
+        $doneTexts = $this->getDoctrine()
+                          ->getRepository("AppBundle:PinnedText")
+                          ->findBy(['corpusId' => $cid, 'type' => 'DONE']);
+        $usersPerText = [];
+        foreach($doneTexts as $text) {
+            $usersPerText[$text->getTextId()][] = $this->getUserName($text->getUserId());
+        }
+        return $usersPerText;
     }
 
     /**

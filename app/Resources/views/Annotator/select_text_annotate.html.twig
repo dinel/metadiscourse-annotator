@@ -61,9 +61,6 @@
                     <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-outline-primary float-right disabled" role="button">Re-process</a>
                 {% endif %}
             </div>
-            {% if is_granted('ROLE_ADMIN')  %}
-                {% include 'Annotator/who_marked_done.html.twig' %}
-            {% endif %}
         </div>
     {% endfor %}
     </div>
