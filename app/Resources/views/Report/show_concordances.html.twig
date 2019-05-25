@@ -31,7 +31,7 @@
                         <div class="left-context"><div>{{ row.concordance[0] }}</div></div> 
                         <div class="keyword"><div class="sense{{row.style}}">{{ row.concordance[1] }}</div></div> 
                         <div class="right-context"><div>{{ row.concordance[2] }}</div></div>                    
-                        <div id="{{ row.id }}" class="details float-right"><i class="fas fa-search-plus"></i></div>
+                        <div id="{{ row.id }}" class="details float-right"><i class="fas fa-plus"></i><i style="display:none;" class="fas fa-minus"></i></div>
                         <div class="more-info"></div>
                     </div>                    
                 {% endfor %}

@@ -15,13 +15,16 @@
  */
 
 $( document ).ready(function() {
-    $("#results").on('click', '.details', function(e) {          
+    $("#results").on('click', '.details', function(e) {
         var node = $(this).next();
+        $(this).find(".fa-plus").toggle();
+        $(this).find(".fa-minus").toggle();
         if(node.html()) {
             node.toggle();
             return;
         }
         
+        node.html('<div class="text-center"><img width="30px;" src="/ajax-loader.gif"></div>');
         $.ajax({
             type: 'GET',
             url: '/search/retrieve_info/' + $(this).attr("id"),
@@ -41,13 +44,14 @@ $( document ).ready(function() {
                 }
                 
                 if(data.uncertain === true) {
-                    display += "<br/><strong style='text-color: red'>The annotator was uncertain about this annotation!!</strong>";
+                    display += "<br/><strong style='text-color: red;'>The annotator was uncertain about this annotation!!</strong>";
                 }
                 display += "<br/>";                
                 node.html(display);
+                $(this).find(".fa-plus").toggle();                
             }
         });
-                e.preventDefault();
+        e.preventDefault();
         
         node.parent().show();
     }); 
