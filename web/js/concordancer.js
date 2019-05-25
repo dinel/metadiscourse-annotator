@@ -17,7 +17,6 @@
 $( document ).ready(function() {
     $("#results").on('click', '.details', function(e) {          
         var node = $(this).next();
-        console.log(node);
         if(node.html()) {
             node.toggle();
             return;
