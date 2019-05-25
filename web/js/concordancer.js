@@ -19,6 +19,13 @@ $( document ).ready(function() {
         var node = $(this).next();
         $(this).find(".fa-plus").toggle();
         $(this).find(".fa-minus").toggle();
+        
+        if(node.hasClass("more-info-shown")) {
+            node.removeClass("more-info-shown")
+        } else {
+            node.addClass("more-info-shown")
+        }
+        
         if(node.html()) {
             node.toggle();
             return;

@@ -90,6 +90,9 @@ limitations under the License.
 
 .more-info {
     margin: 0.5em 5em 0.5em 5em;
-    padding: 0px 3px 0px 3px;
-    background-color: #ECECEC;
+}
+
+.more-info-shown {
+    padding: 12px;
+    border: thin dotted black;
 }
