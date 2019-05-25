@@ -70,6 +70,25 @@ $( document ).ready(function() {
     $('.right-context').each(function(index) {
         trimText($(this).children().get(0), 1);
     });
+    
+    $('#filter-text-btn').click(function(e) {
+        var word = $('#filter-text').val();
+        $('.concordance').each(function(i, obj) {
+           if(!$(this).find('.left-context').text().includes(word) &&
+              !$(this).find('.right-context').text().includes(word)) {
+                $(this).hide();          
+           }
+        });
+        e.preventDefault();
+    });
+    
+    $('#filter-clear-btn').click(function(e) {
+        $('#filter-text').val("");
+        $('.concordance').each(function(i, obj) {
+           $(this).show();
+        });
+        e.preventDefault();
+    });
 });
 
 /*
