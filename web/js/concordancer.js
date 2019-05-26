@@ -77,6 +77,8 @@ $( document ).ready(function() {
            if(!$(this).find('.left-context').text().includes(word) &&
               !$(this).find('.right-context').text().includes(word)) {
                 $(this).hide();          
+           } else {
+               $(this).show();
            }
         });
         e.preventDefault();
