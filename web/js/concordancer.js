@@ -89,7 +89,35 @@ $( document ).ready(function() {
         });
         e.preventDefault();
     });
+    
+    $('#sort-position').change(function(e){
+        var selected = parseInt($('#sort-position').val());
+        var context = "";
+        if(selected < 0) {
+            context = '.left-context';
+        } else {
+            context = '.right-context';
+        }
+        console.log(selected, context)
+        
+        var sortedDivs = $('.concordance').sort(function(a, b) {            
+            var aord = getComparator($(a).find(context).text(), selected);
+            var bord = getComparator($(b).find(context).text(), selected);
+            return aord > bord;
+        });
+        
+        $('#results').html(sortedDivs);
+    });
 });
+
+function getComparator(str, pos) {    
+    var words = str.split(" ");
+    if(pos > 0) {
+        return words[pos - 1];
+    } else {
+        return words[words.length + pos - 1];
+    }
+}
 
 /*
  * Adapted from http://jsfiddle.net/x1Lvq2ex/

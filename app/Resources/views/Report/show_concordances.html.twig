@@ -51,6 +51,20 @@
                 <a href="" id="filter-clear-btn" type="button" class="btn btn-outline-primary" role="button">Clear</a>
             </div>
             
+            <div class="form-group">
+                <label for="sort-position">Sort by</label>
+                <select id="sort-position" class="form-control">
+                    <option selected>Choose...</option>
+                    <option value="-3">3rd word left</option>
+                    <option value="-2">2nd word left</option>
+                    <option value="-1">1st word left</option>
+                    <option disabled>-------------</option>
+                    <option value="1">1st word right</option>
+                    <option value="2">2nd word right</option>
+                    <option value="3">3rd word right</option>
+                </select>
+            </div>
+            
             <div class="voffset4">
                 <a href="" onclick="window.history.go(-1); return false;" class="btn btn-outline-primary" role="button">
                     <i class="fas fa-angle-double-left"></i> Back to statistics
