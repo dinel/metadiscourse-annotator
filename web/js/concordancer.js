@@ -110,6 +110,24 @@ $( document ).ready(function() {
         
         $('#results').html(sortedDivs);
     });
+    
+    $('#show-collocates').click(function(e) {
+        $('#concordances-block').hide();
+        $('#collocations-block').show();
+        $('#show-collocates').hide();
+        $('#hide-collocates').show();
+        e.preventDefault();
+    });
+    
+    $('#hide-collocates').click(function(e) {
+        $('#concordances-block').show();
+        $('#collocations-block').hide();
+        $('#show-collocates').show();
+        $('#hide-collocates').hide();
+        e.preventDefault();
+    });
+    
+    setTimeout(produceCollocations(), 4000);
 });
 
 function getComparator(str, pos) {    
@@ -220,4 +238,64 @@ function trimText(row, direction){
     }
 
     trimContents(row, row, direction);    
+}
+
+/*
+ * Function which determines the collocations from the concordances displayed
+ * @returns nothing
+ */
+function produceCollocations() {
+    var fdCols = new Array();
+    
+    for(var i = 0; i < 10; i++) {
+        fdCols[i] = {};
+    }
+    
+    var noConcordances = $('.concordance').length;
+    
+    $('.concordance').each(function(i, obj) {
+        var text = "";
+        /* left context */
+        text = $(this).find(".left-context").text().split(" ");
+        for(var i = 0; i < 5; i++) {
+            if(! fdCols[4 - i][text[text.length - i - 2]]) {
+                fdCols[4 - i][text[text.length - i - 2]] = 0;
+            }
+            fdCols[4 - i][text[text.length - i - 2]] += 1;
+        }
+        
+        /* right context */
+        text = $(this).find(".right-context").text().split(" ");
+        for(var i = 0; i < 5; i++) {
+            if(! fdCols[5 + i][text[i]]) {
+                fdCols[5 + i][text[i]] = 0;
+            }
+            fdCols[5 + i][text[i]] += 1;
+        }        
+    });
+    
+    for(var i = 0; i < 10; i++) {
+        var col = "";
+        if(i < 5) {
+            col = i;
+        } else {
+            col  = i + 1;
+        }
+        // make array from the frequency object to de-duplicate
+        var uniques = [];
+        for(var value in fdCols[i]) {
+            uniques.push(value);
+        }
+        
+        // sort the uniques array in descending order by frequency
+        function compareFrequency(a, b) {
+            return fdCols[i][b] - fdCols[i][a];
+        }
+
+        var sortedFd = uniques.sort(compareFrequency);
+        for(var j = 0; j < Math.min(10, sortedFd.length); j++) {            
+            $("#r" + j.toString() + "-c" + col.toString()).html(sortedFd[j] + "<br/>" +
+                    fdCols[i][sortedFd[j]].toString() + "/" + noConcordances.toString());
+        }
+    }
 }

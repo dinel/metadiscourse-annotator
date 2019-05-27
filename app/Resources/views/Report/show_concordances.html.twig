@@ -21,7 +21,7 @@
 {% block content %}
 <div class="row voffset3">
     <div class="col-md-10">
-        <div>
+        <div id="concordances-block">
             <h3>Concordances from <strong>{{ search_scope }}</strong></h3>
             
             <div class="voffset4" id="results">
@@ -40,8 +40,34 @@
             {% endfor %}
             </div>
         </div>
-        <br/>
-    </div>
+            
+        <div id="collocations-block" style="display: none;">
+            <table class="table" style="font-size: 75%; text-align: center;">
+                <thead>
+                    <tr>
+                        <th scope="col">-5</th>
+                        <th scope="col">-4</th>
+                        <th scope="col">-3</th>
+                        <th scope="col">-2</th>
+                        <th scope="col">-1</th>
+                        <th scope="col">Keyword</th>
+                        <th scope="col">+1</th>
+                        <th scope="col">+2</th>
+                        <th scope="col">+3</th>
+                        <th scope="col">+4</th>
+                        <th scope="col">+5</th>                        
+                </thead>
+                {% for i in range(0, 9) %}
+                    <tr>
+                        {% for j in range(0, 10) %}
+                            <td id="r{{i}}-c{{j}}"></td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>           
+            
     <div class="col-md-2">
         <div id="option-panel">
             <div class="form-group">
@@ -63,6 +89,11 @@
                     <option value="2">2nd word right</option>
                     <option value="3">3rd word right</option>
                 </select>
+            </div>
+            
+            <div class="voffset4">
+                <a href="#" id="show-collocates" class="btn btn-outline-primary" role="button">Show collocations</a>
+                <a href="#" id="hide-collocates" class="btn btn-outline-primary" role="button" style="display: none;">Hide collocations</a>
             </div>
             
             <div class="voffset4">
