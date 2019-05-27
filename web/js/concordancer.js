@@ -125,9 +125,9 @@ $( document ).ready(function() {
         $('#show-collocates').show();
         $('#hide-collocates').hide();
         e.preventDefault();
-    });
+    });            
     
-    setTimeout(produceCollocations(), 4000);
+    setTimeout(produceCollocations, 1000);
 });
 
 function getComparator(str, pos) {    
@@ -298,4 +298,6 @@ function produceCollocations() {
                     fdCols[i][sortedFd[j]].toString() + "/" + noConcordances.toString());
         }
     }
+    
+    $('#show-collocates').show();
 }
