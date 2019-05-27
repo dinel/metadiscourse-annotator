@@ -71,6 +71,12 @@ $( document ).ready(function() {
         trimText($(this).children().get(0), 1);
     });
     
+    $('#filter-text').on('keypress', function (e) {
+        if(e.which === 13){
+            $('#filter-text-btn').trigger('click');
+        }
+    });
+    
     $('#filter-text-btn').click(function(e) {
         var word = $('#filter-text').val();
         $('.concordance').each(function(i, obj) {
@@ -125,7 +131,7 @@ $( document ).ready(function() {
         $('#show-collocates').show();
         $('#hide-collocates').hide();
         e.preventDefault();
-    });            
+    });
     
     setTimeout(produceCollocations, 1000);
 });
