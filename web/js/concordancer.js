@@ -106,7 +106,6 @@ $( document ).ready(function() {
         } else {
             context = '.right-context';
         }
-        console.log(selected, context)
         
         var sortedDivs = $('.concordance').sort(function(a, b) {            
             var aord = getComparator($(a).find(context).text(), selected);
