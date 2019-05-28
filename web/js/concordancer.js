@@ -108,9 +108,9 @@ $( document ).ready(function() {
         }
         
         var sortedDivs = $('.concordance').sort(function(a, b) {            
-            var aord = getComparator($(a).find(context).text(), selected);
-            var bord = getComparator($(b).find(context).text(), selected);
-            return aord > bord;
+            var aord = getComparator($(a).find(context).text(), selected).toLowerCase();
+            var bord = getComparator($(b).find(context).text(), selected).toLowerCase();
+            return aord > bord ? 1 : aord < bord ? -1 : 0;
         });
         
         $('#results').html(sortedDivs);
