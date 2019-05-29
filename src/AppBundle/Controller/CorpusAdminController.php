@@ -89,6 +89,10 @@ class CorpusAdminController extends Controller
     /**
      * Updates the statistics for a corpus
      * @Route("/admin/corpus/stats/{id}", name="corpus_update_stats")
+     * 
+     * @param Request $request used to check if it is an AJAX request
+     * @param int $id the ID of the corpus for which the statistics are extracted
+     * @return JsonResponse the statistics of the corpus
      */
     public function corpusUpdateStats(Request $request, $id) {
         if($request->isXmlHttpRequest()) {
@@ -98,23 +102,24 @@ class CorpusAdminController extends Controller
             $corpus = SharedFunctions::getCorpusById($id, $doctrine);
             $list_texts = SharedFunctions::getListIdTextFromCorpus($id, $doctrine);
 
+            # SELECT count(`content`) FROM `token`
             $query = $doctrine->getManager()
-                              ->createQuery("SELECT t.content, COUNT(t.content) AS freq " 
+                              ->createQuery("SELECT COUNT(t.content) AS no_tokens " 
                                             . "FROM AppBundle\Entity\Token t "
-                                            . "WHERE t.document in (:param) "
-                                            . "GROUP BY t.content ORDER BY freq DESC")
+                                            . "WHERE t.document in (:param) ")
                               ->setParameters(['param' => explode(",", $list_texts)]);
             $rows = $query->execute();
-
-            $totalWords = 0;
-            $types = [];
-            foreach($rows as $row) {
-                $types[$row["content"]] = 1;
-                $totalWords += $row["freq"];
-            }        
+            $corpus->setNumberTokens((int)$rows[0]['no_tokens']);
             
-            $corpus->setNumberTypes(count($types));
-            $corpus->setNumberTokens($totalWords);
+            # SELECT count( DISTINCT(`content`) ) FROM `token`            
+            $query = $doctrine->getManager()
+                              ->createQuery("SELECT COUNT( DISTINCT(t.content) ) AS no_types "
+                                            . "FROM AppBundle\Entity\Token t "
+                                            . "WHERE t.document in (:param) ")
+                              ->setParameters(['param' => explode(",", $list_texts)]);
+            $rows = $query->execute();
+            $corpus->setNumberTypes((int)$rows[0]['no_types']);
+            
             $corpus->setStatisticsOutdated(0);
             $this->saveCorpus($corpus);
             
@@ -127,7 +132,7 @@ class CorpusAdminController extends Controller
             $em->flush();
             
             return new JsonResponse(array(
-                    'nowords' => $totalWords,
+                    'nowords' => $corpus->getNumberTokens(),
                     'notypes' => $corpus->getNumberTypes()
                 ));
         } else {
