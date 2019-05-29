@@ -67,6 +67,7 @@ $( document ).ready(function() {
         var corpus = $(this).attr('data-corpus');
         $(this).find('.progress').toggle();
         $(this).find('.glyphicon').toggle();
+        $(this).addClass('disabled');
         //$(this).html('<img src="infinity.gif">')
         $.ajax({
             context: this, 
@@ -78,7 +79,7 @@ $( document ).ready(function() {
                 $(this).closest('.with-border').find('.val-types').html(data.notypes);        
                 $(this).find('.progress').toggle();
                 $(this).find('.glyphicon').toggle();
-
+                $(this).removeClass('disabled');
             }
         });
     });
