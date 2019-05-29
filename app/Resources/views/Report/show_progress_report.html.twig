@@ -36,7 +36,10 @@
                         <strong>Annotators</strong><br/>
                         {% for an in stat.anns %}
                             {% set progress = 100 * an.c // stat.no_mark %}
-                            {{ an.userName }}
+                            {{ an.userName }} 
+                            <a href="{{ path('annotate_instead', {'id': stat.text.id, 'name':an.userName}) }}" target="_blank">
+                                <i class="fas fa-random"></i>
+                            </a>
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar" 
                                      style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ an.c }} ({{ progress }}%)</div>                                

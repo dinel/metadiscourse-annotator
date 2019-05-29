@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2015 - 2017 dinel.
+ * Copyright 2015 - 2019 dinel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 
 /**
  * Description of WebAnnotatorController
+ * 
+ * Controller for performing the annotation
  *
  * @author dinel
  */
@@ -36,23 +38,45 @@ use AppBundle\Utils\SharedFunctions;
 class WebAnnotatorController extends Controller
 {
     /**
-     * @Route("/document/{id}/{id_token}", name="document_show", 
-     *          requirements={"id": "\d+", "id_token": "\d+"})
+     * Action which sets the user who annotates and then redirects to the 
+     * actual annotation action
+     * @Route("/annotate_instead/{id}/{name}", name="annotate_instead") 
+     * @param int $id the ID of the text to annotate
+     * @param string $name the user name who annotates
+     * @return object the view
      */
-    public function indexAction($id, $id_token = null) {
+    public function annotateInsteadAction($id, $name) 
+    {
+        $session = $this->get('session');
+        $session->set('replacement-user', $name);
+        
+        return $this->redirectToRoute("document_show", ['id' => $id]);
+    }
+            
+    /**
+     * The action which implements the main annotation process
+     * @Route("/document/{id}/{id_token}", name="document_show", 
+     *         requirements={"id": "\d+", "id_token": "\d+"})
+     * 
+     * @param int $id the ID of the document to be annotated
+     * @param int $id_token the token to which the annotation should jump to
+     * @return object the view
+     */
+    public function indexAction($id, $id_token = null) 
+    {
         $annotationPreferences = $this->getAnnotationPreferences();
         $doc = $this->getDoctrine()
-                ->getRepository('AppBundle:Text')
-                ->find($id);
+                    ->getRepository('AppBundle:Text')
+                    ->find($id);
         
         if($doc) {            
             $tokens = $this->getDoctrine()
-                       ->getRepository('\AppBundle\Entity\Token')
-                       ->createQueryBuilder('t')
-                       ->where('t.document = :id')
-                       ->setParameter('id', $id)
-                       ->getQuery()
-                       ->iterate();
+                           ->getRepository('AppBundle:Token')
+                           ->createQueryBuilder('t')
+                           ->where('t.document = :id')
+                           ->setParameter('id', $id)
+                           ->getQuery()
+                           ->iterate();
             
             $tokens_style = array();
             $markers = array();
@@ -61,10 +85,11 @@ class WebAnnotatorController extends Controller
             
             $session = $this->get('session');
             $id_mark = $session->get('filter-mark-id');
+            $replacement_user = $session->remove('replacement-user');
 
             while (($row = $tokens->next()) !== false) {
                 $token = $row[0];
-                $ann = $this->getAnnotation($token);
+                $ann = $this->getAnnotation($token, $replacement_user);
                 $style = " dsp-" . str_replace(" ", "-", strtolower($token->getContent()));
                 if($ann && ($id_mark == null || $id_mark == $token->getMarkable()->getId())) {                    
                     $flag = 1;
@@ -495,12 +520,23 @@ class WebAnnotatorController extends Controller
         return $response;
     }
 
-    
-    private function getAnnotation($token) {
+    /**
+     * Function which retrieves the annotation for a token corresponding to
+     * a user name. 
+     * @param object $token the token for which the annotation is being retrieved
+     * @param string $user_name the user name for whom the annotation is retrieved. 
+     * If no user_name is provided, the current user is used. 
+     * @return object the annotation
+     */
+    private function getAnnotation($token, $user_name = null) {
+        if(! $user_name) {
+            $user_name = $this->getUser()->getUserName();
+        }
+        
         return $this->getDoctrine()
                     ->getRepository('AppBundle:Annotation')
                     ->findBy(array('token' => $token, 
-                                   'userName' => $this->getUser()->getUserName()));
+                                   'userName' => $user_name));
     }
 
     private function getAnnotationPreferences() {
