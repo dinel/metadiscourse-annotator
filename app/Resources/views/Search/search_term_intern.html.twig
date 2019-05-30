@@ -6,6 +6,7 @@
     {{ parent() }}
     <link href="{{ asset('css/general.css') }}" rel="stylesheet">
     <link href="{{ asset('css/search.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 {% endblock stylesheets %}
 
 {% block body %}
@@ -15,7 +16,8 @@
                 <div>
                     <div><i>The statistics and annotation are from <strong>{{ search_scope }}</strong></i></div>
                     <h4>Statistics</h4>
-                    <table class="table table-hover">
+                    <table class="display" id="table_stat">
+                        <thead>
                         <tr>
                             <td>Show</td>
                             <td>User</td>
@@ -24,6 +26,8 @@
                             <td>Category</td>
                             <td>Count</td>
                         </tr>
+                        </thead>
+                        <tbody>
                         {% for user, u_stats in stats %}
                             {% for mark, m_stats in u_stats %}
                                 {% for sense, s_stats in m_stats %}
@@ -44,6 +48,7 @@
                                 {% endfor %}
                             {% endfor %}
                         {% endfor %}
+                        </tbody>
                     </table>                    
                     <div class="text-left"><a id="display-all">All</a><a style="margin-left: 3em;" id="display-none">None</a></div>
                 </div>
@@ -72,5 +77,20 @@
             </div>
         </div>
     </div>
-                
+{% endblock %}
+
+{% block javascripts %}    
+    <script type="text/javascript">
+    $(document).ready( function () {
+        $("body").find('#table_stat').DataTable({
+            paging: false,
+            info: false,
+            searching: false,
+            dom: 'Bfrt',
+            buttons: [
+                'csv', 'excel'
+            ]
+        } );
+    } );
+    </script>
 {% endblock %}
