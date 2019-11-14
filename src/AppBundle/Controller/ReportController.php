@@ -84,7 +84,11 @@ class ReportController extends Controller {
         $user = $this->getDoctrine()
                      ->getRepository('AppBundle:User')
                      ->find($uid);
-        return $user->getFullName();
+        if($user) {
+            return $user->getFullName();
+        } else {
+            return null;
+        }        
     }
     
     /**
@@ -98,7 +102,12 @@ class ReportController extends Controller {
                           ->findBy(['corpusId' => $cid, 'type' => 'DONE']);
         $usersPerText = [];
         foreach($doneTexts as $text) {
-            $usersPerText[$text->getTextId()][] = $this->getUserName($text->getUserId());
+            $name = $this->getUserName($text->getUserId());
+            
+            // quitely discard deleted users
+            if($name) {
+                $usersPerText[$text->getTextId()][] = $name;
+            }
         }
         return $usersPerText;
     }
