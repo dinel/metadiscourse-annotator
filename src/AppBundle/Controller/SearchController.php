@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2015 - 2018 dinel.
+ * Copyright 2015 - 2020 dinel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -250,6 +250,7 @@ class SearchController extends Controller
     }    
 
     /**
+     * Retrieves information related to an annotation
      * @Route("/search/retrieve_info/{id}")
      * @Method({"GET"})
      */
@@ -258,26 +259,30 @@ class SearchController extends Controller
                            ->getRepository('AppBundle:Annotation')
                            ->find($id);
         
-        $target = "";
-        $source = "";
-        if($annotation->getToken()->getSegment()) {
-            $source = $annotation->getToken()->getSegment()->getSegment();
-            $target = $annotation->getToken()->getSegment()->getAlignment()->getSegment();
+        if($annotation) {        
+            $target = "";
+            $source = "";
+            if($annotation->getToken()->getSegment()) {
+                $source = $annotation->getToken()->getSegment()->getSegment();
+                $target = $annotation->getToken()->getSegment()->getAlignment()->getSegment();
+            }
+
+            return new JsonResponse([
+                    'annotator' => $annotation->getUserName(),
+                    'sense' => $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker",
+                    'comments' => $annotation->getComments(),
+                    'category' => $annotation->getCategoryName(),
+                    'polarity' => $annotation->getPolarity(),
+                    'uncertain' => $annotation->getUncertain(),
+                    'source_title' => $annotation->getToken()->getDocument()->getTitle() . "(" . $annotation->getToken()->getDocument()->getId() . ")",
+                    'id_token' => $annotation->getToken()->getId(),
+                    'id_document' => $annotation->getToken()->getDocument()->getId(),
+                    'source' => $source,
+                    'target' => $target,
+                    ]);
+        } else {
+            return new JsonResponse([]);            
         }
-        
-        return new JsonResponse(array(
-                'annotator' => $annotation->getUserName(),
-                'sense' => $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker",
-                'comments' => $annotation->getComments(),
-                'category' => $annotation->getCategoryName(),
-                'polarity' => $annotation->getPolarity(),
-                'uncertain' => $annotation->getUncertain(),
-                'source_title' => $annotation->getToken()->getDocument()->getTitle() . "(" . $annotation->getToken()->getDocument()->getId() . ")",
-                'id_token' => $annotation->getToken()->getId(),
-                'id_document' => $annotation->getToken()->getDocument()->getId(),
-                'source' => $source,
-                'target' => $target,
-                ));
     }
         
     /***********************************************************************

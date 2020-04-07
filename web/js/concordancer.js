@@ -36,24 +36,30 @@ $( document ).ready(function() {
             type: 'GET',
             url: '/search/retrieve_info/' + $(this).attr("id"),
             success: function(data) {
-                var display = "<strong>Annotator: </strong>" + data.annotator;
-                display += "<br/><strong>Sense selected: </strong> " + data.sense;
-                display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Category: </strong> " + data.category;
-                display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Polarity: </strong> " + data.polarity;
-                display += "<br/><strong>Notes: </strong>" + data.comments;
-                display += "<br/><strong>Source: </strong>" + data.source_title;
-                display += "<span style='margin-left: 5em'><a target='_blank' " 
-                        + " href='/document/" + data.id_document + "/" + data.id_token + "'"
-                        + ">Go to annotation</a></span>";
-                if(data.source) {
-                    display += "<br/><strong>Source segment: </strong>" + data.source;
-                    display += "<br/><strong>Target segment: </strong>" + data.target;
-                }
+                var display = "";
+                if(data.annotator) {
+                    display = "<strong>Annotator: </strong>" + data.annotator;
+                    display += "<br/><strong>Sense selected: </strong> " + data.sense;
+                    display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Category: </strong> " + data.category;
+                    display += "&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Polarity: </strong> " + data.polarity;
+                    display += "<br/><strong>Notes: </strong>" + data.comments;
+                    display += "<br/><strong>Source: </strong>" + data.source_title;
+                    display += "<span style='margin-left: 5em'><a target='_blank' " 
+                            + " href='/document/" + data.id_document + "/" + data.id_token + "'"
+                            + ">Go to annotation</a></span>";
+                    display += "<span style='margin-left: 5em'>Delete</span>";
+                    if(data.source) {
+                        display += "<br/><strong>Source segment: </strong>" + data.source;
+                        display += "<br/><strong>Target segment: </strong>" + data.target;
+                    }
                 
-                if(data.uncertain === true) {
-                    display += "<br/><strong style='text-color: red;'>The annotator was uncertain about this annotation!!</strong>";
+                    if(data.uncertain === true) {
+                        display += "<br/><strong style='color: red;'>The annotator was uncertain about this annotation!!</strong>";
+                    }
+                    display += "<br/>";                
+                } else {
+                    display = "<strong style='color: red;'><i class='fas fa-exclamation-triangle right-margin-1em'></i> An error occurred while retriving the information</strong>";
                 }
-                display += "<br/>";                
                 node.html(display);
                 $(this).find(".fa-plus").toggle();                
             }
