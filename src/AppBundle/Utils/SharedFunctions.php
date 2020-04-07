@@ -283,7 +283,7 @@ class SharedFunctions {
      * @param int $max_width controls the number of characters in the context
      * @return string the context
      */
-    private function getContext($str_query, $term_id, $direction, EntityManager $em, $max_width = 40) {        
+    private static function getContext($str_query, $term_id, $direction, EntityManager $em, $max_width = 40) {        
         $query = $em->createQuery($str_query);
         $query->setParameter(1, $term_id);
         $query->setMaxResults(15);
