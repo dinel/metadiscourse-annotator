@@ -266,8 +266,15 @@ class SearchController extends Controller
                 $source = $annotation->getToken()->getSegment()->getSegment();
                 $target = $annotation->getToken()->getSegment()->getAlignment()->getSegment();
             }
+            
+            if($this->getUser()->isAdmin()) {
+                $adminUser = "TRUE";
+            } else {
+                $adminUser = "FALSE";
+            }
 
             return new JsonResponse([
+                    'id' => $id,
                     'annotator' => $annotation->getUserName(),
                     'sense' => $annotation->getSense() ? $annotation->getSense()->getDefinition() : "Not a marker",
                     'comments' => $annotation->getComments(),
@@ -279,6 +286,7 @@ class SearchController extends Controller
                     'id_document' => $annotation->getToken()->getDocument()->getId(),
                     'source' => $source,
                     'target' => $target,
+                    'admin' => $adminUser,
                     ]);
         } else {
             return new JsonResponse([]);            
