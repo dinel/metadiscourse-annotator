@@ -1,5 +1,5 @@
 /* 
- * Copyright 2018 dinel.
+ * Copyright 2018 - 2020 dinel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,10 @@ $( document ).ready(function() {
                     display += "<span style='margin-left: 5em'><a target='_blank' " 
                             + " href='/document/" + data.id_document + "/" + data.id_token + "'"
                             + ">Go to annotation</a></span>";
-                    display += "<span style='margin-left: 5em'>Delete</span>";
+                    if(data.admin === "TRUE") {
+                        display += "<span style='float: right; margin-right: 1em; color: red; text-size: 150%;'>"
+                            + "<i id='del" + data.id + "' class='far fa-trash-alt'></i></span>";
+                    }
                     if(data.source) {
                         display += "<br/><strong>Source segment: </strong>" + data.source;
                         display += "<br/><strong>Target segment: </strong>" + data.target;
@@ -68,6 +71,28 @@ $( document ).ready(function() {
         
         node.parent().show();
     }); 
+    
+    $('#results').on('click', '.fa-trash-alt', function(e) {
+        var result = confirm("Are you sure you want to delete? This operation cannot be undone!");
+        
+        if(result) {
+            var node = $(this);
+            console.log($(this).attr("id"));
+
+            $.ajax({
+                type: 'GET',
+                url: '/annotation/remove/' + $(this).attr("id").substring(3),
+                success: function(data) {
+                    if(data.success) {
+                        node.parents('.concordance').remove();
+                    }
+                },
+                error: function(xhr){
+                    alert("An error occured: " + xhr.status + " " + xhr.statusText);
+                }
+            });                                    
+        }
+    });
     
     $('.left-context').each(function(index) {
         trimText($(this).children().get(0), 0);
