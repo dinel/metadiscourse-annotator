@@ -15,6 +15,8 @@
  */
 
 $( document ).ready(function() {
+    $('#loading').fadeOut();
+    
     $("#results").on('click', '.details', function(e) {
         var node = $(this).next();
         $(this).find(".fa-plus").toggle();
