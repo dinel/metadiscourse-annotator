@@ -11,16 +11,23 @@
         program will introduce major errors, save this page, send it to 
         the administrator and do not proceed. </p>
         
-        <ul>
-        {% for key, value in forms %}
-            <li>{{ value|join(', ', ' and ') }} => {{ key }} </li>
-        {%  endfor %}
-        </ul>
-        
-        <div class="voffset4">
-            <a href="{{ path('solve_hyphen', {'id': id } ) }}" class="btn btn-outline-primary" role="button">Correct hyphenation</a>
-            <a href="javascript:window.history.back();" class="btn btn-outline-primary" role="button">Back</a>
-        </div>
+        {%  if forms | length > 0 %}
+            <ul>
+            {% for key, value in forms %}
+                <li>{{ value|join(', ', ' and ') }} => {{ key }} </li>
+            {%  endfor %}
+            </ul>
+
+            <div class="voffset4">
+                <a href="{{ path('solve_hyphen', {'id': id } ) }}" class="btn btn-outline-primary" role="button">Correct hyphenation</a>
+                <a href="javascript:window.history.back();" class="btn btn-outline-primary" role="button">Back</a>
+            </div>
+        {%  else %}
+            <p><strong>No forms have been indentified. There is nothing to process.</strong>
+            <div class="voffset4">            
+                <a href="javascript:window.history.back();" class="btn btn-outline-primary" role="button">Back</a>
+            </div>
+        {% endif %}
         
     </div>
 </div>
