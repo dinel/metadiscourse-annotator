@@ -18,6 +18,6 @@
 
 namespace AppBundle\Controller;
 
-class WebAnnotatorController extends Controller
+class ReviewingController extends Controller
 {
 }
