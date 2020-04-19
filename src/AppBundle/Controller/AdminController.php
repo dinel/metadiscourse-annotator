@@ -734,7 +734,7 @@ class AdminController extends Controller
         
         $tokens = $text->getTokens()->toArray();
         $pos = 0;
-        while($pos < count($tokens)) {                
+        while($pos < count($tokens)) {
             $match = $this->findMarkableInDatabase($tokens, $pos, $marks_array, 
                         $ignore_annotated);
             if($match) {
@@ -785,4 +785,132 @@ class AdminController extends Controller
         
         $this->updateMarkersCache($text->getId());
     }    
+    
+    /**
+     * @Route("/admin/pre_solve_hyphen/{id}", name="pre_solve_hyphen")
+     * @param type $id
+    */
+    
+    public function preFixHyphenationAction(int $id) {
+        $text = $this->getDoctrine()
+                     ->getRepository('AppBundle:Text')
+                     ->find($id);
+        
+        // TODO: deal with possible error
+        
+        // load all the markers
+        $repository = $this->getDoctrine()
+                           ->getRepository("AppBundle:Markable");
+        $marks = $repository->findBy([], ['text' => 'ASC']);
+        $marks_array = [];
+        foreach($marks as $mark) {
+            $marks_array = array_merge($marks_array, 
+                                         [$mark->getText()], 
+                                         explode("##", $mark->getAlternatives()));
+        }
+        
+        $tokens = $text->getTokens()->toArray();
+        $pos = 0;
+        
+        $res = [];
+        
+        while($pos < count($tokens)) {
+            if (strcmp($tokens[$pos]->getContent(), "-") == 0) {
+                $before = $tokens[$pos-1]->getContent(); 
+                $after = $tokens[$pos+1]->getContent();
+                $hform = $before . $tokens[$pos]->getContent() . $after ;
+                $form = $before . $after ;
+                if($before && $after && in_array($form, $marks_array)) {
+                    $res[$form][] = $hform;
+                }
+            }
+            $pos++;
+        }
+        
+        return $this->render('Annotator/pre_hyphen_report.html.twig', [
+            'forms' => $res,
+            'id' => $id,
+        ]);
+        
+    }
+    
+        
+    /**
+     * @Route("/admin/solve_hyphen/{id}", name="solve_hyphen")
+     * @param type $id
+    */
+    
+    public function fixHyphenationAction(int $id) {
+        $text = $this->getDoctrine()
+                     ->getRepository('AppBundle:Text')
+                     ->find($id);        
+        
+        // TODO: deal with possible error
+        
+        // load all the markers
+        $repository = $this->getDoctrine()
+                           ->getRepository("AppBundle:Markable");
+        $marks = $repository->findBy([], ['text' => 'ASC']);
+        $marks_array = [];
+        foreach($marks as $mark) {
+            $marks_array = array_merge($marks_array, 
+                                         [$mark->getText()], 
+                                         explode("##", $mark->getAlternatives()));
+        }
+        
+        $tokens = $text->getTokens()->toArray();
+        $pos = 0;
+        
+        $res = [];
+        
+        $em = $this->getDoctrine()->getManager();
+        while($pos < count($tokens)) {
+            if (strcmp($tokens[$pos]->getContent(), "-") == 0) {
+                $before = $tokens[$pos-1]->getContent(); 
+                $after = $tokens[$pos+1]->getContent();
+                $hform = $before . $tokens[$pos]->getContent() . $after ;
+                $form = $before . $after ;
+                if($before && $after && in_array($form, $marks_array)) {
+                    $tokens[$pos - 1]->setContent($form);
+                    $this->deleteMarkerFromToken($tokens[$pos - 1], $em);
+                    $em->persist($tokens[$pos - 1]);
+                    $tokens[$pos]->setContent("");
+                    $this->deleteMarkerFromToken($tokens[$pos], $em);
+                    $em->persist($tokens[$pos]);
+                    $tokens[$pos + 1]->setContent("");       
+                    $this->deleteMarkerFromToken($tokens[$pos + 1], $em);
+                    $em->persist($tokens[$pos + 1]);
+                }
+            }
+            $pos++;
+        }                        
+        $em->flush();
+        
+        return $this->redirectToRoute("reannotate", ['id' => $id]);                
+    }
+    
+    /**
+     * Function which deletes a marker from a token. It will also delete
+     * any annotation associated with the marker
+     * @param Token $token the token for which the marker has to be deleted
+     * @param EntityManager $em the entity manager
+     */
+    private function deleteMarkerFromToken($token, $em) {        
+        if($token->getMarkable()) {
+            // is there annotation?
+            $annotations = $this->getDoctrine()
+                    ->getRepository('AppBundle:Annotation')
+                    ->createQueryBuilder('a')
+                    ->where('a.token = :id')
+                    ->setParameter('id', $token->getId())
+                    ->getQuery()
+                    ->iterate();
+
+            while (($row = $annotations->next()) !== false) {
+                $annotation = $row[0];
+                $em->remove($annotation);
+            }
+        }
+        $token->setMarkable(null);        
+    }
 }

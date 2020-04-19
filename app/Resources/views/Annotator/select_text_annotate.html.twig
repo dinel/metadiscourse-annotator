@@ -54,12 +54,6 @@
                 <a href="{{ path('document_show', {'id': text.id } ) }}" class="btn btn-outline-primary" role="button">Annotate</a>
                 <a href="{{ path('select_mark', {'id': text.id } ) }}" class="btn btn-outline-primary" role="button">Annotate by marker</a>
                 <a href="{{ path('select_category', {'id': text.id } ) }}" class="btn btn-outline-primary" role="button">Annotate by category</a>
-
-                {% if is_granted('ROLE_ADMIN')  %}
-                    <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-outline-primary float-right" role="button">Re-process</a>
-                {% else %}
-                    <a href="{{ path('reannotate', {'id': text.id } ) }}" class="btn btn-outline-primary float-right disabled" role="button">Re-process</a>
-                {% endif %}
             </div>
         </div>
     {% endfor %}

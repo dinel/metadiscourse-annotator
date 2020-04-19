@@ -1,0 +1,28 @@
+{# app/Resources/views/Annotator/pre_hyphen_report.html.twig #}
+
+{% extends 'base_new.html.twig' %}
+
+{% block content %}        
+<div class="row voffset3">
+    <div class="col-md-8">
+        <p>The program is about to correct the following words which were hyphenated 
+        in the input text. All these words are markers and you will be able to 
+        annotate them after you complete this process. If you think the 
+        program will introduce major errors, save this page, send it to 
+        the administrator and do not proceed. </p>
+        
+        <ul>
+        {% for key, value in forms %}
+            <li>{{ value|join(', ', ' and ') }} => {{ key }} </li>
+        {%  endfor %}
+        </ul>
+        
+        <div class="voffset4">
+            <a href="{{ path('solve_hyphen', {'id': id } ) }}" class="btn btn-outline-primary" role="button">Correct hyphenation</a>
+            <a href="javascript:window.history.back();" class="btn btn-outline-primary" role="button">Back</a>
+        </div>
+        
+    </div>
+</div>
+    
+{% endblock %}
