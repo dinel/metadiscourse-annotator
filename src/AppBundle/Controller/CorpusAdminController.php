@@ -102,7 +102,7 @@ class CorpusAdminController extends Controller
             $corpus = SharedFunctions::getCorpusById($id, $doctrine);
             $list_texts = SharedFunctions::getListIdTextFromCorpus($id, $doctrine);
 
-            # SELECT count(`content`) FROM `token`
+            # SELECT count(`content`) FROM `token`            
             $query = $doctrine->getManager()
                               ->createQuery("SELECT COUNT(t.content) AS no_tokens " 
                                             . "FROM AppBundle\Entity\Token t "
@@ -111,9 +111,9 @@ class CorpusAdminController extends Controller
             $rows = $query->execute();
             $corpus->setNumberTokens((int)$rows[0]['no_tokens']);
             
-            # SELECT count( DISTINCT(`content`) ) FROM `token`            
+            # SELECT count( DISTINCT(`content`) ) FROM `token`      
             $query = $doctrine->getManager()
-                              ->createQuery("SELECT COUNT( DISTINCT(t.content) ) AS no_types "
+                              ->createQuery("SELECT COUNT( DISTINCT t.content ) AS no_types "
                                             . "FROM AppBundle\Entity\Token t "
                                             . "WHERE t.document in (:param) ")
                               ->setParameters(['param' => explode(",", $list_texts)]);
