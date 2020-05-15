@@ -12,6 +12,7 @@ var discardTaggleEvent = false;
 var ctrlIsDown = false;
 var annotationAreaOn = false;
 var currentSenses = [];
+var goNext = false;
 
 var nextMarkerQueue = [];
 
@@ -237,6 +238,9 @@ $( document ).ready(function() {
                 
                 $('#update-annotation').removeClass('disabled');
                 $('#update-annotation').addClass('red');
+                
+                $('#save-next').removeClass('disabled');
+                $('#save-next').addClass('red');
             }
         });
     });
@@ -244,6 +248,9 @@ $( document ).ready(function() {
     $('#secondary-category').change(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
+        
+        $('#save-next').removeClass('disabled');
+        $('#save-next').addClass('red');
     });
     
     /*
@@ -253,6 +260,8 @@ $( document ).ready(function() {
     //$('#list-senses').change(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
+        $('#save-next').removeClass('disabled');
+        $('#save-next').addClass('red');
         $('#sense-id').val(this.value);
         $('#not-marker').removeClass('select-annotation');
         $('#list-senses-container').addClass('select-annotation');
@@ -301,6 +310,8 @@ $( document ).ready(function() {
     $('#not-marker').click(function() {
         $('#update-annotation').removeClass('disabled');
         $('#update-annotation').addClass('red');
+        $('#save-next').removeClass('disabled');
+        $('#save-next').addClass('red');
         $('#sense-id').val(0);
         $('#not-marker').addClass('select-annotation');
         $('#list-senses-container').removeClass('select-annotation');
@@ -335,23 +346,38 @@ $( document ).ready(function() {
                 $('#' + token).addClass(data.style); 
                 $('#update-annotation').removeClass('red');
                 $('#update-annotation').addClass('disabled');
+                $('#save-next').removeClass('red');
+                $('#save-next').addClass('disabled');
                 
                 $("#message-area").html("Saved!");
                 $("#message-area").show();
                 setTimeout(function() { $("#message-area").fadeOut(); }, 3000);
                 updateDisplayedAnnotation(sense);
+                if(goNext === true) {
+                    goNext = false;
+                    $('#next').trigger('click');
+                }
             }
         });
     });
     
+    $('#save-next').click(function() {
+        $('#update-annotation').trigger('click');
+        goNext = true;
+    });
+    
     $('#comment').on('change keyup paste', function() {
         $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');   
+        $('#update-annotation').addClass('red');
+        $('#save-next').removeClass('disabled');
+        $('#save-next').addClass('red');
     });
     
     $('#uncertain').change(function() {
         $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');   
+        $('#update-annotation').addClass('red');
+        $('#save-next').removeClass('disabled');
+        $('#save-next').addClass('red');
     });    
     
     $('#locate').click(function() {
@@ -381,6 +407,8 @@ $(function() {
             $( "#polarity" ).val( ui.value );
             $('#update-annotation').removeClass('disabled');
             $('#update-annotation').addClass('red');   
+            $('#save-next').removeClass('disabled');
+            $('#save-next').addClass('red');
         }
     });
     $( "#polarity" ).val( $( "#slider" ).slider( "value" ) );
