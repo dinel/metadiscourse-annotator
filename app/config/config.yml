@@ -27,7 +27,7 @@ framework:
     fragments: { path: /_fragment }
     http_method_override: true
     assets:
-        version: 'v2019-06-25'
+        version: 'v2020-05-16'
 
 # Twig Configuration
 twig:
