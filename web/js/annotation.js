@@ -170,6 +170,7 @@ $( document ).ready(function() {
     $('#next').click(function() {
         annotationAreaOn = true;
         $('#tag-attributes').show();
+        disableSave();
         
         if(nextMarkerQueue.length > 0) {
             data = nextMarkerQueue.shift();
@@ -195,6 +196,7 @@ $( document ).ready(function() {
     $('#previous').click(function() {
         annotationAreaOn = true;
         $('#tag-attributes').show();
+        disableSave();
         nextMarkerQueue = [];
         
         var prevToken = currentToken;
@@ -236,32 +238,20 @@ $( document ).ready(function() {
                     $('#secondary-category').html("");
                 }
                 
-                $('#update-annotation').removeClass('disabled');
-                $('#update-annotation').addClass('red');
-                
-                $('#save-next').removeClass('disabled');
-                $('#save-next').addClass('red');
+                enableSave();
             }
         });
     });
     
     $('#secondary-category').change(function() {
-        $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');
-        
-        $('#save-next').removeClass('disabled');
-        $('#save-next').addClass('red');
+        enableSave();
     });
     
     /*
      * Function triggered when the user changes the selection of a sense
      */           
     $('#list-senses').on( "selectmenuchange", function() {
-    //$('#list-senses').change(function() {
-        $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');
-        $('#save-next').removeClass('disabled');
-        $('#save-next').addClass('red');
+        enableSave();
         $('#sense-id').val(this.value);
         $('#not-marker').removeClass('select-annotation');
         $('#list-senses-container').addClass('select-annotation');
@@ -308,10 +298,7 @@ $( document ).ready(function() {
      * meta-discourse marker
      */
     $('#not-marker').click(function() {
-        $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');
-        $('#save-next').removeClass('disabled');
-        $('#save-next').addClass('red');
+        enableSave();
         $('#sense-id').val(0);
         $('#not-marker').addClass('select-annotation');
         $('#list-senses-container').removeClass('select-annotation');
@@ -344,10 +331,8 @@ $( document ).ready(function() {
                 $('#' + token).removeClass();
                 $('#' + token).addClass("meta-marker");
                 $('#' + token).addClass(data.style); 
-                $('#update-annotation').removeClass('red');
-                $('#update-annotation').addClass('disabled');
-                $('#save-next').removeClass('red');
-                $('#save-next').addClass('disabled');
+                disableSave();
+
                 
                 $("#message-area").html("Saved!");
                 $("#message-area").show();
@@ -367,17 +352,11 @@ $( document ).ready(function() {
     });
     
     $('#comment').on('change keyup paste', function() {
-        $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');
-        $('#save-next').removeClass('disabled');
-        $('#save-next').addClass('red');
+        enableSave();
     });
     
     $('#uncertain').change(function() {
-        $('#update-annotation').removeClass('disabled');
-        $('#update-annotation').addClass('red');
-        $('#save-next').removeClass('disabled');
-        $('#save-next').addClass('red');
+        enableSave();
     });    
     
     $('#locate').click(function() {
@@ -405,10 +384,7 @@ $(function() {
         step: 1,
         slide: function( event, ui ) {
             $( "#polarity" ).val( ui.value );
-            $('#update-annotation').removeClass('disabled');
-            $('#update-annotation').addClass('red');   
-            $('#save-next').removeClass('disabled');
-            $('#save-next').addClass('red');
+            enableSave();
         }
     });
     $( "#polarity" ).val( $( "#slider" ).slider( "value" ) );
@@ -430,8 +406,7 @@ function updateDisplayedAnnotation(current_annotation) {
         $('#list-senses-container').removeClass('select-annotation');
         $('#not-marker').removeClass('select-annotation');
         $('.current-annotation').css("background-color", '#ffd');
-        $('#explanation').html("");
-        
+        $('#explanation').html("");        
     }
 }
 
@@ -607,4 +582,24 @@ function getNextToken(start) {
     }
     
     return nextToken;
+}
+
+/**
+ * Function which disables the save buttons
+ */
+function disableSave() {
+    $('#update-annotation').removeClass('red');
+    $('#update-annotation').addClass('disabled');
+    $('#save-next').removeClass('red');
+    $('#save-next').addClass('disabled');
+}
+
+/**
+ * Function which enables the save buttons
+ */
+function enableSave() {
+    $('#update-annotation').removeClass('disabled');
+    $('#update-annotation').addClass('red');   
+    $('#save-next').removeClass('disabled');
+    $('#save-next').addClass('red');
 }
