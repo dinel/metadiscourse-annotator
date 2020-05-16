@@ -43,11 +43,11 @@ body {
 
 textarea { vertical-align: top; }
 
-#update-annotation.disabled {
+#update-annotation.disabled, #save-next.disabled {
     background-color: gray;
 }
 
-#update-annotation.red {
+#update-annotation.red, #save-next.red {
     border-color: red;
 }
 
