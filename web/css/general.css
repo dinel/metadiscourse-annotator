@@ -130,3 +130,13 @@ https://github.com/minhur/bootstrap-toggle/issues/186
     background-color: white;
     border: thin rgba(0, 0, 0, .25) solid;
 }
+
+/* for sticky option panel */
+#option-panel {
+    position: sticky;
+    top:20px;
+}
+
+#option-panel a {
+    margin: 4px;
+}
