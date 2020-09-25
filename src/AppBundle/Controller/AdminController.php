@@ -53,6 +53,8 @@ class AdminController extends Controller
      * @Route("/admin/text/add", name="admin_text_add")
      */
     public function newTextAction(\Symfony\Component\HttpFoundation\Request $request) {
+        set_time_limit(0);
+        
         $text = new \AppBundle\Entity\Text();
         
         $form = $this->createFormBuilder($text)
