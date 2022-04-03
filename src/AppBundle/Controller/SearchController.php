@@ -98,7 +98,7 @@ class SearchController extends Controller
                 $r[] = $annotation->getSense() ? 
                             $annotation->getSense()->getId() :
                             "Not a marker";
-                $r[] = SharedFunctions::getSentence($token->getId(), $token->getContent(), $em);
+                $r[] = SharedFunctions::getSentence($token->getId(), $token->getContent(), $em, 80);
                 
                 if($annotation->getSense()) {
                     $styles[$annotation->getSense()->getDefinition()] = $annotation->getSense()->getId();
@@ -267,7 +267,7 @@ class SearchController extends Controller
                 $target = $annotation->getToken()->getSegment()->getAlignment()->getSegment();
             }
             
-            if($this->getUser()->isAdmin()) {
+            if($this->getUser() && $this->getUser()->isAdmin()) {
                 $adminUser = "TRUE";
             } else {
                 $adminUser = "FALSE";
